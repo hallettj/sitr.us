@@ -44,6 +44,7 @@
     "@types/node": "^13.1.8",
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
+    "@types/react-helmet": "^5.0.15",
     "@types/theme-ui": "^0.2.6",
     "cross-env": "^6.0.3",
     "gatsby-plugin-webpack-bundle-analyser-v2": "^1.1.8",
