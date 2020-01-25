@@ -5,7 +5,26 @@ require("dotenv").config({
 module.exports = {
   siteMetadata: {
     siteTitle: "sitr.us",
-    siteTitleAlt: "posts by Jesse Hallett",
+    siteTitleAlt: "sitr.us",
+    siteHeadline: "posts by Jesse Hallett",
+    siteUrl: "https://sitr.us/",
+    siteDescription: "posts by Jesse Hallett",
+    siteLanguage: "en",
+    author: "@hallettj",
+    externalLinks: [
+      {
+        name: "Github",
+        url: "https://github.com/hallettj/"
+      },
+      {
+        name: "Twitter",
+        url: "https://twitter.com/hallettj/"
+      },
+      {
+        name: "Email",
+        url: "mailto:jesse@sitr.us"
+      }
+    ],
     navigation: [
       {
         title: "Blog",
@@ -15,7 +34,8 @@ module.exports = {
         title: "About",
         slug: "/about"
       }
-    ]
+    ],
+    showLineNumbers: false
   },
   plugins: [
     {
