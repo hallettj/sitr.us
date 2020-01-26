@@ -1,18 +1,19 @@
 ---
-layout: post
 title: "Advanced features in Flow"
 author: Jesse Hallett
 date: 2015-05-31
-slug: /2015/06/20/advanced-features-in-flow.html
+slug: /2015/05/31/advanced-features-in-flow.html
 comments: true
 tags:
   - Flow
 revisions:
   - date: 2015-06-01
-    message: Added notice that `$` features are not public.
+    message: "Added notice that `$` features are not public."
   - date: 2015-06-08
-    message: `$Record<T>` is gone in Flow v0.12.
+    message: "`$Record<T>` is gone in Flow v0.12."
 ---
+
+import { TableOfContents } from "../../../src/components/table-of-contents"
 
 Flow has some very interesting features that are currently not documented.
 It is likely that the reason for missing documentation is that these features
@@ -32,8 +33,9 @@ and [react.js][react-types].
 and that the semantics of those features may change.
 But they are useful enough that I plan to use some of them anyway :)
 
-* Table of Contents
-{:toc}
+## Table of Contents
+
+<TableOfContents headings={props.headings} />
 
 ## `Class<T>`
 
@@ -44,7 +46,7 @@ with proper type checking.
 I use this in an event dispatch system where events are class instances,
 and event handlers are invoked based on whether they accept a given event type:
 
-{% highlight js %}
+```js
 var handlers: Array<[Class<any>, Function]> = []
 
 function register<T:Object>(klass: Class<T>, handler: (event: T) => void) {
@@ -58,12 +60,12 @@ function emit<T:Object>(event: T) {
     }
   })
 }
-{% endhighlight %}
+```
 
 This gives me a compile-time guarantee that event handlers can handle events of
 the type they are invoked with.
 
-{% highlight js %}
+```js
 class ViewPost {
   id: number;
   author: string;
@@ -87,7 +89,7 @@ register(ViewPost, ({ id, author }) => { /* whatever */ })
 
 // Error: object pattern property not found in ViewComment
 register(ViewComment, ({ id, author }) => { /* whatever */ })
-{% endhighlight %}
+```
 
 ## `$Diff<A,B>`
 
@@ -98,20 +100,20 @@ Properties that are defined in both `A` and `B` are allowed too.
 React uses this to throw type errors if components are not given required props,
 but to leave props with default values as optional.
 
-{% highlight js %}
+```js
 declare function createElement<D, P, S, A: $Diff<P, D>>(
   name: ReactClass<D, P, S>,
   attributes: A,
   children?: any
 ): ReactElement<D, P, S>;
-{% endhighlight %}
+```
 
 Where `P` is the type for component props,
 and `D` is the type for default props.
 
 Here is a simplified example:
 
-{% highlight js %}
+```js
 type Props = {
   foo: number,
   bar: string,
@@ -140,7 +142,7 @@ setProps({
 setProps({
     foo: 1,
 })
-{% endhighlight %}
+```
 
 In my testing,
 this worked equally well if `$Diff` was used directly in the type of `P`
@@ -153,7 +155,7 @@ it is used in a type bound.
 Matches the shape of `T`.
 React uses `$Shape` in the signatures for `setProps` and `setState`.
 
-{% highlight js %}
+```js
 declare class ReactComponent<D, P, S> {
   // ...
 
@@ -165,7 +167,7 @@ declare class ReactComponent<D, P, S> {
 
   // ...
 }
-{% endhighlight %}
+```
 
 Where `P` is the type of a component's props,
 and `S` is the type of a component's state.
@@ -182,7 +184,7 @@ when calling `replaceState` you must include a value for every property in `S`.
 
 Some examples:
 
-{% highlight js %}
+```js
 type Props = {
   foo: number,
   bar: string,
@@ -197,18 +199,18 @@ var a: $Shape<Props> = {
 var b: $Shape<Props> = {
   foo: 'one'
 }
-{% endhighlight %}
+```
 
 An object of type `$Shape<T>` is not allowed to have properties that are not
 part of `T`.
 
-{% highlight js %}
+```js
 // Error: prop baz of Props not found in object type
 var c: $Shape<Props> = {
   foo: 1,
   baz: 2,
 }
-{% endhighlight %}
+```
 
 `$Shape` is like a supertype for objects.
 Consider that a type `{ foo: number }` (when used as a type bound) represents
@@ -239,7 +241,7 @@ React uses `$Record` to check the type of `propTypes`.
 Here is a simplified example:
 
 
-{% highlight js %}
+```js
 type Props = {
   foo: number,
   bar: string,
@@ -254,42 +256,42 @@ var propTypes1: $Record<Props> = {
 var propTypes2: $Record<Props> = {
   foo: React.PropTypes.number,
 }
-{% endhighlight %}
+```
 
 Note that Flow does *not* verify that `React.PropTypes.number` matches the type
 `number`.
 It just checks that `propTypes1` has all of the same keys.
 
-{% highlight js %}
+```js
 // No errors!
 var propTypes3: $Record<Props> = {
   foo: 'bleah',
   bar: 'blerg',
 }
-{% endhighlight %}
+```
 
 A `$Record` type might have additional keys that are not included in the
 original object type.
 
-{% highlight js %}
+```js
 // No errors!
 var propTypes4: $Record<Props> = {
   foo: React.PropTypes.number,
   bar: React.PropTypes.string,
   baz: React.PropTypes.string,
 }
-{% endhighlight %}
+```
 
 An important detail to note is that a `$Record` type can only use property
 names that are known statically.
 Dynamic lookups are not allowed.
 
-{% highlight js %}
+```js
 propTypes4.foo  // No errors!
 
 // Error: computed property/element cannot be accessed on record type
 propTypes4['foo']
-{% endhighlight %}
+```
 
 In its real definition,
 React actually uses `$Record` in combination with `$Supertype` so that you do
@@ -300,7 +302,7 @@ not get an error if you omit some properties from `propTypes`.
 A type that is a supertype of `T`.
 React uses `$Supertype` in the type of `propTypes`:
 
-{% highlight js %}
+```js
 declare class ReactComponent<D, P, S> {
   // ...
 
@@ -308,7 +310,7 @@ declare class ReactComponent<D, P, S> {
 
   // ...
 }
-{% endhighlight %}
+```
 
 Where the type variable `P` is the type of the props for a component.
 
@@ -330,11 +332,11 @@ This is what you get when you use a type bound.
 For example,
 these signatures are equivalent:
 
-{% highlight js %}
+```js
 function doSomething1<T: Object>(obj: T) { /* whatever */ }
 
 function doSomething2(obj: $Subtype<Object>) { /* whatever */ }
-{% endhighlight %}
+```
 
 But the second version has the disadvantage that you cannot refer to the type
 that `obj` gets in the return type of the function, or in the types of other
@@ -350,18 +352,18 @@ certain required properties,
 where you don't want to prevent the caller from including additional properties.
 But now this works without a type bound:
 
-{% highlight js %}
+```js
 function getId(obj: { id: number }): number {
   return obj.id
 }
 
 getId({ id: 1, name: 'foo' })  // No errors!
-{% endhighlight %}
+```
 
 I also had a thought that `$Subtype` could be used to implement a composition
 pattern that previously did not work.
 
-{% highlight js %}
+```js
 type HasId = { id: number }
 type HasName = { name: string }
 
@@ -372,7 +374,7 @@ function makeWidget(id: number, name: string): Widget {
 }
 
 var w = makeWidget(1, 'foo')
-{% endhighlight %}
+```
 
 But in Flow v0.11 this does work.
 Hooray!
@@ -380,7 +382,7 @@ Hooray!
 `$Subtype` could be useful if you want to define an object type that can be
 assigned properties that are not declared in the type:
 
-{% highlight js %}
+```js
 type Extensible = $Subtype<{foo: number}>
 
 var a: Extensible = { foo: 1, bar: 2 }
@@ -389,7 +391,7 @@ a.baz = 3  // No errors!
 
 // Error: property foo not found in object literal
 var b: Extensible = { bar: 2 }
-{% endhighlight %}
+```
 
 However this weakens property checking on the extensible type.
 For example,
@@ -403,7 +405,7 @@ The set of keys of `T`.
 One use for this is to write a lookup function,
 and have Flow check that the lookup key is valid.
 
-{% highlight js %}
+```js
 var props = {
   foo: 1,
   bar: 'two',
@@ -418,13 +420,13 @@ getProp('foo')  // No errors!
 
 // Error: string literal nao property not found in object literal
 getProp('nao')
-{% endhighlight %}
+```
 
 The type `$Enum<typeof props>` is a lot like this type:
 
-{% highlight js %}
+```js
 type EnumProps = 'foo' | 'bar' | 'baz'
-{% endhighlight %}
+```
 
 But with `$Enum`,
 Flow computes the type union for you.
@@ -447,14 +449,14 @@ The getter can be used to get arbitrary properties out of the object,
 without having to refer to the object itself after creating the getter.
 We would like to write this:
 
-{% highlight js %}
+```js
 // Does not work!
 function makeGetter<T:Object>(obj: T): <U>(key: $Enum<T>) => U {
   return function(key) {
     return obj[key]
   }
 }
-{% endhighlight %}
+```
 
 The use of `$Enum<T>` ensures that a getter can only be called to get
 properties that actually exist on the given object.
@@ -468,14 +470,14 @@ An obvious idea is to copy types from the return type of `makeGetter` into the
 signature of the inner function.
 But that leads to another problem.
 
-{% highlight js %}
+```js
 // Still does not work!
 function makeGetter<T:Object>(obj: T): <U>(key: $Enum<T>) => U {
   return function<U>(key: $Enum<T>): U {
     return obj[key]
   }
 }
-{% endhighlight %}
+```
 
 This time the error is:
 
@@ -491,25 +493,25 @@ On the other hand, Flow might be smart enough to figure out what the argument
 type in the inner function should be.
 So we can use `*` to kick the problem over to Flow.
 
-{% highlight js %}
+```js
 // Finally, an version that does work.
 function makeGetter<T:Object>(obj: T): <U>(key: $Enum<T>) => U {
   return function <U>(key: *): U {
     return obj[key]
   }
 }
-{% endhighlight %}
+```
 
 Now we can see `makeGetter` in action.
 
-{% highlight js %}
+```js
 var someObj = { foo: 1, bar: 2 }
 var get = makeGetter(someObj)
 
 get('foo')  // No errors!
 
 get('baz')  // string literal 'baz' not found in object literal
-{% endhighlight %}
+```
 
 Another option would have been to use `any` instead of `*`.
 But that is so much less elegant!
@@ -526,7 +528,7 @@ since the outer function has the type signature that we want.
 
 React uses an existential type to define the `ReactClass` type:
 
-{% highlight js %}
+```js
 /**
  * Type of a React class (not to be confused with the type of instances of a
  * React class, which is the React class itself). A React class is any subclass
@@ -539,7 +541,7 @@ React uses an existential type to define the `ReactClass` type:
  */
 type ReactClass<D, P, S> = _ReactClass<D, P, S, *>;
 type _ReactClass<D, P, S, C: ReactComponent<D, P, S>> = Class<C>;
-{% endhighlight %}
+```
 
 This allows React to pass around a polymorphic class as a first-class value
 without losing type information.
@@ -557,7 +559,7 @@ work with classes.
 
 We can reimplement `makeGetter` from the last section as a class.
 
-{% highlight js %}
+```js
 class Getter<T:Object> {
   obj: T;
   constructor(obj: T) { this.obj = obj }
@@ -573,7 +575,7 @@ getter.getProp('foo')  // No errors!
 
 // Error: string literal 'baz' not found in object literal
 getter.getProp('baz')
-{% endhighlight %}
+```
 
 This probably seems unremarkable -
 every object-oriented language with static type-checking scopes class-level
@@ -581,26 +583,26 @@ type variables this way.
 But ES6 classes are mostly syntactic sugar for ES5 constructor functions -
 yet a straight translation of `Getter` to ES5 syntax does not work:
 
-{% highlight js %}
+```js
 // Does not work
 function Getter<T:Object>(obj: T) {
   this.getProp = function<U>(key: $Enum<T>): U {
     return obj[key]
   }
 }
-{% endhighlight %}
+```
 
 We get the same error: `identifier T, could not resolve name`.
 This time to fix the problem we have to refer to `T` indirectly using `typeof obj`.
 
-{% highlight js %}
+```js
 // No errors!
 function Getter<T:Object>(obj: T) {
   this.getProp = function<U>(key: $Enum<typeof obj>): U {
     return obj[key]
   }
 }
-{% endhighlight %}
+```
 
 The ability of classes to scope type variables over inner methods,
 and the ability to use `instanceof` for type refinement,
