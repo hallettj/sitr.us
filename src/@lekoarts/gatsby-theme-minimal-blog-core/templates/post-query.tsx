@@ -32,6 +32,10 @@ export const query = graphql`
           message
         }
       }
+      headings {
+        depth
+        value
+      }
     }
   }
 `

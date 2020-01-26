@@ -33,6 +33,10 @@ type PostProps = {
       frontmatter: {
         revisions?: Array<{ date: string; message: string }>
       }
+      headings: {
+        depth: number
+        value: string
+      }
     }
   }
 }
@@ -43,7 +47,7 @@ const shadow = px.map(v => `rgba(0, 0, 0, 0.15) 0px ${v} ${v} 0px`)
 const Post = ({
   data: {
     post,
-    mdx: { frontmatter }
+    mdx: { frontmatter, headings }
   }
 }: PostProps) => {
   const revisions = sortedRevisions(frontmatter.revisions)
@@ -90,7 +94,7 @@ const Post = ({
           }
         }}
       >
-        <MDXRenderer>{post.body}</MDXRenderer>
+        <MDXRenderer headings={headings}>{post.body}</MDXRenderer>
       </section>
     </Layout>
   )
