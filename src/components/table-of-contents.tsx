@@ -64,10 +64,9 @@ function nestedHeadings(
 ): NestedHeadings {
   const [topLevel, rest1] = splitBy(
     headings,
-    ({ depth }) => depth <= currentDepth
+    ({ depth }) => depth === currentDepth
   )
   const [nested, rest2] = splitBy(rest1, ({ depth }) => depth > currentDepth)
-  console.log({ topLevel, nested, rest2, currentDepth, headings })
   return (topLevel as NestedHeadings[])
     .concat(nested.length > 0 ? [nestedHeadings(nested, currentDepth + 1)] : [])
     .concat(rest2.length > 0 ? nestedHeadings(rest2, currentDepth) : [])
@@ -85,5 +84,5 @@ function minDepth(headings: Headings): number {
 }
 
 function splitBy<T>(xs: T[], pred: (x: T) => boolean): [T[], T[]] {
-  return [takeWhile(xs, pred), dropWhile(xs, x => !pred(x))]
+  return [takeWhile(xs, pred), dropWhile(xs, pred)]
 }

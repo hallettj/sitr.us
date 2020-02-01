@@ -6,7 +6,12 @@ slug: /2013/11/04/functional-data-structures.html
 comments: true
 tags:
   - functional programming
+revisions:
+  - date: 2013-11-12
+    message: Added section on installing Mori.
 ---
+
+import { TableOfContents } from "../../../src/components/table-of-contents"
 
 I have a long-standing desire for a JavaScript library that provides
 good implementations of functional data structures.  Recently I found
@@ -14,8 +19,9 @@ good implementations of functional data structures.  Recently I found
 looking for.  Mori packages data structures from the [Clojure][]
 standard library for use in JavaScript code.
 
-* Table of Contents
-{:toc}
+## Table of Contents
+
+<TableOfContents headings={props.headings} />
 
 ## Functional data structures
 
@@ -150,22 +156,22 @@ random-access lookups and updates.  Vectors are created using the
 arguments given to the function become elements of a new vector.  In
 [Node.js][] you can import Mori and create a vector like this:
 
-{% highlight js %}
+```js
 var mori = require('mori');
 var v = mori.vector(1, 2, 3);
 
 assert(mori.count(v) === 3);  // `count` gives the length of the vector
 assert(mori.first(v) === 1);
-{% endhighlight %}
+```
 
 Mori also works with [AMD][] implementations (such as [RequireJS][]) for
 use in browser code:
 
-{% highlight js %}
+```js
 define(['mori'], function(mori) {
     var v = mori.vector(1, 2, 3);
 });
-{% endhighlight %}
+```
 
 [Node.js]: http://nodejs.org/
 [AMD]: https://github.com/amdjs/amdjs-api/wiki/AMD
@@ -177,9 +183,9 @@ functions that take values as arguments.  Those functions are organized
 into modules to group related functions together.  This approach makes
 a lot of sense when values are mostly immutable; and it avoids name
 collisions that sometimes come up in object-oriented code, since names
-are scoped by module instead of by object.[^polymorphism]
+are scoped by module instead of by object.[^1]
 
-[^polymorphism]: You might be wondering how Clojure handles polymorphism, since the convention is to use functions instead of methods.  Clojure has a feature called [protocols][] that permit multiple implementations for functions depending on the type of a given argument.  Elsewhere in the functional world, [Haskell][] and [Scala][] provide a similar, yet more powerful feature, called [type classes][].
+[^1]: You might be wondering how Clojure handles polymorphism, since the convention is to use functions instead of methods.  Clojure has a feature called [protocols][] that permit multiple implementations for functions depending on the type of a given argument.  Elsewhere in the functional world, [Haskell][] and [Scala][] provide a similar, yet more powerful feature, called [type classes][].
 
 [protocols]: http://clojure.org/protocols
 [Haskell]: http://www.haskell.org/haskellwiki/Haskell
@@ -194,20 +200,20 @@ Instead all functionality is provided by functions exported by the
 
 Existing vectors can be modified:
 
-{% highlight js %}
+```js
 var v1 = mori.vector(1, 2, 3);
 var v2 = mori.conj(v1, 4);
 
 assert(String(v2) === '[1 2 3 4]');
 assert(String(v1) === '[1 2 3]');  // The original vector is unchanged.
-{% endhighlight %}
+```
 
 `conj` is an idiom that is particular to Clojure.  It inserts one or
 more values into a collection.  It behaves differently with different
 collection types, using whatever insert strategy is most efficient for
-the given collection.[^conj]
+the given collection.[^2]
 
-[^conj]: When `conj` is used on a list it prepends elements (like `cons`) because prepending is much cheaper than inserting at other possible positions.  Given a vector `conj` appends values.  Appending is often desired, and appending to a vector is just as efficient as inserting at any other position.  `conj` works on sets and maps too - but in those cases the idea of insertion position is not usually meaningful.
+[^2]: When `conj` is used on a list it prepends elements (like `cons`) because prepending is much cheaper than inserting at other possible positions.  Given a vector `conj` appends values.  Appending is often desired, and appending to a vector is just as efficient as inserting at any other position.  `conj` works on sets and maps too - but in those cases the idea of insertion position is not usually meaningful.
 
 
 ### higher-order functions
@@ -215,7 +221,7 @@ the given collection.[^conj]
 Mori provides a number of higher-order functions.  Here is an example
 that computes the sum of the even values in a collection:
 
-{% highlight js %}
+```js
 function even_sum(coll) {
     var evens = mori.filter(mori.is_even, coll);
     var sum   = mori.reduce(mori.sum, 0, evens);
@@ -223,14 +229,14 @@ function even_sum(coll) {
 }
 
 assert(even_sum(v2) === 6);
-{% endhighlight %}
+```
 
 Or, borrowing from [an example][group_by] in the Mori documentation, one
 might compute a sum for even values and a separate sum for odd values:
 
 [group_by]: http://swannodette.github.io/mori/#group_by
 
-{% highlight js %}
+```js
 function even_odd_sum(coll) {
     var groups = mori.group_by(function(n) {
         return mori.is_even(n) ? 'even' : 'odd';
@@ -245,7 +251,7 @@ function even_odd_sum(coll) {
 
 assert(mori.get(even_odd_sum(v2), 'even') === 6);
 assert(mori.get(even_odd_sum(v2), 'odd') === 4);
-{% endhighlight %}
+```
 
 The example above returns a map created with [`array_map`][array_map clojure],
 which is a map implementation that works well with a small number of
@@ -271,7 +277,7 @@ a comparison function that is used to to maintain an ordering of added
 values.  With the appropriate comparison appointments are added and are
 automatically sorted by date:
 
-{% highlight js %}
+```js
 function Calendar(appts) {
     appts = appts || mori.sorted_set_by(compare_appts);
     var cal = {};
@@ -303,7 +309,7 @@ function compare_appts(a, b) {
         return (a.title) .localeCompare (b.title);
     }
 }
-{% endhighlight %}
+```
 
 Like the underlying set, this calendar implementation is immutable.
 When an appointment is added you get a new calendar value.
@@ -317,7 +323,7 @@ appointments with the same date and time.
 
 Appointments can be added to a calendar and queried in date order:
 
-{% highlight js %}
+```js
 var my_cal = Calendar().add({
     title: "Portland JavaScript Admirers' Monthly Meeting",
     date:  Date.parse("2013-09-25T19:00-0700")
@@ -336,7 +342,7 @@ var now = Date.parse("2013-09-20");  // or `new Date()` for the current time
 var next_appts = my_cal.upcoming(now, 2);
 mori.map(function(a) { return a.title; }, next_appts);
 // ("Synesthesia Bike Tour" "Code 'n' Splode Monthly Meeting")
-{% endhighlight %}
+```
 
 Looks good!  Now let's add an undo feature.  In case the user changes
 her mind about the last appointment that was added, the undo feature
@@ -346,7 +352,7 @@ constructor takes an additional optional argument, the `add` method
 passes a reference from one calendar value to the next, and there is
 a new `undo` method:
 
-{% highlight js %}
+```js
 function Calendar(appts, prev_cal) {
     // ...
 
@@ -361,18 +367,18 @@ function Calendar(appts, prev_cal) {
 
     // ...
 }
-{% endhighlight %}
+```
 
 Assuming the same set of appointments, we can use the `undo` method to
 step back to a state before the fourth appointment was added:
 
-{% highlight js %}
+```js
 var my_prev_cal = my_cal.undo();
 
 var next_appts_ = my_prev_cal.upcoming(now, 2);
 mori.map(function(a) { return a.title; }, next_appts_);
 // ("Code 'n' Splode Monthly Meeting" "Portland JavaScript Admirers' Monthly Meeting")
-{% endhighlight %}
+```
 
 Immutability comes in handy in this scenario.  It is trivial to step
 back in time.
@@ -380,7 +386,7 @@ back in time.
 Actually because `Calendar` is immutable, you don't necessarily need a special
 method to get undo behavior:
 
-{% highlight js %}
+```js
 function makeCalendar() {
     var cal_0 = Calendar();
     var cal_1 = cal_0.add({
@@ -408,7 +414,7 @@ function makeCalendar() {
     // That was close...
     return toReturn;
 }
-{% endhighlight %}
+```
 
 I'm sure that the Synesthesia Bike Tour is a lot of fun.  It's just that
 when demonstrating an undo feature, something has to take the fall.
@@ -418,14 +424,14 @@ That's just the world that we live in, I suppose.
 ### `hash_map`
 
 All JavaScript objects are maps.  But those can only use strings as
-keys.[^es6-maps]  The `hash_map` provided by Mori can use any values as keys.
+keys.[^3]  The `hash_map` provided by Mori can use any values as keys.
 
-[^es6-maps]: It does look like ECMAScript 6 will add [a Map implementation][ES6 Map] and a [WeakMap][] to the language spec, both of which will take arbitrary objects as keys (only non-primitives in the WeakMap case).  But those implementations will not be immutable!
+[^3]: It does look like ECMAScript 6 will add [a Map implementation][ES6 Map] and a [WeakMap][] to the language spec, both of which will take arbitrary objects as keys (only non-primitives in the WeakMap case).  But those implementations will not be immutable!
 
 [ES6 Map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
 [WeakMap]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap
 
-{% highlight js %}
+```js
 var mori = require('mori');
 
 var a = { foo: 1 };
@@ -433,7 +439,7 @@ var b = { foo: 2 };
 
 var map = mori.hash_map(a, 'first', b, 'second');
 assert(mori.get(map, b) === 'second');
-{% endhighlight %}
+```
 
 If you use plain JavaScript objects as keys they will be compared by
 reference identity.  If you use Mori data structures as keys they will
@@ -443,7 +449,7 @@ ClojureScript.
 Mori maps are immutable; so there is never a need to create defensive
 copies.  An update operation produces a new map.
 
-{% highlight js %}
+```js
 var empty = mori.hash_map();
 var m1 = mori.assoc(empty, 'foo', 1);
 var m2 = mori.assoc(m1, 'bar', 2, 'nao', 3);
@@ -452,7 +458,7 @@ var m3 = mori.dissoc(m2, 'foo');
 assert(mori.get(m2, 'foo') === 1);
 assert(mori.get(m2, 'bar') === 2);
 assert(mori.get(m3, 'foo') === null);
-{% endhighlight %}
+```
 
 The function `assoc` adds any number key-value pairs to a map; and
 `dissoc` removes keys.
@@ -468,9 +474,9 @@ constructors to avoid having functions that take zillions of arguments.
 It is also common to have a set of default values for certain options.
 So code like this is pretty typical:
 
-{% highlight js %}
+```js
 var opts = _.extend({}, options, defaults);
-{% endhighlight %}
+```
 
 I usually put in an empty object as the first argument to the Underscore
 [`_.extend`][extend] call so that I get a new object instead of modifying the
@@ -480,7 +486,7 @@ alternative to the defensive copy could be to use immutable Mori maps:
 
 [extend]: http://underscorejs.org/#extend
 
-{% highlight js %}
+```js
 function MyFeature(options) {
     var opts = mori.into(MyFeature.defaults, mori.js_to_clj(options));
 
@@ -501,7 +507,7 @@ MyFeature.defaults = mori.into(mori.hash_map(), mori.js_to_clj({
 
 var feat = new MyFeature({ position: 'above' });
 assert(feat.getPosition() === 'above');
-{% endhighlight %}
+```
 
 The function `mori.into(coll, from)` adds all of the members of `from`
 into a copy of `coll`.  Both `from` and `coll` can by any Mori
@@ -512,12 +518,12 @@ Mori map.  It is also possible to provide a Mori sequence as input to
 start with - `js_to_clj` will accept either a plain JavaScript object or
 a Mori collection:
 
-{% highlight js %}
+```js
 var feat_ = new MyFeature(mori.hash_map(
     'position',       'above',
     'destroyOnClose', true
 ));
-{% endhighlight %}
+```
 
 There is probably no performance gain from using Mori in this situation.
 It is unlikely to matter anyway, since the structures involved are
@@ -543,7 +549,7 @@ another:
 
 [Laziness]: #laziness
 
-{% highlight js %}
+```js
 var s_1 = mori.set([5, 4, 3, 2, 1]);
 var seq = mori.map(function(e) { return Math.pow(e, 2); }, s_1);
 
@@ -559,7 +565,7 @@ console.log(s_3);
 
 // Outputs:
 // > #{1 4 9 16 25}
-{% endhighlight %}
+```
 
 Applying `map` to the first set is lazy - but building the second set
 with `into` is not.  So a good practice is to avoid building non-lazy
@@ -580,14 +586,14 @@ original.
 Here is a function that removes `null` values from any Mori collection
 and that returns a collection of the same type:
 
-{% highlight js %}
+```js
 function compact(coll) {
     return mori.into(mori.empty(coll), mori.filter(function(elem) {
         var value = mori.is_map(coll) ? mori.last(elem) : elem;
         return value !== null;
     }, coll));
 }
-{% endhighlight %}
+```
 
 If the collection given is a map then the value of `elem` in the filter
 callback will be a key-value pair.  So `compact` includes an `is_map`
@@ -636,11 +642,11 @@ resizing when array length grows).  If O(log_32 n) does not seem
 appealing in comparison, consider that if you are using 32-bit integers
 as keys:
 
-{% highlight js %}
+```js
 var max_int = Math.pow(2, 32);
 var log_32  = function(n) { return Math.log(n) / Math.log(32); };
 assert( log_32(max_int) < 7 );
-{% endhighlight %}
+```
 
 Which means that your keyspace will run out before your vector's tree
 becomes more than 7 layers deep.  Up to that point operations will be
@@ -671,23 +677,23 @@ ClojureScript.
 
 Every Mori value has a hash that identifies its content:
 
-{% highlight js %}
+```js
 var v = mori.vector('foo', 1);
 assert( mori.hash(v) === -1634041171 );
-{% endhighlight %}
+```
 
 If a value is recreated with the same content, it has the same hash:
 
-{% highlight js %}
+```js
 var v2 = mori.vector('foo', 1);
 assert( mori.hash(v2) === mori.hash(v) );
-{% endhighlight %}
+```
 
 Mori's hash function delegates to a specific hash algorithm for each of
 its data structures, which are ultimately based on internal algorithms
 that Mori uses to compute hashes for primitive JavaScript values:
 
-{% highlight js %}
+```js
 assert( mori.hash(2)         === 2      );
 assert( mori.hash("2")       === 50     );
 assert( mori.hash("foo")     === 101574 );
@@ -695,16 +701,16 @@ assert( mori.hash(true)      === 1      );
 assert( mori.hash(false)     === 0      );
 assert( mori.hash(null)      === 0      );
 assert( mori.hash(undefined) === 0      );
-{% endhighlight %}
+```
 
 Since Mori also accommodates arbitrary JavaScript values as map keys and
 set values, it also has a scheme for assigning hash values to other
 JavaScript objects.
 
-{% highlight js %}
+```js
 var obj = { foo: 1 };
 assert( mori.hash(obj) === 1 );
-{% endhighlight %}
+```
 
 It seems that Mori has a monotonically increasing counter for object
 hash values.  The first object that it computes a hash for gets the
@@ -712,12 +718,12 @@ value `1`; the second object gets `2`, and so on.  To keep track of
 which object got which hash value, it stores the value on the object
 itself:
 
-{% highlight js %}
+```js
 Object.keys(obj);
 //> [ 'foo', 'closure_uid_335348264' ]
 obj.closure_uid_335348264;
 //> 1
-{% endhighlight %}
+```
 
 There are obvious hash-collision issues between non-Mori objects,
 numbers, and `true`.  But Mori data structures can handle hash
@@ -730,25 +736,25 @@ Mori has its own equals function, which also comes from ClojureScript.
 As with hash, any two mori values that have the same content are
 considered to be equal:
 
-{% highlight js %}
+```js
 assert( mori.equals(v, v2) );
-{% endhighlight %}
+```
 
 It works on primitive JavaScript values:
 
-{% highlight js %}
+```js
 assert( mori.equals(2, 2) );
-{% endhighlight %}
+```
 
 When applied to non-Mori JavaScript objects, `equals` works the same way
 that the built-in `===` function does:
 
-{% highlight js %}
+```js
 var obj_1 = { bar: 1 };
 var obj_2 = { bar: 1 };
 assert( !mori.equals(obj_1, obj_2) );
 assert( mori.equals(obj_1, obj_1) );
-{% endhighlight %}
+```
 
 ### compare
 
@@ -803,9 +809,9 @@ of the log_32 n steps in a `hash_map` lookup.
 The `array_map` implementation has an internal notion of the upper limit
 on an efficient size.  Once the map reaches that threshold, inserting
 another key-value pair produces a `hash_map` instead of a larger
-`array_map`.[^ArrayMaps]
+`array_map`.[^4]
 
-[^ArrayMaps]: [http://clojure.org/data_structures#Data Structures-ArrayMaps][ArrayMaps]
+[^4]: [http://clojure.org/data_structures#Data Structures-ArrayMaps][ArrayMaps]
 [ArrayMaps]: http://clojure.org/data_structures#Data%20Structures-ArrayMaps
 
 The information here on implementations and running times mainly comes
@@ -824,7 +830,7 @@ Evaluation is deferred until some non-lazy function accesses one or more
 elements of the transformed sequence.  At that point Mori computes and
 memoizes transformations.
 
-{% highlight js %}
+```js
 // Sets, maps, vectors, and lists are actually not lazy.  But ranges
 // are.
 var s = mori.sorted_set_by(function(a, b) {
@@ -861,22 +867,22 @@ console.log(seq);
 // > processed: 4
 // > processed: 5
 // > (-1 -2 -3 -4 -5)
-{% endhighlight %}
+```
 
 The results of a lazy evaluation are cached.  If the same sequence is
 forced again the map function will not be called a second time:
 
-{% highlight js %}
+```js
 console.log(seq);
 
 // Outputs:
 // > (-1 -2 -3 -4 -5)
-{% endhighlight %}
+```
 
 Mori runs just enough deferred computation to get whatever result is
 needed.  It is often not necessary to compute an entire lazy sequence:
 
-{% highlight js %}
+```js
 var seq_ = mori.map(function(e) {
     console.log('processed:', e);
     return e * 2;
@@ -892,7 +898,7 @@ console.log(seq__);
 // > processed: 1
 // > processed: 2
 // > (2 4)
-{% endhighlight %}
+```
 
 In the above case there is an intermediate lazy sequence that
 theoretically contains five values: the results of doubling values in
@@ -902,7 +908,7 @@ needed.  The other three are never computed.
 Laziness means that it is possible to create infinite sequences without
 needing unlimited memory or time:
 
-{% highlight js %}
+```js
 // With no arguments, `range` returns a lazy sequence of all whole
 // numbers from zero up.
 var non_neg_ints = mori.range();
@@ -931,7 +937,7 @@ console.log(
 
 // Outputs:
 // > 1048576
-{% endhighlight %}
+```
 
 If you try this out in a REPL, such as node, be aware that when an
 expression is entered a JavaScript REPL will usually try to print the
@@ -939,21 +945,21 @@ value of that expression, which has the effect of forcing evaluation of
 lazy sequences.  If you enter a lazy sequence you will end up in an
 infinite loop:
 
-{% highlight js %}
+```js
 non_neg_ints = mori.range();
 
 // Loops for a long time, then runs out of memory.
-{% endhighlight %}
+```
 
 The solution to this is to be careful to assign infinite sequences in
 `var` statements.  That prevents the REPL from trying to print the
 sequence:
 
-{% highlight js %}
+```js
 var non_neg_ints = mori.range();
 
 // Prints 'undefined', all is well.
-{% endhighlight %}
+```
 
 Powers of two are actually a terrible example of a lazy sequence: any
 element in that sequence could be calculated more quickly using
@@ -966,7 +972,7 @@ in the sequence.  A good example is computing [Fibonacci numbers][].
 
 [Fibonacci numbers]: https://en.wikipedia.org/wiki/Fibonacci_number
 
-{% highlight js %}
+```js
 function fibs() {
     var pairs = mori.iterate(function(pair) {
         var x = pair[0], y = pair[1];
@@ -974,7 +980,7 @@ function fibs() {
     }, [0, 1]);
     return mori.map(mori.first, pairs);
 }
-{% endhighlight %}
+```
 
 This implementation uses the [`iterate`][iterate] function, which takes
 a function and an initial value.  It creates an infinite sequence by
@@ -990,7 +996,7 @@ value from each pair.
 
 Using this sequence allows us to ask the questions:
 
-{% highlight js %}
+```js
 // What are the first ten values in the Fibonacci sequence?
 console.log(
     mori.take(10, fibs())
@@ -1022,7 +1028,7 @@ console.log(
 );
 
 // My computer runs for a long time with no apparent answer...
-{% endhighlight %}
+```
 
 A lazy sequence might also contain lines from a large file or chunks of
 data flowing into a network server.  At the time of this writing I was
@@ -1038,7 +1044,7 @@ apply to every element would result in multiple iterations of the entire
 sequence.  Because Mori operates lazily it can potentially collect
 transformations for each element and apply them in a single pass:
 
-{% highlight js %}
+```js
 var seq_1 = mori.map(function(e) {
     console.log('first pass:', e);
     return e;
@@ -1058,17 +1064,17 @@ console.log(
 // > first pass: 2
 // > second pass: 2
 // > (1 2)
-{% endhighlight %}
+```
 
 If applying `map` to a collection twice resulted in two iterations we
 would expect to see:
 
-{% highlight js %}
+```js
 // > first pass: 1
 // > first pass: 2
 // > second pass: 1
 // > second pass: 2
-{% endhighlight %}
+```
 
 The fact that the first pass and second pass are interleaved suggests
 that Mori collects transformations and applies all transformations to
@@ -1077,5 +1083,3 @@ encourages writing code in a way that makes most logical sense rather
 than thinking about performance.  You can write what are logically many
 iterations over a collection and the library will rearrange computations
 to minimize the actual work that is done.
-
-_Updated 2013-11-12: Added section on installing Mori._
