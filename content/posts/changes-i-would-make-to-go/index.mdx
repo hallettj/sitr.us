@@ -15,8 +15,6 @@ revisions:
     message: Edits based on reader feedback
 ---
 
-_Last updated 2017-03-20_
-
 I have been programming primarily in Go for about six months.
 I find it frustrating.
 There are two reasons for this:
@@ -74,10 +72,10 @@ replacement for the Gecko HTML rendering engine, which is written in C++.
 [Servo]: https://servo.org/
 
 As I see it the key differences are that
-Rust aims for soundness,[^soundness], powerful abstractions, and high performance;
+Rust aims for soundness,[^1], powerful abstractions, and high performance;
 Go aims to be accessible, consistently simple, and fast to compile.
 
-[^soundness]: Soundness is a property of a type system where any "claims" made by program types are guaranteed to hold at runtime. Runtime type errors will not occur if a language is sound.
+[^1]: Soundness is a property of a type system where any "claims" made by program types are guaranteed to hold at runtime. Runtime type errors will not occur if a language is sound.
 
 That said, Rust is not necessarily a replacement for Go,
 and I do not mean to say that everyone using Go should switch to Rust.
@@ -280,7 +278,7 @@ C and C++ are notorious for [undefined behaviors][],
 which lead to traps for programmers, and to problems making code portable
 between compiler implementations.
 Use of uninitialized variables is one notable example of undefined behavior in
-both languages.[^changing-specs]
+both languages.[^2]
 I imagine that the designers of Go learned from C and C++,
 and set out to clearly define as much of Go's behavior as possible.
 I think that is a great attitude for language designers to adopt!
@@ -292,7 +290,7 @@ and fail type-checking if any such uses are found.
 [undefined behaviors]: http://blog.llvm.org/2011/05/what-every-c-programmer-should-know.html
 [data-flow analysis]: https://en.wikipedia.org/wiki/Data-flow_analysis
 
-[^changing-specs]: This may have changed over time; the C and C++ language specifications are evolving, and I am not very familiar with the details.
+[^2]: This may have changed over time; the C and C++ language specifications are evolving, and I am not very familiar with the details.
 
 The zero-value requirement introduces a constraint that `nil` must exist and
 must be assignable to a variety of types.
