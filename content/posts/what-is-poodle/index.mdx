@@ -11,6 +11,8 @@ revisions:
     message: Update link to Poodle; show slides inline with post
 ---
 
+import { ImgCap } from "../../../src/components/figure"
+
 This is a description of my passion project. I plan to publish more detail and motivation when I get to a minimum viable product.
 
 I want to make social collaboration software without walls.
@@ -95,19 +97,33 @@ And everything gracefully degrades when interacting with people with regular ema
 
 Going slide-by-slide:
 
-{% imgcap /talks/poodle/message-wide.png Participants can edit their own post after-the-fact; each activity has +1 counts. %}
+<ImgCap src="/talks/poodle/message-wide.png">
+  Participants can edit their own post after-the-fact; each activity has +1 counts.
+</ImgCap>
 
-{% imgcap /talks/poodle/document-wide.png An interaction might be presented as a collaborative document instead of as a thread. In this case there are calls-to-action to edit, or link to the document. (In this example the document content is markdown; but this concept could work for any type of file: images, videos, slide decks, whatever.) %}
+<ImgCap src="/talks/poodle/document-wide.png">
+  An interaction might be presented as a collaborative document instead of as a thread. In this case there are calls-to-action to edit, or link to the document. (In this example the document content is markdown; but this concept could work for any type of file: images, videos, slide decks, whatever.)
+</ImgCap>
 
-{% imgcap /talks/poodle/link-to-document.png Linking to email messages is a much under-used feature in my opinion. There is actually already an [RFC](https://tools.ietf.org/html/rfc2392) that specifies how to construct a globally-unique URI for any email message. %}
+<ImgCap src="/talks/poodle/link-to-document.png">
+  Linking to email messages is a much under-used feature in my opinion. There is actually already an <a href="https://tools.ietf.org/html/rfc2392">RFC</a> that specifies how to construct a globally-unique URI for any email message.
+</ImgCap>
 
-{% imgcap /talks/poodle/permalink.png This is an early iteration of the process of linking to a document from another activity. Combining collaborative documents with linking allows for a decentralized wiki that actually lives in copies in the participant&rsquo;s email accounts. %}
+<ImgCap src="/talks/poodle/permalink.png">
+  This is an early iteration of the process of linking to a document from another activity. Combining collaborative documents with linking allows for a decentralized wiki that actually lives in copies in the participant's email accounts.
+</ImgCap>
 
-{% imgcap /talks/poodle/who-can-see-this-discussion.png I was experimenting with features to make email more usable generally. I tried to design Poodle to make it really obvious who sees what in any exchange. Poodle uses a reply-to-all form as the default reply option, and the user must go through extra steps to reply to just one person, or to a subset of the people already participating in a discussion. %}
+<ImgCap src="/talks/poodle/who-can-see-this-discussion.png">
+  I was experimenting with features to make email more usable generally. I tried to design Poodle to make it really obvious who sees what in any exchange. Poodle uses a reply-to-all form as the default reply option, and the user must go through extra steps to reply to just one person, or to a subset of the people already participating in a discussion.
+</ImgCap>
 
-{% imgcap /talks/poodle/private-aside-1.png If someone does reply without including everyone, you get this "private aside" feature. (This works just by examining To:, From:, and Cc: fields in email messages in the discussion.) The private aside acts like a self-contained sub-discussion, interleaved with the original discussion. My hope is that this kind of feature can help to avoid embarrassing information leaks. %}
+<ImgCap src="/talks/poodle/private-aside-1.png">
+  If someone does reply without including everyone, you get this "private aside" feature. (This works just by examining To:, From:, and Cc: fields in email messages in the discussion.) The private aside acts like a self-contained sub-discussion, interleaved with the original discussion. My hope is that this kind of feature can help to avoid embarrassing information leaks.
+</ImgCap>
 
-{% imgcap /talks/poodle/private-aside-2.png Private aside messages are interleaved time-wise with the top-level discussion. And each private aside has its own private reply form after the last message in the aside. %}
+<ImgCap src="/talks/poodle/private-aside-2.png">
+  Private aside messages are interleaved time-wise with the top-level discussion. And each private aside has its own private reply form after the last message in the aside.
+</ImgCap>
 
 Somehow I missed including a slide showing another feature that I think is useful:
 when someone includes a new person in the recipient list in a reply,
