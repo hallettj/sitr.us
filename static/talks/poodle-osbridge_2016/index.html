@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Jesse Hallett &lt;jesse@sitr.us&gt;">
+  <title>Take back social media with Poodle</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/css/reveal.css">
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/css/theme/white.css" id="theme">
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/css/print/pdf.css' : 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+  <h1 class="title">Take back social media with Poodle</h1>
+  <h2 class="author">Jesse Hallett &lt;jesse@sitr.us&gt;</h2>
+  <h3 class="date">Open Source Bridge, June 2016</h3>
+</section>
+
+<section class="slide level6">
+
+<p>http://sitr.us/talks/poodle-osbridge_2016</p>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="icon.svg" alt="github.com/hallettj/poodle" /><figcaption>github.com/hallettj/poodle</figcaption>
+</figure>
+</section>
+<section class="slide level6">
+
+<p>Twitter</p>
+<p>Facebook</p>
+<p>Google+</p>
+</section>
+<section class="slide level6">
+
+<p>Diaspora</p>
+<p>GNU social</p>
+<p>pump.io</p>
+<p>Buddycloud</p>
+</section>
+<section class="slide level6">
+
+<ul>
+<li>identity</li>
+<li>message delivery</li>
+<li>structured messages</li>
+</ul>
+</section>
+<section class="slide level6">
+
+<p>ActivityStrea.ms</p>
+</section>
+<section class="slide level6">
+
+<ul>
+<li>identity <b>✓</b></li>
+<li>message delivery <b>✓</b></li>
+<li>structured messages</li>
+</ul>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="message-wide.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="document-wide.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="link-to-document.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="permalink.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="who-can-see-this-discussion.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="private-aside-1.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="private-aside-2.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="strawpoll.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<pre class="js"><code>{
+  &quot;@context&quot;: &quot;http://www.w3.org/ns/activitystreams&quot;,
+  &quot;type&quot;: &quot;Create&quot;,
+  &quot;published&quot;: &quot;2016-06-22T15:04:55Z&quot;,
+  &quot;actor&quot;: {
+   &quot;type&quot;: &quot;Person&quot;,
+   &quot;id&quot;: &quot;mailto:alice@mail.net&quot;,
+   &quot;name&quot;: &quot;Alice&quot;,
+   &quot;image&quot;: {
+     &quot;type&quot;: &quot;Link&quot;,
+     &quot;href&quot;: &quot;http://example.org/alice/image.jpg&quot;,
+     &quot;mediaType&quot;: &quot;image/jpeg&quot;
+   }
+  },
+  &quot;object&quot; : {
+   &quot;id&quot;: &quot;cid:b00b3a15-6be4-40bc-980c-a808967042e6/4&quot;,
+   &quot;type&quot;: &quot;Note&quot;,
+   &quot;name&quot;: &quot;Re: Favorite Pokémon?&quot;,
+   &quot;url&quot;: &quot;cid:b00b3a15-6be4-40bc-980c-a808967042e6/4&quot;
+  }
+}</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="js"><code>{
+  ...
+  &quot;type&quot;: &quot;Update&quot;,
+  &quot;published&quot;: &quot;2016-06-22T15:05:31Z&quot;,
+  &quot;object&quot;: {
+    &quot;id&quot;: &quot;cid:1b87965f-6578-4ce4-8abc-d8905dbb83ec/4&quot;,
+    &quot;type&quot;: &quot;Note&quot;,
+    &quot;name&quot;: &quot;Re: Favorite Pokémon?&quot;,
+    &quot;url&quot;: &quot;cid:1b87965f-6578-4ce4-8abc-d8905dbb83ec/4&quot;
+  },
+  &quot;target&quot;: {
+    &quot;id&quot;: &quot;cid:b00b3a15-6be4-40bc-980c-a808967042e6/4&quot;
+  }
+}</code></pre>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="alice-and-bob.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="email-as-identity.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="chat-via-email.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="chat-with-group.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="group-grows.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="alice-publishes-to-web.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="bob-follows-alice.png" />
+</figure>
+</section>
+<section class="slide level6">
+
+<p>github.com/hallettj/poodle</p>
+<p>github.com/hallettj/arfe</p>
+<p>http://sitr.us/talks/poodle-osbridge_2016</p>
+</section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/lib/js/head.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/plugin/zoom-js/zoom.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.3.0/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>

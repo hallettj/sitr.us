@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Introduction to JavaScript</title>
+
+  <link rel="stylesheet" href="./css/reset.css" type="text/css"/>
+  <link rel="stylesheet" href="./css/showoff.css" type="text/css"/>
+
+  <script type="text/javascript" src="./js/jquery-1.4.min.js"></script>
+  <script type="text/javascript" src="./js/jquery.cycle.all.js"></script>
+	<script type="text/javascript" src="./js/jquery-print.js"></script>
+  <script type="text/javascript" src="./js/jquery.batchImageLoad.js"></script>
+
+  <script type="text/javascript" src="./js/jquery.doubletap-0.1.js"></script>
+
+  <script type="text/javascript" src="./js/fg.menu.js"></script>
+  <script type="text/javascript" src="./js/showoff.js"></script>
+  <script type="text/javascript" src="./js/jTypeWriter.js"> </script>
+  <script type="text/javascript" src="./js/sh_main.min.js"></script>
+
+  <link type="text/css" href="./css/fg.menu.css" media="screen" rel="stylesheet" />
+  <link type="text/css" href="./css/theme/ui.all.css" media="screen" rel="stylesheet" />
+  <link type="text/css" href="./css/sh_style.css" rel="stylesheet" >
+
+  <script type="text/javascript">
+  $(function(){
+    setupPreso(false, '.');
+  });
+  </script>
+</head>
+
+<body>
+
+
+<a tabindex="0" href="#search-engines" class="fg-button fg-button-icon-right ui-widget ui-state-default ui-corner-all" id="navmenu"><span class="ui-icon ui-icon-triangle-1-s"></span>slides</a>
+<div id="navigation" class="hidden"></div>
+
+<div id="help">
+  <table>
+    <tr><td class="key">space, &rarr;</td><td>next slide</td></tr>
+    <tr><td class="key">&larr;</td><td>previous slide</td></tr>
+    <tr><td class="key">d</td><td>debug mode</td></tr>
+    <tr><td class="key">## &lt;ret&gt;</td><td>go to slide #</td></tr>
+    <tr><td class="key">c</td><td>table of contents (vi)</td></tr>
+    <tr><td class="key">f</td><td>toggle footer</td></tr>
+    <tr><td class="key">r</td><td>reload slides</td></tr>
+    <tr><td class="key">z</td><td>toggle help (this)</td></tr>
+  </table>
+</div>
+
+<div id="preso">loading presentation...</div>
+<div id="footer">
+  <span id="slideInfo"></span>
+  <span id="debugInfo"></span>
+</div>
+
+<div id="slides" class="offscreen" style="display:none;">
+<div class="slide" data-transition="none"><div class="content bullets center" ref="about-me/01_title">
+<h1>Introduction to JavaScript</h1>
+
+<ul>
+<li>Jesse Hallett</li>
+<li>jesse@sitr.us</li>
+<li>PSU Tech Talk - June 7th, 2013</li>
+</ul>
+</div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content center" ref="intro/01_what_is_javascript/1">
+<h1>JavaScript in one slide</h1>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="intro/01_what_is_javascript/2">
+<pre class="sh_javascript"><code>var obj = {
+    first: 1,
+    second: "foo"
+};
+
+function eachProp(operation) {
+    operation('first',  obj.first);
+    operation('second', obj.second);
+}
+
+eachProp(function(name, value) {
+    alert('The value of '+ name +' is '+
+            value);
+});</code></pre></div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content center" ref="functional/01_function_values/1">
+<h1>JavaScript is functional</h1>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="functional/01_function_values/2">
+<h2>functions are values</h2>
+
+<pre class="sh_javascript"><code>var sum = function(a, b) {
+    return a + b;
+};
+
+var foo = sum;
+
+assert( foo(2, 3) == 5 );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functional/01_function_values/3">
+<h2>functions are values</h2>
+
+<pre class="sh_javascript"><code>var double = function(a) {
+    return a * 2;
+};
+
+function twice(op, x) {
+    return op(op(x));
+};
+
+assert( twice(double, 2) == 8 );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functional/01_function_values/4">
+<h2>higher order functions</h2>
+
+<pre class="sh_javascript"><code>var array = [1, 2, 3];
+
+var doubled = array.map(function(e) {
+    return e * 2;
+});
+
+assert( equal(doubled, [2, 4, 6] );
+
+var total = array.reduce(function(sum, e) {
+    return sum + e;
+}, 0);
+
+assert( total == 6 );</code></pre></div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content center" ref="scope/01_lexical_scope/1">
+<h1>Scope</h1></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/01_lexical_scope/2">
+<h2>lexical scope</h2>
+
+<pre class="sh_javascript"><code>var x = 3;
+var y = 4;
+
+(function a() {
+    var y = 5;
+
+    assert(x == 3);
+    assert(y == 5);
+}());
+
+assert(x == 3);
+assert(y == 4);</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content javascript" ref="scope/01_lexical_scope/3">
+<h2>function-level scope</h2>
+
+<pre class="sh_javascript"><code>var y = 4;
+
+for (var i = 0; i &lt; 10; i += 1) {
+    var y = i;
+}
+
+assert(y == 9);
+assert(i == 10);</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/01_lexical_scope/4">
+<h2>functions are closures</h2>
+
+<pre class="sh_javascript"><code>function outer() {
+    var x = 3;
+
+    return function() {
+        x += 1
+        return x;
+    };
+}
+var inner = outer();
+
+assert(typeof x == 'undefined');
+
+assert(inner() == 4);
+assert(inner() == 5);</code></pre></div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content bullets" ref="scope/01_lexical_scope/5">
+<h2>exceptions to lexical scope</h2>
+
+<ul>
+<li><code>this</code></li>
+<li><code>arguments</code></li>
+</ul>
+</div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content center" ref="scope/02_oo_scope/1">
+<h1><code>this</code></h1></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/02_oo_scope/2">
+<h2>refers to the receiver</h2>
+
+<pre class="sh_javascript"><code>var obj = {
+    func: function() {
+        return this;
+    }
+}
+
+assert( obj.func() == obj );</code></pre></div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content center" ref="object-oriented/01_objects/1">
+<h1>JavaScript is Object-Oriented</h1></div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content center" ref="modular/01_modules/1">
+<h1>JavaScript is Modular</h1>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="modular/02_amd/1">
+<pre class="sh_javascript"><code>define('math', function() {
+
+    return {
+        derivative: function(f) {
+            // ...
+        },
+
+        integral: function(f) {
+            // ...
+        }
+    };
+
+});</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="modular/02_amd/2">
+<pre class="sh_javascript"><code>define('physics', ['math'], function(math) {
+
+    function speed(distance) {
+        return math.derivative(distance);
+    }
+
+    return {
+        speed: speed
+    };
+
+});</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content center" ref="modular/03_encapsulation/1">
+<h1>encapsulation</h1>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="modular/03_encapsulation/2">
+<pre class="sh_javascript"><code>define('mymodule', [], function() {
+    var privateA, privateB;
+
+    function privateFunc() {
+        // ...
+    }
+
+    function publicFunc(a, b) {
+        privateA = privateFunc(a);
+        return privateB;
+    }
+
+    return {
+        publicFunc: publicFunc
+    };
+});</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="modular/03_encapsulation/3">
+<pre class="sh_javascript"><code>define('counter', [], function() {
+    function Counter() {
+        var count = 0;
+
+        function increment() {
+            count += 1;
+        }
+
+        return {
+            click: function() {
+                increment();
+                return count;
+            }
+        };
+    };
+    return Counter;
+});</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="modular/03_encapsulation/4">
+<pre class="sh_javascript"><code>define('eg', [counter], function(Counter) {
+
+    var count = Counter();
+
+    count.click();
+    count.click();
+
+    assert( count.click() == 3 );
+
+    assert(
+      typeof count.increment == 'undefined'
+    );
+
+});</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="modular/04_commonjs/1">
+<pre class="sh_javascript"><code>// math.js
+
+function derivative(f) {
+    // ...
+}
+
+function integral(f) {
+    // ...
+}
+
+exports.derivative = derivative;
+exports.integral   = integral;</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="modular/04_commonjs/2">
+<pre class="sh_javascript"><code>// physics.js
+
+var math = require('math');
+
+function speed(distance) {
+    return math.derivative(distance);
+}
+
+exports.speed = speed;</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content center" ref="concurrency/01_events/1">
+<h1>Events and Concurrency</h1></div>
+
+</div><div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/2">
+<h2>JavaScript is single-threaded</h2>
+
+<pre class="sh_javascript"><code>var clicks = 0;
+
+$('button').on('click', function() {
+    clicks += 1;
+});</code></pre>
+
+</div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/3">
+<h2>watch out for code that blocks</h2>
+
+<pre class="sh_javascript"><code>var clicks = 0;
+
+$('button').on('click', function() {
+    clicks += 1;
+});
+
+while (clicks &lt; 5) {
+    // wait for more clicks...
+}
+
+// We never get here!
+doNextThing();</code></pre></div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/4">
+<h2>correct implementation of click counter</h2>
+
+<pre class="sh_javascript"><code>var clicks = 0;
+
+$('button').on('click', function() {
+    clicks += 1;
+
+    if (clicks &gt;= 5) {
+        doNextThing();
+    }
+});</code></pre></div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/5">
+<h2>all IO is asynchronous</h2>
+
+<pre class="sh_javascript"><code>var finished = false;
+
+$.getJSON('/feed').done(function(feed) {
+    display(feed.count +" unread items");
+
+    finished = true;
+});
+
+assert( finished === false );</code></pre></div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/6">
+<p><img alt="Event callback timeline" src="image/concurrency/img/Timers.png" height="700"/></p>
+
+<p>From John Resig's blog, http://ejohn.org/blog/how-javascript-timers-work/</p></div>
+</div>
+
+
+<div class="slide" data-transition="none"><div class="content center" ref="server-side/01_web_app/1">
+<h1>JavaScript on the Server</h1>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="server-side/01_web_app/2">
+<h2>NodeJS and Express</h2>
+<pre class="sh_javascript"><code>var express = require('express');
+var app     = express();
+
+app.get('/', function(req, res) {
+    res.send('Hello, world!');
+});
+
+app.listen(3000);</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="server-side/02_rss/1">
+<h2>RSS reader</h2>
+<pre class="sh_javascript"><code>var feeds = [
+    'http://www.reddit.com/.rss'
+];
+
+app.use(express.bodyParser());
+
+app.post('/feeds', function(req, res) {
+    feeds.push(req.body.url);
+    var id = feeds.length - 1;
+    res.redirect('/feeds/'+ id);
+});</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="server-side/02_rss/3">
+<pre class="sh_javascript"><code>app.get('/feeds/:id', function(req, res) {
+    var url = feeds[req.params.id];
+
+    http.read(url)
+    .then(function(data) {
+        var xml  = data.toString('utf-8');
+
+        var list = parseTitles(xml)
+                   .join('&lt;li&gt;');
+
+        res.send('&lt;ul&gt;&lt;li&gt;'+list+'&lt;/ul&gt;');
+    });
+});</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content" ref="server-side/02_rss/4">
+<pre class="sh_javascript"><code>function parseTitles(data) {
+    var titles = [];
+    data.replace(/&lt;title&gt;(.+?)&lt;\/title&gt;/ig,
+        function(_, title) {
+            titles.push(title);
+        }
+    );
+    return titles;
+}</code></pre>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content center" ref="server-side/02_rss/5">
+<p><img src="image/rss-app-reddit.png" alt="screenshot of RSS app"/></p>
+</div></div>
+
+<div class="slide" data-transition="none"><div class="content smbullets" ref="resources/01_resources/2">
+<h2>Resources</h2>
+
+<ul>
+<li>JavaScript: The Good Parts by Douglas Crockford
+<li><a href="http://jquery.com/">jQuery</a>, browser utility library
+<li><a href="http://requirejs.org/">RequireJS</a>, a module implementation
+<li><a href="http://nodejs.org/">NodeJS</a>, server-side javascript platform
+<li><a href="http://expressjs.com/">Express</a>, a web framework
+</ul>
+</div>
+</div>
+
+<div class="slide" data-transition="none"><div class="content center" ref="resources/01_resources/4">
+<p><img src="image/resources/img/pdxjs.png" alt="Portland JavaScript Admirers" height="600px"/></p>
+</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+---
+layout: deckjs-pygments
+title: "JavaScript modules and lazy loading"
+description: "A comparison of some different module strategies"
+author: Jesse Hallett
+---
+
+<section class="slide">
+{%highlight js %}
+// fileA.js
+B.stuff.doStuff();
+
+
+// fileB.js
+var B = B || {};
+B.stuff = B.stuff || {};
+B.stuff.doStuff = function() {
+    console.log('stuff!');
+};
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+// fileA.js
+var b = require('./fileB.js');
+
+b.doStuff();
+
+
+// fileB.js
+exports.doStuff = function() {
+    console.log('stuff!');
+};
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+// fileA.js
+define('fileA', ['fileB'], function(b) {
+    b.doStuff();
+});
+
+
+// fileB.js
+define('fileB', function() {
+    return {
+        doStuff: function() {
+            console.log('stuff!');
+        }
+    }
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+// fileA.js
+define(['fileB'], function(b) {
+    b.doStuff();
+});
+
+
+// fileB.js
+define(function() {
+    return {
+        doStuff: function() {
+            console.log('stuff!');
+        }
+    }
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+define('moduleName', ['depA', 'depB'], function(depA, depB) {
+    return {
+        doStuff: function() {
+            depA.doStuff();
+            depB.doStuff();
+        }
+    };
+});
+
+require(['moduleName', 'jquery'], function(module, $) {
+    $(document).ready(function() {
+        module.doStuff();
+    });
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+// fileA.js
+require(['fileB'], function(b) {
+    b.doStuff();
+});
+
+$.getScript('/fileB.js');
+
+
+// fileB.js
+define('fileB', function() {
+    return {
+        doStuff: function() {
+            console.log('stuff!');
+        }
+    }
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+// fileA.js
+require(['fileB'], function(b) {
+    b.doStuff();
+});
+
+$.getScript('/fileB.js');
+
+
+// fileB.js
+define('fileB', {
+    doStuff: function() {
+        console.log('stuff!');
+    }
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+// main.js
+$('#navbar').on('click', '.register', function(event) {
+    event.preventDefault();
+    showLoading();
+    require(['registration'], function(registration) {
+        hideLoading();
+        registration.showModal();
+    });
+});
+
+// registration.js
+define(['jquery'], function($) {
+    /* lots of code */
+    return {
+        showModal: function() { /* ... */ };
+    }
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight html %}
+<!--This sets the baseUrl to the "scripts" directory-->
+<script data-main="scripts/main.js" src="scripts/require.js"></script>
+{% endhighlight %}
+
+{%highlight js %}
+// /scripts/main.js
+require(['fileA', 'fileB'], function(a, b) {
+    a.doStuff();
+    b.doStuff();
+});
+
+// /scripts/fileA.js
+define({ /* ... */ });
+
+// /scripts/fileB.js
+define({ /* ... */ });
+{% endhighlight %}
+</section>
+
+<section class="slide">
+<h2>References</h2>
+<dl>
+    <dt>Asynchronous Module Definition
+    <dd><a href="https://github.com/amdjs/amdjs-api/wiki/AMD">github.com/amdjs/amdjs-api/wiki/AMD</a>
+    <dt>CommonJS Modules
+    <dd><a href="http://wiki.commonjs.org/wiki/Modules/1.1">wiki.commonjs.org/wiki/Modules/1.1</a>
+    <dt>RequireJS
+    <dd><a href="http://requirejs.org/docs/api.html">requirejs.org/docs/api.html</a>
+</dl>
+</section>

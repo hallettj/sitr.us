@@ -1,0 +1,8 @@
+{
+    "name": "ECMAScript 6 Now!",
+    "description": "Lightning talk at PDXjs, 2014-04-23",
+    "author": "Jesse Hallett <jesse@sitr.us>",
+    "sections": [
+        { "section": "one" }
+    ]
+}

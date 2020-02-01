@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Jesse Hallett">
+  <title>safety-lens</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/reveal.css"/>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #303030; color: #cccccc; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #cccccc; background-color: #303030; }
+code > span.kw { color: #f0dfaf; } /* Keyword */
+code > span.dt { color: #dfdfbf; } /* DataType */
+code > span.dv { color: #dcdccc; } /* DecVal */
+code > span.bn { color: #dca3a3; } /* BaseN */
+code > span.fl { color: #c0bed1; } /* Float */
+code > span.ch { color: #dca3a3; } /* Char */
+code > span.st { color: #cc9393; } /* String */
+code > span.co { color: #7f9f7f; } /* Comment */
+code > span.ot { color: #efef8f; } /* Other */
+code > span.al { color: #ffcfaf; } /* Alert */
+code > span.fu { color: #efef8f; } /* Function */
+code > span.er { color: #c3bf9f; } /* Error */
+code > span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+code > span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code > span.sc { color: #dca3a3; } /* SpecialChar */
+code > span.vs { color: #cc9393; } /* VerbatimString */
+code > span.ss { color: #cc9393; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { } /* Variable */
+code > span.cf { color: #f0dfaf; } /* ControlFlow */
+code > span.op { color: #f0efd0; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code > span.at { } /* Attribute */
+code > span.do { color: #7f9f7f; } /* Documentation */
+code > span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code > span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code > span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/theme/black.css" id="theme">
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/print/pdf.css' : 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">safety-lens</h1>
+    <h2 class="author">Jesse Hallett</h2>
+    <h3 class="date">PDXjs, February 24 2016</h3>
+</section>
+
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="st">&#39;date-utils&#39;</span>
+
+<span class="kw">let</span> event <span class="op">=</span> <span class="op">{</span> <span class="dt">date</span><span class="op">:</span> <span class="kw">new</span> <span class="at">Date</span>()<span class="op">,</span> <span class="dt">title</span><span class="op">:</span> <span class="st">&#39;get coffee&#39;</span> <span class="op">}</span>
+
+<span class="va">event</span>.<span class="at">date</span> <span class="op">=</span> <span class="kw">new</span> <span class="at">Date</span>().<span class="at">addDays</span>(<span class="dv">1</span>)</code></pre></div>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="st">&#39;date-utils&#39;</span>
+
+<span class="kw">let</span> event <span class="op">=</span> <span class="op">{</span> <span class="dt">date</span><span class="op">:</span> <span class="kw">new</span> <span class="at">Date</span>()<span class="op">,</span> <span class="dt">title</span><span class="op">:</span> <span class="st">&#39;get coffee&#39;</span> <span class="op">}</span>
+
+event <span class="op">=</span> <span class="va">Object</span>.<span class="at">assign</span>(<span class="op">{},</span> event<span class="op">,</span> <span class="op">{</span> <span class="dt">date</span><span class="op">:</span> <span class="kw">new</span> <span class="at">Date</span>().<span class="at">addDays</span>(<span class="dv">1</span>) <span class="op">}</span>)</code></pre></div>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> set <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;safety-lens&#39;</span>
+<span class="im">import</span> <span class="op">{</span> prop <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;safety-lens/es2015&#39;</span>
+
+event <span class="op">=</span> <span class="at">set</span>(<span class="at">prop</span>(<span class="st">&#39;date&#39;</span>)<span class="op">,</span> <span class="kw">new</span> <span class="at">Date</span>().<span class="at">addDays</span>(<span class="dv">1</span>)<span class="op">,</span> event)</code></pre></div>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> get<span class="op">,</span> over <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;safety-lens&#39;</span>
+
+<span class="kw">const</span> date <span class="op">=</span> <span class="at">get</span>(<span class="at">prop</span>(<span class="st">&#39;date&#39;</span>)<span class="op">,</span> event)
+
+event <span class="op">=</span> <span class="at">over</span>(<span class="at">prop</span>(<span class="st">&#39;date&#39;</span>)<span class="op">,</span> d <span class="op">=&gt;</span> <span class="va">d</span>.<span class="at">addDays</span>(<span class="dv">1</span>)<span class="op">,</span> event)</code></pre></div>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> type <span class="op">{</span> Lens_ <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;safety-lens&#39;</span>
+
+type Event <span class="op">=</span> <span class="op">{</span> <span class="dt">date</span><span class="op">:</span> Date<span class="op">,</span> <span class="dt">title</span><span class="op">:</span> string <span class="op">}</span>
+<span class="kw">const</span> eventDate<span class="op">:</span> Lens_<span class="op">&lt;</span>Event<span class="op">,</span> Date<span class="op">&gt;</span>
+
+event <span class="op">=</span> <span class="at">over</span>(eventDate<span class="op">,</span> date <span class="op">=&gt;</span> <span class="va">date</span>.<span class="at">addDays</span>(<span class="dv">1</span>)<span class="op">,</span> event)</code></pre></div>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> List<span class="op">,</span> Map <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;immutable&#39;</span>
+<span class="im">import</span> <span class="op">{</span> lookup <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;safety-lens&#39;</span>
+
+<span class="kw">let</span> events <span class="op">=</span> <span class="va">List</span>.<span class="at">of</span>(
+  <span class="at">Map</span>(<span class="op">{</span> <span class="dt">date</span><span class="op">:</span> <span class="kw">new</span> <span class="at">Date</span>()<span class="op">,</span> <span class="dt">title</span><span class="op">:</span> <span class="st">&#39;get coffee&#39;</span> <span class="op">}</span>)<span class="op">,</span>
+  <span class="at">Map</span>(<span class="op">{</span> <span class="dt">date</span><span class="op">:</span> <span class="kw">new</span> <span class="at">Date</span>()<span class="op">,</span> <span class="dt">title</span><span class="op">:</span> <span class="st">&#39;plan day&#39;</span> <span class="op">}</span>)
+)
+
+<span class="kw">let</span> firstEventDate <span class="op">=</span> <span class="va">events</span>.<span class="at">getIn</span>([<span class="dv">0</span><span class="op">,</span> <span class="st">&#39;date&#39;</span>])</code></pre></div>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> lookup <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;safety-lens&#39;</span>
+
+events <span class="op">=</span> <span class="va">List</span>.<span class="at">of</span>(
+  <span class="op">{</span> <span class="dt">date</span><span class="op">:</span> <span class="kw">new</span> <span class="at">Date</span>()<span class="op">,</span> <span class="dt">title</span><span class="op">:</span> <span class="st">&#39;get coffee&#39;</span> <span class="op">},</span>
+  <span class="op">{</span> <span class="dt">date</span><span class="op">:</span> <span class="kw">new</span> <span class="at">Date</span>()<span class="op">,</span> <span class="dt">title</span><span class="op">:</span> <span class="st">&#39;plan day&#39;</span> <span class="op">}</span>
+)
+
+<span class="kw">const</span> firstEvent <span class="op">=</span> <span class="at">index</span>(<span class="dv">0</span>)
+<span class="kw">const</span> firstEventDate <span class="op">=</span> <span class="at">compose</span>(firstEvent<span class="op">,</span> eventDate)
+
+firstEventDate <span class="op">=</span> <span class="at">lookup</span>(firstEventDate<span class="op">,</span> events)</code></pre></div>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> traverse <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;safety-lens/immutable&#39;</span>
+
+<span class="kw">const</span> allDates <span class="op">=</span> <span class="at">compose</span>(traverse<span class="op">,</span> eventDate)
+
+<span class="kw">const</span> rescheduled <span class="op">=</span> <span class="at">over</span>(
+  allDates<span class="op">,</span>
+  date <span class="op">=&gt;</span> <span class="va">date</span>.<span class="at">addDays</span>(<span class="dv">1</span>)<span class="op">,</span>
+  events
+)</code></pre></div>
+</section>
+<section class="slide level6">
+
+<p>github.com/hallettj/safety-lens</p>
+<pre class="sh"><code>npm install safety-lens</code></pre>
+</section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/head.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Vertical centering of slides
+        center: true,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>

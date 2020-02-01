@@ -1,0 +1,255 @@
+---
+layout: deckjs-pygments
+title: "Promises and monadic concurrency"
+description: "pdxjs presentation 2013-02-27"
+author: "Jesse Hallett"
+---
+
+<section class="slide">
+{%highlight js %}
+function fooPromise() {
+    var deferred = $.Deferred();
+
+    setTimeout(function() {
+        deferred.resolve("foo");
+    }, 1000);
+
+    return deferred.promise();
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+fooPromise().then(
+    function(value) {
+        // prints "foo" after 1 second
+        console.log(value);
+    },
+    function() { console.log("something went wrong"); }
+);
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function getPost(id) {
+    return $.getJSON('/posts/'+ id);
+}
+
+function getUser(id) {
+    return $.getJSON('/users/'+ id);
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function authorForPost(id) {
+    var postPromise = getPost(id),
+        deferred = $.Deferred();
+
+    postPromise.then(function(post) {
+        var authorPromise = getUser(post.authorId);
+
+        authorPromise.then(function(author) {
+            deferred.resolve(author);
+        });
+    });
+
+    return deferred.promise();
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function authorForPost(id) {
+    var postPromise = getPost(id),
+        deferred = $.Deferred();
+
+    postPromise.then(function(post) {
+        return getUser(post.authorId);
+    }).then(function(author) {
+        deferred.resolve(author);
+    });
+
+    return deferred.promise();
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function postWithAuthor(id) {
+    return getPost(id).then(function(post) {
+        var userId = post.authorId;
+        return getUser(userId).then(function(author) {
+            return $.extend(post, { author: author });
+        });
+    });
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function getTwoUsers(idA, idB) {
+    var userPromiseA = getUser(idA),
+        userPromiseB = getUser(idB);
+
+    return $.when(userPromiseA, userPromiseB);
+}
+
+getTwoUsers(1002, 1008).then(function(userA, userB) {
+    $(render(userA)).appendTo('#users');
+    $(render(userB)).appendTo('#users');
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+<img src="avatar.svg" width="1024" height="600" alt="customizable avatar"/>
+</section>
+
+<section class="slide">
+{%highlight js %}
+var myAvatar = {
+    name:       '[enter name here]',
+    height:     170,
+    hatStyle:   'conductor/skater',
+    shirtColor: 'rgb(12, 12, 250)'
+};
+
+function update() {
+    drawAvatar({
+        name:       myAvatar.name,
+        height:     myAvatar.height,
+        hatStyle:   myAvatar.hatStyle,
+        shirtColor: myAvatar.shirtColor
+    });
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function getShirtColor() {
+    openColorPicker().then(function(color) {
+        myAvatar.shirtColor = color;
+        update();
+    });
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function getShirtColor() {
+    openColorPicker().then(function(color) {
+
+        myAvatar.shirtColor = color;
+
+        save(myAvatar).then(function(savedAvatar) {
+            myAvatar = savedAvatar;
+            update();
+        });
+
+    });
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+var deferred = $.Deferred();
+
+deferred.resolve({
+    name:       '[enter name here]',
+    height:     170,
+    hatStyle:   'conductor/skater',
+    shirtColor: 'rgb(12, 12, 250)'
+});
+
+var myAvatar = deferred.promise();
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function getShirtColor() {
+    myAvatar = $.when(openColorPicker(), myAvatar)
+    .then(function(color, avatar) {
+
+        var updatedAvatar = $.extend({}, avatar, {
+            shirtColor: color
+        });
+
+        return save(updatedAvatar);
+
+    });
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function orElse(promise, fallback) {
+    var d = $.Deferred();
+
+    promise.then(
+        d.resolve,
+        function() {
+            fallback.then(d.resolve, d.reject);
+        }
+    );
+
+    return d.promise();
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function getShirtColor() {
+    var withChange = $.when(openColorPicker(), myAvatar)
+    .then(function(color, avatar) {
+
+        var updatedAvatar = $.extend({}, avatar, {
+            shirtColor: color
+        });
+
+        return save(updatedAvatar);
+
+    });
+
+    myAvatar = orElse(withChange, myAvatar);
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{%highlight js %}
+function getShirtColor() {
+    var withChange = myAvatar.then(function(avatar) {
+        openColorPicker(avatar.shirtColor).then(function(color) {
+
+            var updatedAvatar = $.extend({}, avatar, {
+                shirtColor: color
+            });
+
+            return save(updatedAvatar);
+
+        });
+    });
+
+    myAvatar = orElse(withChange, myAvatar);
+}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+<h2><a href="http://sitr.us/talks/monadic-promises/">sitr.us/talks/monadic-promises/</a></h2>
+<h2><a href="http://sitr.us/2012/07/31/promise-pipelines-in-javascript.html">sitr.us/2012/07/31/promise-pipelines-in-javascript.html</a></h2>
+<h2><a href="http://wiki.commonjs.org/wiki/Promises/A">wiki.commonjs.org/wiki/Promises/A</a></h2>
+</section>

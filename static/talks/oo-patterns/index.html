@@ -1,0 +1,660 @@
+---
+layout: deckjs
+title: Object-oriented patterns in JavaScript
+description: Presentation at NodePDX 2012
+author: Jesse Hallett
+---
+
+<section class="slide title" id="title-slide">
+    <h1>Object-oriented Patterns in JavaScript</h1>
+    <div class="vcenter">
+        <h3>Jesse Hallett &mdash; @hallettj</h3>
+        <h3>NodePDX 2012</h3>
+        <h3>http://sitr.us/talks/oo-patterns</h3>
+    </div>
+</section>
+
+<section class="slide" id="how-does-it-work">
+    <img class="vcenter" src="./images/hotdogtopi.jpg" alt="Multiple inheritance - How does it work?" />
+</section>
+
+<section class="slide" id="multiple-inheritance-is-good">
+    <blockquote class="vcenter" cite="https://dl.acm.org/citation.cfm?id=62142&dl=ACM&coll=DL&CFID=65852909&CFTOKEN=31629107">
+        <p>Multiple inheritance is good, but there is no good way to do it.</p>
+        <p><cite>Steve Cook, summarizing a panel from OOPSLA '87</cite>
+    </blockquote>
+</section>
+
+<section class="slide" id="crafty">
+    <h2>Crafty</h2>
+    <pre class="brush: js">
+var player = Crafty.e('2D, Canvas, Collision,
+                        Massive, Inertia, Player')
+    .attr({ x: 300, y: 300, w: 25, h: 25 })
+    .setMass(1);
+
+var asteroid = Crafty.e('2D, Canvas, Collision,
+                        Massive, Deadly')
+    .attr({ x: 500, y: 500, w: 50, h: 50 })
+    .setMass(100);
+    </pre>
+</section>
+
+<section class="slide" id="crafty-deadly">
+    <h2>Crafty</h2>
+    <pre class="brush: js">
+Crafty.c('Deadly', {
+    init: function() {
+        if (!this.hasComponent('Collision')) {
+            this.addComponent('Collision');
+        }
+
+        this.onHit('player', function() {
+            Crafty.scene('gameover');
+        });
+    }
+});
+
+Crafty.c('Collision', {
+    /* ... */
+    onHit: function (comp, fn) {
+        this.bind('EnterFrame', function () {
+            var hitdata = this.hit(comp);
+            if (hitdata) {
+                fn.call(this, hitdata);
+            }
+        });
+        return this;
+    },
+    /* ... */
+});
+    </pre>
+</section>
+
+<section class="slide" id="crafty-mass">
+    <div class="vcenter">
+        <pre class="brush: js;">
+Crafty.c('Massive', {
+    mass: function(mass) {
+        var self = this;
+        this.bind('EnterFrame', function() {
+            Crafty('Massive').each(function() {
+                var other = this,
+                    d = distance(other, self),
+                    u = unitVector(other, self),
+                    accel = vecMult(G * mass /
+                                    (d*d), u);
+
+                if (other.has('Inertia')) {
+                    other.accelerate(accel);
+                }
+            });
+        });
+    }
+});
+
+Crafty.c('Inertia', {
+    /* ... */
+    accelerate: function(vec) {
+        this._vector.x += vec.x;
+        this._vector.y += vec.y;
+    },
+    /* ... */
+});
+        </pre>
+    </div>
+</section>
+
+<section class="slide" id="traitsjs">
+    <h2>traits.js</h2>
+    <pre class="brush: js">
+var Trait = require('traits').Trait;
+
+var TEquality = Trait({
+    equals: Trait.required,
+    notEquals: function(x) { return !this.equals(x); }
+});
+
+function TCircle(center, radius) {
+    return Trait.compose(
+        TEquality,
+        Trait({
+            center: center,
+            radius: radius,
+            area: function {
+                return Math.PI * this.radius * this.radius;
+            },
+            equals: function(c) {
+                return c.center.x == this.center.x &amp;&amp;
+                       c.center.y == this.center.y &amp;&amp;
+                       c.radius == this.radius;
+            },
+        })
+    )
+}
+    </pre>
+</section>
+
+<section class="slide" id="crafty-with-traits">
+    <h2>Crafty with traits</h2>
+    <pre class="brush: js">
+function makePlayer(pos, mass) {
+    var TPlayer = Trait.compose(
+        T2D(pos), TCanvas, TCollision,
+        TMassive(mass), TInertia(0, 0)
+    );
+    return Trait.create(Object.prototype, TPlayer);
+}
+
+function TInertia(initVecX, initVecY) {
+    var vector = { x: initVecX, y: initVecY };
+
+    Trait({
+        init: function() {
+            this.bind('EnterFrame', function() {
+                this.setPosX(this.getPosX + vector.x);
+                this.setPosY(this.getPosY + vector.y);
+            });
+        },
+
+        setPosX: Trait.required,
+        setPosY: Trait.required,
+
+        accelerate: function(vec) {
+            vector.x += vec.x;
+            vector.y += vec.y;
+        },
+        /* ... */
+    });
+}
+    </pre>
+</section>
+
+<section class="slide" id="traitsjs-conflicts">
+    <h2>traits.js &mdash; conflicts</h2>
+    <pre class="brush: js">
+function TColor(red, green, blue) {
+    return Trait.compose(TEquality, Trait({
+        red: red, green: green, blue: blue,
+        equals: function(col) {
+            return col.red == red &amp;&amp;
+                   col.green == green &amp;&amp;
+                   col.blue == blue;
+        }
+    }));
+}
+
+function TCircleWithColor(center, radius, rgb) {
+    return Trait.compose(
+        TEquality,
+        TColor(rgb.red, rgb.green, rgb.blue),
+        Trait({
+            center: center,
+            radius: radius,
+            area: function {
+                return Math.PI * this.radius * this.radius;
+            },
+            equals: function(c) {
+                return c.center.x == this.center.x &amp;&amp;
+                       c.center.y == this.center.y &amp;&amp;
+                       c.radius == this.radius;
+            }
+        })
+    );
+}
+    </pre>
+</section>
+
+<section class="slide" id="traitsjs-conflicts-two-equals">
+    <h2>traits.js &mdash; conflicts</h2>
+    <pre class="brush: js; highlight: [4,5,6,7,8,22,23,24,25,26]">
+function TColor(red, green, blue) {
+    return Trait.compose(TEquality, Trait({
+        red: red, green: green, blue: blue,
+        equals: function(col) {
+            return col.red == red &amp;&amp;
+                   col.green == green &amp;&amp;
+                   col.blue == blue;
+        }
+    }));
+}
+
+function TCircleWithColor(center, radius, rgb) {
+    return Trait.compose(
+        TEquality,
+        TColor(rgb.red, rgb.green, rgb.blue),
+        Trait({
+            center: center,
+            radius: radius,
+            area: function {
+                return Math.PI * this.radius * this.radius;
+            },
+            equals: function(c) {
+                return c.center.x == this.center.x &amp;&amp;
+                       c.center.y == this.center.y &amp;&amp;
+                       c.radius == this.radius;
+            }
+        })
+    );
+}
+    </pre>
+</section>
+
+<section class="slide" id="traitsjs-conflicts-resolution">
+    <h2>traits.js &mdash; conflicts</h2>
+    <pre class="brush: js;">
+function TCircleWithColor(center, radius, rgb) {
+    return Trait.compose(
+
+        Trait.resolve({
+            equals: 'equalCircles'
+        }, TCircle(center, radius)),
+
+        Trait.resolve({
+            equals: 'equalColors'
+        }, TColor(rgb.red, rgb.green, rgb.blue)),
+
+        Trait({
+            equals: function(c) {
+                return this.equalCircles(c) &amp;&amp;
+                    this.equalColors(c);
+            }
+        })
+
+    );
+}
+    </pre>
+</section>
+
+<section class="slide" id="traitsjs-type-ambiguity">
+    <h2>traits.js &mdash; conflicts</h2>
+    <pre class="brush: js">
+function checkPalette(color) {
+    var officialColors = [burgundy, mauve,
+                            burntUmber, white];
+    return officialColors.some(function(official) {
+        color.equals(official);
+    });
+}
+
+checkPalette(circleA);  // whoops!
+    </pre>
+</section>
+
+<section class="slide" id="crafty-with-traits-redux">
+    <h2>Crafty with traits</h2>
+    <pre class="brush: js">
+function CraftyCompose(/* traits */) {
+    var traits = Array.prototype.slice.call(arguments),
+    var inits = traits.filter(function(t) {
+        return !!t.init;
+    }).map(function(t) {
+        return t.init;
+    });
+    var resolved = traits.map(function(t) {
+        return t.resolve({ init: undefined });
+    }
+    var composed = Trait.compose.apply(Trait, resolved);
+    var withInit = Trait.compose(composed, Trait({
+        init: function() {
+            var self = this;
+            inits.forEach(function(init) {
+                init.call(self);
+            });
+        }
+    });
+    return withInit;
+}
+
+function makePlayer(pos, mass) {
+    var TPlayer = CraftyCompose(
+        T2D(pos), TCanvas, TCollision,
+        TMassive(mass), TInertia(0, 0));
+    var player = Trait.create(Object.prototype, TPlayer);
+    player.init();
+    return player;
+}
+    </pre>
+</section>
+
+<section class="slide" id="adding-circles-and-colors">
+    <h2>Another conflict</h2>
+    <pre class="brush: js">
+var TColor = function(red, green, blue) {
+    return Trait({
+        red: red, green: green, blue: blue,
+
+        add: function(col) {
+            return Trait.create(Object.prototype, TColor(
+                Math.max(255, red + col.red),
+                Math.max(255, green + col.green),
+                Math.max(255, blue + col.blue)
+            ));
+        }
+    }));
+}
+
+function TCircle(center, radius) {
+    return Trait({
+        center: center,
+        radius: radius,
+        area: function {
+            return Math.PI * this.radius * this.radius
+        },
+
+        add: function(s) {
+            return Trait.create(Object.prototype,
+                TCircle(center, radius + s))
+        }
+    });
+}
+    </pre>
+</section>
+
+<section class="slide" id="resolving-conflict-with-aliases">
+    <h2>Another conflict</h2>
+    <pre class="brush: js">
+function TCircleWithColor(center, radius, rgb) {
+    return Trait.compose(
+        Trait.resolve({
+            add: 'addCircles'
+        }, TCircle(center, radius)),
+
+        Trait.resolve({
+            add: 'addColors'
+        }, TColor({
+            red: rgb.red, green: rgb.green, blue: rgb.blue
+        })),
+    );
+}
+
+function CircleWithColor(center, radius, rgb) {
+    return Trait.create(Object.prototype,
+        TCircleWithColor(center, radius, rgb));
+}
+    </pre>
+</section>
+
+<section class="slide" id="fragile-types">
+    <h2>Fragile types</h2>
+    <pre class="brush: js">
+function dropHighlight(circle, color) {
+    var highlight = circle.add(5);
+    var lightened = color.add({
+        red: 50, green: 50, blue: 50
+    });
+    draw([circle, color], [highlight, lightened]);
+}
+
+var myCircle = CircleWithColor({ x: 0, y: 0 }, 100, {
+    red: 100, green: 0, blue: 0
+});
+
+dropHighlight(myCircle, myCircle);  // whoops!
+    </pre>
+</section>
+
+<section class="slide" id="separating-behavior-and-state">
+    <h2>Separating behavior and state</h2>
+    <pre class="brush: js">
+// color.js
+function add(x, y) {
+    return new Color(
+        Math.max(255, x.red + y.red),
+        Math.max(255, x.green + y.green),
+        Math.max(255, x.blue + y.blue)
+    );
+}
+
+function Color(red, green, blue) {
+    this.red = red; this.green = green; this.blue = blue;
+}
+
+exports.add = add;
+exports.Color = Color;
+
+// circle.js
+function add(circle, s) {
+    return new Circle(circle.center, circle.radius + s);
+}
+
+function Circle(center, radius) {
+    this.center = center;
+    this.radius = radius;
+}
+
+exports.add = add;
+exports.Circle = Circle;
+    </pre>
+</section>
+
+<section class="slide" id="stronger-types">
+    <h2>Separating behavior and state</h2>
+    <pre class="brush: js">
+var Color = require('color');
+var Circle = require('circle');
+
+function dropHighlight(circle, color) {
+    var highlight = Circle.add(circle, 5);
+    var lightened = Color.add(color,
+                                new Color(50, 50, 50));
+    draw([circle, color], [highlight, lightened]);
+}
+
+var myCircle = {
+    center: { x: 0, y: 0 },
+    radius: 100,
+    red: 100,
+    green: 0,
+    blue: 0
+};
+
+dropHighlight(myCircle, myCircle);  // it's ok!
+    </pre>
+</section>
+
+<section class="slide" id="traits-provide-polymorphism">
+    <h2>What about polymorphism?</h2>
+    <pre class="brush: js">
+var TEnum = Trait({
+    forEach: Trait.required,
+    reduce: function(f, init) {
+        var r = init;
+        this.forEach(function(e) { r = f(r, e); });
+        return r;
+    },
+    map: function(f) {
+        return this.reduce(function(r, e) {
+            r.push(f(e));
+        }, []);
+    },
+    some: function(p) {
+        return this.reduce(function(r, e) {
+            return r || p(e);
+        }, false);
+    },
+    // and so forth
+});
+    </pre>
+</section>
+
+<section class="slide" id="lost-polymorphism">
+    <h2>What about polymorphism?</h2>
+    <pre class="brush: js">
+var ObjectEnum = require('ObjectEnum');
+var StringEnum = require('StringEnum');
+var ArrayLike = require('ArrayLikeEnum');
+var Color = require('Color');
+
+ObjectEnum.map({ x: 0, y: 1 }, function(pair) {
+    return [pair[0], pair[1] + 1];
+});
+
+StringEnum.map("hello, world", function(c) {
+    return c.toUpperCase();
+});
+
+(function() {
+    ArrayLike.forEach(arguments, function(n) {
+        console.log(n);
+    });
+})(1, 2, 3);
+
+Color.some(new Color(255, 0, 0), function(c) {
+    return c &gt; 0
+});
+    </pre>
+</section>
+
+<section class="slide" id="protocols">
+    <h2>Protocols</h2>
+    <pre class="brush: js">
+// enum.js
+var Protocol = require('protocol').Protocol;
+
+var Enum = exports = Protocol({
+    forEach: Protocol.required,
+
+    reduce: function(obj, f, init) {
+        var r = init;
+        Enum.forEach(obj, function(e) { r = f(r, e); });
+        return r;
+    },
+
+    map: function(obj, f) {
+        return Enum.reduce(obj, function(r, e) {
+            r.push(f(e));
+        }, []);
+    },
+
+    some: function(obj, p) {
+        return Enum.reduce(obj, function(r, e) {
+            return r || p(e);
+        }, false);
+    },
+
+    // and so forth
+});
+    </pre>
+</section>
+
+<section class="slide" id="protocols">
+    <h2>Protocols</h2>
+    <pre class="brush: js">
+var extend = require('protocol').extend;
+var Enum = require('enum');
+var Color = require('Color');
+
+extend(Object, Enum, {
+    forEach: function(obj, f) {
+        Object.keys.forEach(function(k) {
+            f([k, obj[k]]);
+        });
+    }
+});
+
+extend(Color, Enum, {
+    forEach: function(obj, f) {
+        f(obj.red);
+        f(obj.green);
+        f(obj.blue);
+    });
+});
+    </pre>
+</section>
+
+<section class="slide" id="etiquette">
+    <h2>Etiquette.js</h2>
+    <h3 class="vcenter">github.com/hallettj/etiquette.js</h3>
+</section>
+
+<section class="slide" id="etiquette-implementation">
+    <pre class="brush: js">
+function Protocol(signatures) {
+    var proto = this; impls = {};  // { Type: Function }
+
+    function findImpl(object) {
+        var constructor = object.constructor;
+        var impl = impls[constructor];
+        if (impl) { return impl; }
+        else if (constructor &amp;&amp;
+                 constructor.prototype &amp;&amp;
+                 constructor.prototype !== Object) {
+            return findImpl(constructor.prototype);
+        }
+    }
+
+    Object.keys(signatures).forEach(function(funcName) {
+        proto[funcName] = function(obj) {
+            var impl=findImpl(obj), func=impl[funcName];
+            if (func) {
+                return func.apply(null, arguments);
+            } else if (signatures[funcName]) {
+                return signatures[funcName]
+                            .apply(null, arguments);
+            } else {
+                throw "no implementation: '"+funcName+"'";
+            }
+        };
+    });
+    proto.impls = impls;
+    return proto;
+}
+
+function extend(type, protocol, impls) {
+    protocol.impls[type] = impls;
+}
+    </pre>
+</section>
+
+<section class="slide" id="etiquette-usage">
+    <h2>Etiquette.js usage</h2>
+    <pre class="brush: js">
+var Ord = Protocol({
+    lt: function(a, b) { return Ord.compare(a, b) < 0; },
+    gt: function(a, b) { return Ord.compare(a, b) > 0; },
+    eq: function(a, b) { return Ord.compare(a, b) === 0; },
+    gte: function(a, b) { return Ord.gt(a, b) ||
+                                    Ord.eq(a, b); },
+    lte: function(a, b) { return Ord.lt(a, b) ||
+                                    Ord.eq(a, b); },
+    compare: false
+});
+
+extend(String, Ord, {
+    compare: function(a, b) {
+        return a.length - b.length;
+    }
+});
+
+Ord.compare("foo", "bar");  // 0
+Ord.eq("foo", "bar");  // true
+    </pre>
+</section>
+
+<section class="slide" id="references">
+    <h2>References</h2>
+    <ul>
+        <li>Crafty &mdash; &lt;<a href="http://craftyjs.com">craftyjs.com</a>&gt;
+        <li>my game &mdash; &lt;<a href="https://github.com/hallettj/game">github.com/hallettj/game</a>&gt;
+
+        <li>traits.js &mdash; &lt;<a href="http://soft.vub.ac.be/~tvcutsem/traitsjs/index.html">traits.js.org</a>&gt;
+        <li>Traits: Composable Units of Behaviour &mdash;
+            &lt;<a href="http://scg.unibe.ch/archive/papers/Scha03aTraits.pdf">scg.unibe.ch/archive/papers/Scha03aTraits.pdf</a>&gt;
+        <li>Creating safe and composable 'mixins' with traits.js &mdash;
+            &lt;<a href="http://howtonode.org/traitsjs">howtonode.org/traitsjs</a>&gt;
+
+        <li>Clojure Protocols &mdash; &lt;<a href="http://clojure.org/protocols">clojure.org/protocols</a>&gt;
+        <li>Type classes in Haskell &mdash; &lt;<a href="http://www.haskell.org/tutorial/classes.html">www.haskell.org/tutorial/classes.html</a>&gt;
+
+        <li>Etiquette.js &mdash; &lt;<a href="https://github.com/hallettj/etiquette.js">github.com/hallettj/etiquette.js</a>&gt;
+        <li>these slides &mdash; &lt;<a href="http://sitr.us/talks/oo-patterns/">sitr.us/talks/oo-patterns</a>&gt;
+    </ul>
+</section>
+
+<section class="slide" id="image-credits">
+    <h2>Image credits</h2>
+    <ul>
+        <li>Multiple Inheritance - How does it work? &mdash; by Denton Gentry &lt;<a href="http://codingrelic.geekhold.com/2011/12/multiple-inheritance.html">codingrelic.geekhold.com/2011/12/multiple-inheritance.html</a>&gt;
+    </ul>
+</section>

@@ -1,0 +1,837 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title></title>
+
+  <link rel="stylesheet" href="./css/reset.css" type="text/css"/>
+  <link rel="stylesheet" href="./css/showoff.css" type="text/css"/>
+
+  <script type="text/javascript" src="./js/jquery-1.4.min.js"></script>
+  <script type="text/javascript" src="./js/jquery.cycle.all.js"></script>
+	<script type="text/javascript" src="./js/jquery-print.js"></script>
+  <script type="text/javascript" src="./js/jquery.batchImageLoad.js"></script>
+
+  <script type="text/javascript" src="./js/jquery.doubletap-0.1.js"></script>
+
+  <script type="text/javascript" src="./js/fg.menu.js"></script>
+  <script type="text/javascript" src="./js/showoff.js"></script>
+  <script type="text/javascript" src="./js/jTypeWriter.js"> </script>
+  <script type="text/javascript" src="./js/sh_main.min.js"></script>
+
+  <link type="text/css" href="./css/fg.menu.css" media="screen" rel="stylesheet" />
+  <link type="text/css" href="./css/theme/ui.all.css" media="screen" rel="stylesheet" />
+  <link type="text/css" href="./css/sh_style.css" rel="stylesheet" >
+
+  
+
+  
+
+  <script type="text/javascript">
+  $(function(){
+    setupPreso(false, '.');
+  });
+  </script>
+</head>
+
+<body>
+
+
+<a tabindex="0" href="#search-engines" class="fg-button fg-button-icon-right ui-widget ui-state-default ui-corner-all" id="navmenu"><span class="ui-icon ui-icon-triangle-1-s"></span>slides</a>
+<div id="navigation" class="hidden"></div>
+
+<div id="help">
+  <table>
+    <tr><td class="key">space, &rarr;</td><td>next slide</td></tr>
+    <tr><td class="key">&larr;</td><td>previous slide</td></tr>
+    <tr><td class="key">d</td><td>debug mode</td></tr>
+    <tr><td class="key">## &lt;ret&gt;</td><td>go to slide #</td></tr>
+    <tr><td class="key">c</td><td>table of contents (vi)</td></tr>
+    <tr><td class="key">f</td><td>toggle footer</td></tr>
+    <tr><td class="key">r</td><td>reload slides</td></tr>
+    <tr><td class="key">z</td><td>toggle help (this)</td></tr>
+  </table>
+</div>
+
+<div id="preso">loading presentation...</div>
+<div id="footer">
+  <span id="slideInfo"></span>
+  <span id="debugInfo"></span>
+</div>
+
+<div id="slides" class="offscreen" style="display:none;">
+<div class="slide" data-transition="none"><div class="content bullets" ref="about-me/01_title">
+<h1>Professional JavaScript</h1>
+
+<ul>
+<li>Jesse Hallett</li>
+<li>acct:hallettj@gmail.com</li>
+<li>Open Source Bridge - June 3rd, 2010</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="intro/01_what_is_javascript/1">
+<h1>JavaScript in one slide</h1></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="intro/01_what_is_javascript/2">
+<pre class="sh_javascript"><code>var obj = {
+    first: 1,
+    second: 2
+};
+
+function eachProp(operation) {
+    operation('first',  obj.first);
+    operation('second', obj.second);
+}
+
+eachProp(function(name, value) {
+    alert('The value of '+ name +' is '+
+            value);
+});</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functional/01_function_values/1">
+<h1>JavaScript is functional</h1></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functional/01_function_values/2">
+<h2>functions are values</h2>
+
+<pre class="sh_javascript"><code>var sum = function(a, b) {
+    return a + b;
+};
+
+var foo = sum;
+
+assert( foo(2, 3) == 5 );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functional/01_function_values/3">
+<h2>functions are values</h2>
+
+<pre class="sh_javascript"><code>var double = function(a) {
+    return a * 2;
+};
+
+function twice(op, x) {
+    return op(op(x));
+};
+
+assert( twice(double, 2) == 8 );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functional/01_function_values/4">
+<h2>higher order functions</h2>
+
+<pre class="sh_javascript"><code>var array = [1, 2, 3];
+
+var doubled = array.map(function(e) {
+    return e * 2;
+});
+
+assert( doubled[2] == 6 );
+
+var total = array.reduce(function(sum, e) {
+    return sum + e;
+}, 0);
+
+assert( total == 6 );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="functional/01_function_values/5">
+<h2>how many languages can do this?</h2>
+
+<pre class="sh_javascript"><code>function mirrors() {
+    return mirrors.toString();
+}
+
+assert( mirrors() ==
+    "function mirrors() {
+       return mirrors.toString();
+     }" );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="functional/01_function_values/6">
+<h2>functional libraries</h2>
+
+<ul>
+<li>Underscore.js <a href="http://documentcloud.github.com/underscore/">http://documentcloud.github.com/underscore/</a></li>
+<li>Functional JavaScript <a href="http://osteele.com/sources/javascript/functional/">http://osteele.com/sources/javascript/functional/</a></li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/01_lexical_scope/1">
+<h1>Scope</h1></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/01_lexical_scope/2">
+<h2>lexical scope</h2>
+
+<pre class="sh_javascript"><code>var x = 3;
+var y = 4;
+
+(function a() {
+    var y = 5;
+
+    assert(x == 3);
+    assert(y == 5);
+})();
+
+assert(x == 3);
+assert(y == 4);</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content javascript" ref="scope/01_lexical_scope/3">
+<h2>function-level scope</h2>
+
+<pre class="sh_javascript"><code>var y = 4;
+
+for (var i = 0; i &lt; 10; i += 1) {
+    var y = i;
+}
+
+assert(y == 9);
+assert(i == 10);</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/01_lexical_scope/4">
+<h2>functions are closures</h2>
+
+<pre class="sh_javascript"><code>function outer() {
+    var x = 3;
+
+    return function() {
+        x += 1
+        return x;
+    };
+}
+var inner = outer();
+
+assert(typeof x == 'undefined');
+
+assert(inner() == 4);
+assert(inner() == 5);</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="scope/01_lexical_scope/5">
+<h2>exceptions to lexical scope</h2>
+
+<ul>
+<li><code>this</code></li>
+<li><code>arguments</code></li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/02_oo_scope/1">
+<h1><code>this</code></h1></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/02_oo_scope/2">
+<h2>refers to the receiver</h2>
+
+<pre class="sh_javascript"><code>var obj = {
+    func: function() {
+        return this;
+    }
+}
+
+assert( obj.func() == obj );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/02_oo_scope/3">
+<h2>except when it doesn't</h2>
+
+<pre class="sh_javascript"><code>var obj = {
+    func: function() {
+        return this;
+    }
+}
+
+var func = obj.func;
+
+assert( func() != obj );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/02_oo_scope/4">
+<h2>four invocation patterns</h2></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/02_oo_scope/5">
+<h2>1. function invocation</h2>
+
+<pre class="sh_javascript"><code>var obj = {
+    func: function() {
+        return this;
+    }
+}
+
+var func = obj.func;
+
+// `this` refers to the global object
+assert( func() == window );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/02_oo_scope/6">
+<h2>2. method invocation</h2>
+
+<pre class="sh_javascript"><code>var obj = {
+    func: function() {
+        return this;
+    }
+}
+
+// `this` refers to the receiver
+assert( obj.func()    == obj );
+assert( obj['func']() == obj );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/02_oo_scope/7">
+<h2>3. constructor invocation</h2>
+
+<pre class="sh_javascript"><code>var obj = {
+    func: function() {
+        return this;
+    }
+}
+
+// `this` refers to a new object
+assert( new obj.func() != obj );
+assert( new obj.func() != window );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/02_oo_scope/8">
+<h2>4. apply invocation</h2>
+
+<pre class="sh_javascript"><code>var obj = {
+    func: function() {
+        return this;
+    }
+}
+
+var otherFunc = function() { return this; };
+
+// `this` refers to the given argument
+assert( otherFunc.apply(obj) == obj );
+assert( otherFunc.call(obj)  == obj );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/02_oo_scope/9">
+<h2><code>apply()</code> and <code>call()</code></h2>
+
+<pre class="sh_javascript"><code>function sum(a, b) {
+    return a + b;
+}
+
+assert( sum.apply(null, [1, 2]) == 3 );
+assert( sum.call(null, 1, 2)    == 3 );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/03_arguments/1">
+<h1><code>arguments</code></h1></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/03_arguments/2">
+<h2>refers to arguments list</h2>
+
+<pre class="sh_javascript"><code>(function(a) {
+
+    assert( arguments[0] == 1 );
+    assert( arguments[1] == 2 );
+
+})(1, 2);</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/03_arguments/3">
+<h2>not quite an array</h2>
+
+<pre class="sh_javascript"><code>(function(/* args */) {
+
+    assert( arguments.length == 2 );
+    assertThrows( arguments.indexOf(2) );
+
+})(1, 2);</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/03_arguments/4">
+<h2>how to get an actual array</h2>
+
+<pre class="sh_javascript"><code>(function(/* args */) {
+    var args =
+      Array.prototype.slice.call(arguments);
+
+    assert( args.indexOf(2) == 1 );
+})(1, 2);</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/04_iterators/1">
+<h2>a case study</h2>
+
+<pre class="sh_javascript"><code>var ids = [1, 2];
+for (var i = 0; i &lt; ids.length; i += 1) {
+    $.getJSON('/comments/'+ ids[i],
+      function(c) {
+        $('#comment-'+ ids[i]).html(c.body);
+    });
+}</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content smbullets" ref="scope/04_iterators/2">
+<h2>what you expected</h2>
+
+<ul>
+<li>comment #1 - Who wants smoothies?</li>
+<li>comment #2 - Me! Me!</li>
+</ul>
+
+
+<h2>what you got</h2>
+
+<ul>
+<li>comment #1 -</li>
+<li>comment #2 - Me! Me!</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/04_iterators/3">
+<h2>the solution</h2>
+
+<pre class="sh_javascript"><code>var ids = [1, 2];
+ids.forEach(function(id) {
+    $.getJSON('/comments/'+ id, function(c){
+        $('#comment-'+ id).html(c.body);
+    });
+});</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="scope/04_iterators/4">
+<h2>another solution</h2>
+
+<pre class="sh_javascript"><code>var ids = [1, 2];
+
+function display(id) {
+    $.getJSON('/comments/'+ id, function(c){
+        $('#comment-'+ id).html(c.body);
+    });
+}
+
+for (var i = 0; i &lt; ids.length; i += 1) {
+    display(ids[i]);
+}</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/01_objects/1">
+<h1>JavaScript is Object-Oriented</h1></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/01_objects/2">
+<h2>object literals</h2>
+
+<pre class="sh_javascript"><code>var obj = {
+    foo: 1,
+    bar: 2,
+    sum: function(a, b) {
+        return a + b;
+    }
+};</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/01_objects/3">
+<h2>accessing properties</h2>
+
+<pre class="sh_javascript"><code>assert( obj.foo == 1 );
+
+for (var prop in obj) {
+    assert( typeof prop == 'string' );
+    assert( prop in obj );
+
+    obj[prop];
+}</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/01_objects/4">
+<h2>square bracket notation</h2>
+
+<pre class="sh_javascript"><code>assert( obj['foo'] == 1 );
+
+var s = 'baz';
+obj[s] = 3;
+
+assert( obj.baz == 3 );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/01_objects/5">
+<h2>undefined properties</h2>
+
+<pre class="sh_javascript"><code>assert( typeof obj.whatev == 'undefined' );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/01_objects/6">
+<h2>deleting properties</h2>
+
+<pre class="sh_javascript"><code>delete obj.foo
+
+assert( typeof obj.foo == 'undefined' );
+assert( !('foo' in obj) );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/01_objects/7">
+<h2>prototypes</h2>
+
+<pre class="sh_javascript"><code>var proto = { foo: 1 };
+
+function Proto() {};
+Proto.prototype = proto;
+
+var obj = new Proto();
+
+assert( obj.foo == 1 );
+assert( !obj.hasOwnProperty('foo') );
+
+proto.foo = 2;
+assert( obj.foo == 2 );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/01_objects/8">
+<h2>prototypes made easier</h2>
+
+<pre class="sh_javascript"><code>var proto = { foo: 1 };
+var obj = Object.create(proto);
+
+assert( obj.foo == 1 );
+assert( !obj.hasOwnProperty('foo') );
+
+proto.foo = 2;
+assert( obj.foo == 2 );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/02_class_implementations/1">
+<h1>Defining Classes</h1></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/02_class_implementations/2">
+<h2>The Module Pattern</h2>
+
+<pre class="sh_javascript"><code>var Button = function(interval) {
+    var lastPushed = new Date();
+
+    this.push = function() {
+        if (intervalElapsed()) {
+            throw "You waited too long.";
+        } else {
+            lastPushed = new Date();
+        }
+    };
+
+    function intervalElapsed() {
+        var now = new Date();
+        return (now - lastPushed) &lt; interval;
+    }
+};</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/02_class_implementations/3">
+<pre class="sh_javascript"><code>var button = new Button(108);
+
+button.push();</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content small" ref="object-oriented/02_class_implementations/4">
+<h2>Resig's Class implementation</h2>
+
+<pre class="sh_javascript"><code>var Button = Class.extend({
+    init: function(interval) {
+        this.interval = interval;
+        this.lastPushed = new Date();
+    },
+
+    push: function() {
+        if (this._intervalElapsed()) {
+            this._badThings();
+        } else {
+            this.lastPushed = new Date();
+        }
+    },
+
+    _intervalElapsed: function() {
+        var now = new Date();
+        return (now - this.lastPushed) &lt; this.interval;
+    },
+
+    _badThings: function() {
+        throw "You waited too long";
+    }
+});</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content small" ref="object-oriented/02_class_implementations/5">
+<h2>subclassing</h2>
+
+<pre class="sh_javascript"><code>var EventedButton = Button.extend({
+    init: function(interval) {
+        this._super(interval);
+        this._startCount();
+    },
+
+    push: function() {
+        clearTimeout(this.timeout);
+        this._startCount();
+    },
+
+    _startCount: function() {
+        var self = this;
+        this.timeout = setTimeout(function() {
+            self._badThings();
+        }, this.interval);
+    }
+});</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content small" ref="object-oriented/02_class_implementations/6">
+<h2>encapsulation by convention</h2>
+
+<pre class="sh_javascript"><code>var button = new Button(108);
+
+button._badThings();
+
+setInterval(function() {
+    clearTimeout(button.timeout);
+    button._startCount();
+}, 104);</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="object-oriented/02_class_implementations/7">
+<h1>jive.oo.Class</h1></div>
+</div><div class="slide" data-transition="none"><div class="content small" ref="object-oriented/02_class_implementations/8">
+<h2>protected members</h2>
+
+<pre class="sh_javascript"><code>var Button = jive.oo.Class.extend(function(protected) {
+    this.init = function(interval) {
+        this.interval = interval;
+        this.lastPushed = new Date();
+    };
+
+    this.push = function() {
+        if (this.intervalElapsed()) {
+            this.badThings();
+        } else {
+            this.lastPushed = new Date();
+        }
+    };
+
+    protected.intervalElapsed = function() {
+        var now = new Date();
+        return (now - this.lastPushed) &lt; this.interval;
+    };
+
+    protected.badThings = function() {
+        throw "You waited too long";
+    };
+});</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content small" ref="object-oriented/02_class_implementations/9">
+<h2>subclassing</h2>
+
+<pre class="sh_javascript"><code>var EventedButton = Button.extend(function(protected) {
+    this.init = function(interval) {
+        this._super(interval);
+        this.startCount();
+    };
+
+    this.push = function() {
+        clearTimeout(this.timeout);
+        this.startCount();
+    };
+
+    protected.startCount = function() {
+        var self = this;
+        this.timeout = setTimeout(function() {
+            self.badThings();
+        }, this.interval);
+    };
+});</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content small" ref="object-oriented/02_class_implementations/10">
+<h2>true encapsulation</h2>
+
+<pre class="sh_javascript"><code>var button = new Button(108);
+
+assert( typeof button.badThings  == 'undefined' );
+assert( typeof button.timeout    == 'undefined' );
+assert( typeof button.startCount == 'undefined' );
+
+button.push();</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/1">
+<h1>Events and Concurrency</h1></div>
+</div><div class="slide" data-transition="none"><div class="content bullets" ref="concurrency/01_events/2">
+<h2>JavaScript is single-threaded</h2>
+
+<pre class="sh_javascript"><code>var i = 0, array = [];
+
+setInterval(function() {
+    i += 1;
+    array.push(i);
+}, 1000);</code></pre>
+
+<ul>
+<li>result: array == [1, 2, 3, 4, ...]</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/3">
+<h2>watch out for code that blocks</h2>
+
+<pre class="sh_javascript"><code>var i = 0, array = [];
+
+setInterval(function() {
+    i += 1;
+    array.push(i);
+}, 1000);
+
+var mark = new Date(), now;
+
+while(true) {
+    now = new Date();
+    if (now - mark &gt;= 1000) {
+        mark = now;
+        array.push('x');
+    }
+}</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content smbullets" ref="concurrency/01_events/4">
+<h2>what you expected</h2>
+
+<ul>
+<li>array == [1, 'x', 2, 'x', 3, ...]</li>
+</ul>
+
+
+<h2>what you got</h2>
+
+<ul>
+<li>array == ['x', 'x', 'x', 'x', 'x', ...]</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/5">
+<h2>JavaScript is asynchronous</h2>
+
+<pre class="sh_javascript"><code>var i = 0;
+
+$.getJSON('/feed', function(feed) {
+    display(feed.count +" unread items");
+
+    i += 1;
+    assert( i == 2 );
+});
+
+i += 1;
+assert( i == 1 );</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/6">
+<h2>correct implementation of "slow zip"</h2>
+
+<pre class="sh_javascript"><code>var i = 0, array = [];
+
+setInterval(function() {
+    i += 1;
+    array.push(i);
+}, 1000);
+
+setInterval(function() {
+    array.push('x');
+}, 1000);</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/7">
+<h2>DOM events are asynchronous too</h2>
+
+<pre class="sh_javascript"><code>$('#clickme').click(function() {
+    $('#clickme').text('clicked!');
+});
+
+$('#clickme').text('not clicked');</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="concurrency/01_events/8">
+<p><img alt="Event callback timeline" src="image/concurrency/img/Timers.png" height="700"/></p>
+
+<p>From John Resig's blog, http://ejohn.org/blog/how-javascript-timers-work/</p></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="testing/01_qunit/1">
+<h1>Testing</h1></div>
+</div><div class="slide" data-transition="none"><div class="content small" ref="testing/01_qunit/2">
+<h2>tests and assertions</h2>
+
+<pre class="sh_javascript"><code>test('strict equality does not coerce', function() {
+    ok( 3 !== "3", '3 is not strictly equal to "3"' );
+});</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content small" ref="testing/01_qunit/3">
+<h2>test lifecycles</h2>
+
+<pre class="sh_javascript"><code>module('equality', {
+    setup: function() {
+        this.array = [1, 2, 3];
+    },
+
+    teardown: function() {
+        delete this.array;
+    }
+});
+
+test('array comparisons are by identity', function() {
+    ok( this.array != this.array.slice(),
+        'two arrays with the same values or not equal' );
+});</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content small" ref="testing/01_qunit/4">
+<h2>testing asynchronous code</h2>
+
+<pre class="sh_javascript"><code>asyncTest('fetches a feed', 1, function() {
+    $.getJSON('/feed', function(feed) {
+        ok( feed.count &gt; 0,
+            'fetched feed with unread items' );
+        start();
+    });
+});</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content small" ref="testing/01_qunit/5">
+<h2>mocking</h2>
+
+<pre class="sh_javascript"><code>module('feed API', {
+    setup: function() {
+        this.oldGet = $.getJSON
+
+        $.getJSON = function(url, callback) {
+            setTimeout(function() {
+                callback({ count: 3 });
+            }, 0);
+        };
+    },
+    teardown: function() {
+        $.getJSON = this.oldGet;
+    }
+);
+
+asyncTest('fetches a feed', 1, function() {
+    $.getJSON('/feed', function(feed) {
+        ok( feed.count &gt; 0,
+            'fetched feed with unread items' );
+        start();
+    });
+});</code></pre></div>
+</div><div class="slide" data-transition="none"><div class="content" ref="cross-browser/01_ie/1">
+<h1>Top 5 reasons my code does not work in IE</h1></div>
+</div><div class="slide" data-transition="none"><div class="content smbullets" ref="cross-browser/01_ie/2">
+<h2>1. Extra comma in object literal</h2>
+
+<pre class="sh_javascript"><code>var myObj = {
+    foo: 1,
+    bar: 2,
+}</code></pre>
+
+<ul>
+<li>Tolerated by most browsers, syntax error in IE.</li>
+<li>Error: "Expected identifier, string or number"</li>
+<li>Use syntax checker like JSLint &lt;jslint.com&gt;.</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content smbullets" ref="cross-browser/01_ie/3">
+<h2>2. Use of <code>Array#indexOf()</code></h2>
+
+<pre class="sh_javascript"><code>if ([1, 2, 3].indexOf('foo') &gt; -1) {
+    return true;
+}</code></pre>
+
+<ul>
+<li>Error: "is not a method"</li>
+<li>Use a framework replacement such as <code>$.inArray()</code>.</li>
+<li>Or define this method yourself.</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content smbullets" ref="cross-browser/01_ie/4">
+<h2>3. Line break between <code>return</code> and return value</h2>
+
+<pre class="sh_javascript"><code>function getVals() {
+    return
+    {
+        foo: 1, bar: 2
+    };
+}</code></pre>
+
+<ul>
+<li>Return value is <code>undefined</code>.</li>
+<li>Be obsessive about line breaks and semicolons.</li>
+<li>Use a syntax checker like JSLint.</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content smbullets" ref="cross-browser/01_ie/5">
+<h2>4. Invalid arguments to a native function</h2>
+
+<pre class="sh_javascript"><code>$('#someDiv').css('width', 'NaNpx');</code></pre>
+
+<ul>
+<li>Error: "invalid argument"</li>
+<li>IE is very strict about argument validation and number of arguments.</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content smbullets" ref="cross-browser/01_ie/6">
+<h2>5. Treating a built-in function like a function</h2>
+
+<pre class="sh_javascript"><code>var oldWrite = document.write;
+document.write = function() {
+    if (!$.isReady) {
+        return oldWrite.apply(document,
+                              arguments);
+    }
+};</code></pre>
+
+<ul>
+<li>Error: "is null or not an object"</li>
+<li>Native functions in IE do not inherit from Function.prototype.</li>
+<li><p>Borrow functions from Function.prototype.</p>
+
+<p><code>return Function.prototype.apply.call(oldWrite, document, arguments);</code></p></li>
+<li><p>Use framework methods for checking type, such as $.isFunction().</p></li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content smbullets" ref="cross-browser/01_ie/7">
+<h2>Honorable Mentions</h2>
+
+<ul>
+<li>Compressing uncached responses without <code>max-age=0</code> header</li>
+<li>Embedding Flash with <code>max-age=0</code> header</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content" ref="resources/01_resources/1">
+<h1>Resources</h1></div>
+</div><div class="slide" data-transition="none"><div class="content smbullets" ref="resources/01_resources/2">
+<h2>Books</h2>
+
+<ul>
+<li>JavaScript: The Good Parts by Douglas Crockford</li>
+<li>Pro JavaScript Techniques by John Resig</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content smbullets" ref="resources/01_resources/3">
+<h2>Tools</h2>
+
+<ul>
+<li>JSLint.com</li>
+<li>Firebug in Firefox</li>
+<li>Developer Tools in WebKit</li>
+<li>Microsoft Script Debugger in IE6 and IE7</li>
+<li>Charles Web Debugging Proxy or Fiddler Web Debugger</li>
+</ul>
+</div>
+</div><div class="slide" data-transition="none"><div class="content center" ref="resources/01_resources/4">
+<p><img src="image/resources/img/pdxjs.png" alt="Portland JavaScript Admirers" height="600px"/></p>
+</div>
+</div>
+</div>
+
+</body>
+</html>

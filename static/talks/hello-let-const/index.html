@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Jesse Hallett" />
+  <title>Goodbye var, hello let &amp; const</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/reveal.min.css"/>
+    <style type="text/css">code{white-space: pre;}</style>
+    <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #303030; color: #cccccc; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #cccccc; background-color: #303030; }
+code > span.kw { color: #f0dfaf; }
+code > span.dt { color: #dfdfbf; }
+code > span.dv { color: #dcdccc; }
+code > span.bn { color: #dca3a3; }
+code > span.fl { color: #c0bed1; }
+code > span.ch { color: #dca3a3; }
+code > span.st { color: #cc9393; }
+code > span.co { color: #7f9f7f; }
+code > span.ot { color: #efef8f; }
+code > span.al { color: #ffcfaf; }
+code > span.fu { color: #efef8f; }
+code > span.er { color: #c3bf9f; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/theme/black.css" id="theme">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+      if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+    </script>
+    <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Goodbye <code>var</code>, hello <code>let</code> &amp; <code>const</code></h1>
+    <h2 class="author">Jesse Hallett</h2>
+    <h3 class="date">PDXjs, October 28, 2015</h3>
+</section>
+
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> x = <span class="dv">1</span>
+<span class="kw">var</span> y = <span class="dv">2</span></code></pre>
+<div class="fragment">
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> x = <span class="dv">1</span>
+<span class="kw">const</span> y = <span class="dv">2</span></code></pre>
+</div>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">getUsers</span>(userIds) {
+  <span class="kw">var</span> users = {}
+  <span class="kw">for</span> (<span class="kw">var</span> id of usersIds) {
+    <span class="fu">fetch</span>(`<span class="ot">/usrs/</span>${id}`).<span class="fu">then</span>(resp =&gt; <span class="ot">resp</span>.<span class="fu">json</span>()).<span class="fu">then</span>(user =&gt; {
+      users[id] = user
+    })
+  }
+  <span class="kw">return</span> users
+}</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">for</span> (<span class="kw">var</span> i of [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]) {
+  <span class="fu">setTimeout</span>(() =&gt; <span class="ot">console</span>.<span class="fu">log</span>(i), <span class="dv">0</span>)
+}
+
+<span class="co">// 3</span>
+<span class="co">// 3</span>
+<span class="co">// 3</span></code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">for</span> (<span class="kw">let</span> i of [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]) {
+  <span class="fu">setTimeout</span>(() =&gt; <span class="ot">console</span>.<span class="fu">log</span>(i), <span class="dv">0</span>)
+}
+
+<span class="co">// 1</span>
+<span class="co">// 2</span>
+<span class="co">// 3</span></code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">getUsers</span>(userIds) {
+  <span class="kw">var</span> users = {}                <span class="co">// NEW VARIABLE SCOPE</span>
+  <span class="kw">for</span> (<span class="kw">var</span> id of usersIds) {
+    <span class="fu">fetch</span>(`<span class="ot">/usrs/</span>${id}`).<span class="fu">then</span>(resp =&gt; <span class="ot">resp</span>.<span class="fu">json</span>()).<span class="fu">then</span>(user =&gt; {
+      users[id] = user
+    })
+  }
+  <span class="kw">return</span> users
+}</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">getUsers</span>(userIds) {
+  <span class="kw">let</span> users = {}                <span class="co">// NEW VARIABLE SCOPE</span>
+  <span class="kw">for</span> (<span class="kw">let</span> id of usersIds) {    <span class="co">// NEW VARIABLE SCOPE</span>
+    <span class="fu">fetch</span>(`<span class="ot">/usrs/</span>${id}`).<span class="fu">then</span>(resp =&gt; <span class="ot">resp</span>.<span class="fu">json</span>()).<span class="fu">then</span>(user =&gt; {
+      users[id] = user
+    })
+  }
+  <span class="kw">return</span> users
+}</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">getUsers</span>(userIds) {
+  <span class="kw">const</span> users = {}              <span class="co">// NEW VARIABLE SCOPE</span>
+  <span class="kw">for</span> (<span class="kw">const</span> id of usersIds) {  <span class="co">// NEW VARIABLE SCOPE</span>
+    <span class="fu">fetch</span>(`<span class="ot">/usrs/</span>${id}`).<span class="fu">then</span>(resp =&gt; <span class="ot">resp</span>.<span class="fu">json</span>()).<span class="fu">then</span>(user =&gt; {
+      users[id] = user
+    })
+  }
+  <span class="kw">return</span> users
+}</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> x = <span class="dv">1</span>
+
+x = <span class="dv">2</span>  <span class="co">// javascript says NO!</span></code></pre>
+<div class="fragment">
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">let</span> y = <span class="dv">1</span>
+
+y = <span class="dv">2</span>  <span class="co">// ok, if you must</span></code></pre>
+</div>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> xs = []
+
+<span class="ot">xs</span>.<span class="fu">push</span>(<span class="dv">1</span>)
+<span class="ot">xs</span>.<span class="fu">push</span>(<span class="dv">2</span>)
+
+<span class="ot">console</span>.<span class="fu">log</span>(xs)
+<span class="co">// [ 1, 2 ]</span></code></pre>
+</section>
+<section class="slide level6">
+
+<ul>
+<li>Babel</li>
+<li>Node v4.x</li>
+<li>Chrome 41</li>
+<li>IE 11 / Edge 12</li>
+</ul>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;use strict&quot;</span></code></pre>
+</section>
+    </div>
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/head.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/js/reveal.min.js"></script>
+
+  <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: 'none', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+//          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; }, }
+//          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+]});
+    </script>
+    </body>
+</html>

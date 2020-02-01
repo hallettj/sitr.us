@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Jesse Hallett" />
+  <meta name="dcterms.date" content="2015-01-28" />
+  <title>Flow:  type-checked JavaScript</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/reveal.min.css"/>
+    <style type="text/css">code{white-space: pre;}</style>
+    <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #303030; color: #cccccc; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #cccccc; background-color: #303030; }
+code > span.kw { color: #f0dfaf; }
+code > span.dt { color: #dfdfbf; }
+code > span.dv { color: #dcdccc; }
+code > span.bn { color: #dca3a3; }
+code > span.fl { color: #c0bed1; }
+code > span.ch { color: #dca3a3; }
+code > span.st { color: #cc9393; }
+code > span.co { color: #7f9f7f; }
+code > span.ot { color: #efef8f; }
+code > span.al { color: #ffcfaf; }
+code > span.fu { color: #efef8f; }
+code > span.er { color: #c3bf9f; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/theme/black.css" id="theme">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+      if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+    </script>
+    <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Flow: <br> type-checked JavaScript</h1>
+    <h2 class="author">Jesse Hallett</h2>
+    <h3 class="date">January 28, 2015</h3>
+</section>
+
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">/* @flow */</span>
+<span class="kw">function</span> <span class="fu">foo</span>(x) {
+  <span class="kw">return</span> x * <span class="dv">10</span>;
+}
+<span class="fu">foo</span>(<span class="st">&#39;Hello, world!&#39;</span>);</code></pre>
+<div class="fragment">
+<pre><code>$ flow
+
+hello.js:5:5,19: string
+This type is incompatible with
+  hello.js:3:10,15: number</code></pre>
+</div>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">length</span>(x) {
+  <span class="kw">return</span> <span class="ot">x</span>.<span class="fu">length</span>;
+}</code></pre>
+<div class="fragment">
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> total = <span class="fu">length</span>(<span class="st">&#39;Hello&#39;</span>) + <span class="fu">length</span>(<span class="kw">null</span>);</code></pre>
+</div>
+<div class="fragment">
+<pre><code>Type error: x might be null</code></pre>
+</div>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> fs = <span class="fu">require</span>(<span class="st">&#39;fs&#39;</span>);
+
+<span class="ot">fs</span>.<span class="fu">write</span>(<span class="st">&#39;log.txt&#39;</span>, <span class="st">&#39;an event occurred&#39;</span>);</code></pre>
+</section>
+<section class="slide level6" data-transition="none">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> fs = <span class="fu">require</span>(<span class="st">&#39;fs&#39;</span>);
+
+<span class="ot">fs</span>.<span class="fu">write</span>(<span class="st">&#39;log.txt&#39;</span>, <span class="st">&#39;an event occurred&#39;</span>);
+<span class="co">//       ^          ^ should be a buffer</span>
+<span class="co">//       |</span>
+<span class="co">//       | should be a file descriptor</span></code></pre>
+</section>
+<section class="slide level6" data-transition="none">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> fs = <span class="fu">require</span>(<span class="st">&#39;fs&#39;</span>);
+
+<span class="ot">fs</span>.<span class="fu">open</span>(<span class="st">&#39;log.txt&#39;</span>, <span class="st">&#39;a&#39;</span>, <span class="kw">function</span>(err, fd) {
+  <span class="ot">fs</span>.<span class="fu">write</span>(fd, <span class="kw">new</span> <span class="fu">Buffer</span>(<span class="st">&#39;an event occurred&#39;</span>));
+});</code></pre>
+</section>
+<section class="slide level6">
+
+<blockquote>
+<p>...underlying the design of Flow is the assumption that most JavaScript code is implicitly statically typed; even though types may not appear anywhere in the code, they are in the developer’s mind as a way to reason about the correctness of the code. Flow infers those types automatically wherever possible, which means that it can find type errors without needing any changes to the code at all.</p>
+</blockquote>
+</section>
+<section class="slide level6">
+
+<blockquote>
+<p>This makes Flow fundamentally different than existing JavaScript type systems (such as TypeScript), which make the weaker assumption that most JavaScript code is dynamically typed, and that it is up to the developer to express which code may be amenable to static typing.</p>
+</blockquote>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">length</span>(x) {
+  <span class="kw">return</span> <span class="ot">x</span>.<span class="fu">length</span>;
+}
+
+<span class="kw">var</span> total = <span class="fu">length</span>(<span class="st">&#39;Hello&#39;</span>) + <span class="fu">length</span>(<span class="kw">null</span>);</code></pre>
+<pre><code>Type error: x might be null</code></pre>
+</section>
+<section class="slide level6" data-transition="none">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">length</span>(x) {
+  <span class="kw">if</span> (x) {
+    <span class="kw">return</span> <span class="ot">x</span>.<span class="fu">length</span>;
+  } <span class="kw">else</span> {
+    <span class="kw">return</span> <span class="dv">0</span>;
+  }
+}
+
+<span class="kw">var</span> total = <span class="fu">length</span>(<span class="st">&#39;Hello&#39;</span>) + <span class="fu">length</span>(<span class="kw">null</span>);</code></pre>
+</section>
+<section class="slide level6" data-transition="none">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">length</span>(x) {  <span class="co">// x might or might not be null</span>
+  <span class="kw">if</span> (x) {  <span class="co">// true iff x is not null</span>
+    <span class="kw">return</span> <span class="ot">x</span>.<span class="fu">length</span>;  <span class="co">// x is definitely not null here</span>
+  } <span class="kw">else</span> {
+    <span class="kw">return</span> <span class="dv">0</span>;
+  }
+}
+
+<span class="kw">var</span> total = <span class="fu">length</span>(<span class="st">&#39;Hello&#39;</span>) + <span class="fu">length</span>(<span class="kw">null</span>);</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> o = <span class="kw">null</span>;
+<span class="kw">if</span> (o == <span class="kw">null</span>) {
+  o = <span class="st">&#39;hello&#39;</span>;
+}
+<span class="fu">print</span>(<span class="ot">o</span>.<span class="fu">length</span>);</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">foo</span>(b) { <span class="kw">if</span> (b) { <span class="kw">return</span> <span class="dv">21</span>; } <span class="kw">else</span> { <span class="kw">return</span> <span class="st">&#39;&#39;</span>; } }
+
+<span class="kw">function</span> <span class="fu">bar</span>(b) {
+  <span class="kw">var</span> x = <span class="fu">foo</span>(b);
+  <span class="kw">var</span> y = <span class="fu">foo</span>(b);
+  <span class="kw">if</span> (<span class="kw">typeof</span> x == <span class="st">&#39;number&#39;</span> &amp;&amp; <span class="kw">typeof</span> y == <span class="st">&#39;number&#39;</span>) { <span class="kw">return</span> x + y; }
+  <span class="kw">return</span> <span class="dv">0</span>;
+}
+
+<span class="kw">var</span> n = <span class="fu">bar</span>(<span class="dv">1</span>) * <span class="fu">bar</span>(<span class="dv">2</span>);</code></pre>
+</section>
+<section class="slide level6" data-transition="none">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">foo</span>(b) { <span class="kw">if</span> (b) { <span class="kw">return</span> <span class="dv">21</span>; } <span class="kw">else</span> { <span class="kw">return</span> <span class="st">&#39;&#39;</span>; } }
+
+<span class="kw">function</span> <span class="fu">bar</span>(b) {
+  <span class="kw">var</span> x = <span class="fu">foo</span>(b);  <span class="co">// Did we get a number back?  Maybe?</span>
+  <span class="kw">var</span> y = <span class="fu">foo</span>(b);
+  <span class="kw">if</span> (<span class="kw">typeof</span> x == <span class="st">&#39;number&#39;</span> &amp;&amp; <span class="kw">typeof</span> y == <span class="st">&#39;number&#39;</span>) { <span class="kw">return</span> x + y; }
+  <span class="kw">return</span> <span class="dv">0</span>;                  <span class="co">// x and y must be numbers here ^   ^</span>
+}
+
+<span class="kw">var</span> n = <span class="fu">bar</span>(<span class="dv">1</span>) * <span class="fu">bar</span>(<span class="dv">2</span>);  <span class="co">// bar() always returns a number</span></code></pre>
+</section>
+<section class="slide level6" data-transition="none">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="fu">foo</span>(b) { <span class="kw">if</span> (b) { <span class="kw">return</span> <span class="dv">21</span>; } <span class="kw">else</span> { <span class="kw">return</span> <span class="st">&#39;&#39;</span>; } }
+
+<span class="kw">function</span> <span class="fu">bar</span>(b) {
+  <span class="kw">var</span> x = <span class="fu">foo</span>(b);  <span class="co">// Did we get a number back?  Maybe?</span>
+  <span class="kw">var</span> y = <span class="fu">foo</span>(b);
+  <span class="kw">if</span> (<span class="kw">typeof</span> x == <span class="st">&#39;number&#39;</span> &amp;&amp; <span class="kw">typeof</span> y == <span class="st">&#39;number&#39;</span>) { <span class="kw">return</span> x + y; }
+  <span class="kw">return</span> <span class="dv">0</span>;                  <span class="co">// x and y must be numbers here ^   ^</span>
+}
+
+<span class="kw">var</span> n = <span class="fu">bar</span>(<span class="dv">1</span>) * <span class="fu">bar</span>(<span class="dv">2</span>);  <span class="co">// bar() always returns a number</span></code></pre>
+<pre><code>foo: (b: number) =&gt; string | number
+
+bar: (b: number) =&gt; number</code></pre>
+</section>
+<section class="slide level6">
+
+<figure>
+<img src="string-union-number.svg" alt="string|number" /><figcaption>string|number</figcaption>
+</figure>
+</section>
+<section class="slide level6">
+
+<pre><code>number                mixed                 MyClass
+
+string                any                   Array&lt;T&gt;
+
+boolean               ?T                    [T, U, V]
+
+void                  T | U                 { x: T; y: U; z: Z }
+
+&quot;foo&quot;                 T &amp; U                 { [key:string]: T }
+
+                                            (x: T) =&gt; U</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript">type Point = { <span class="dt">x</span>: number; <span class="dt">y</span>: number }
+
+<span class="kw">function</span> <span class="fu">mkPoint</span>(x, y): Point {
+  <span class="kw">return</span> { <span class="dt">x</span>: x, <span class="dt">y</span>: y }
+}
+
+<span class="kw">var</span> p = <span class="fu">mkPoint</span>(<span class="st">&#39;2&#39;</span>, <span class="st">&#39;3&#39;</span>)
+<span class="co">// Type error: string is incompatible with number</span>
+
+<span class="kw">var</span> q = <span class="fu">mkPoint</span>(<span class="dv">2</span>, <span class="dv">3</span>)
+<span class="ot">q</span>.<span class="fu">z</span> = <span class="dv">4</span>
+<span class="co">// Type error: property `z` not found in object type</span>
+
+<span class="kw">var</span> r: Point = { <span class="dt">x</span>: <span class="dv">5</span> }
+<span class="co">// Type error: property y not found in object literal</span></code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> n: Object = <span class="kw">null</span>;
+<span class="co">// Type error: null is incompatible with object type</span>
+
+<span class="kw">var</span> m: ?Object = <span class="kw">null</span>;
+<span class="co">// this is ok</span>
+
+<span class="kw">var</span> o = <span class="kw">null</span>;
+<span class="co">// this is ok too</span></code></pre>
+</section>
+<section class="slide level6">
+
+<pre><code>?T</code></pre>
+<pre><code>T | null | undefined</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript">type Foo = { <span class="dt">x</span>: number; <span class="dt">y</span>: string; [<span class="dt">key</span>:string]: any }
+type Bar = { <span class="dt">z</span>: boolean }
+
+type FooBar = Foo &amp; Bar
+
+<span class="kw">var</span> a: FooBar = { <span class="dt">x</span>: <span class="dv">1</span>, <span class="dt">y</span>: <span class="st">&#39;two&#39;</span>, <span class="dt">z</span>: <span class="kw">true</span>, <span class="dt">zz</span>: <span class="kw">false</span> }
+
+<span class="kw">var</span> b = <span class="ot">a</span>.<span class="fu">x</span>  <span class="co">// number</span>
+<span class="kw">var</span> c = <span class="ot">a</span>.<span class="fu">z</span>  <span class="co">// boolean</span>
+<span class="kw">var</span> d = <span class="ot">a</span>.<span class="fu">zz</span> <span class="co">// boolean</span>
+<span class="kw">var</span> e = <span class="ot">a</span>.<span class="fu">w</span>  <span class="co">// (unknown)</span></code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript">type Tree&lt;T&gt; = Node&lt;T&gt; | EmptyTree
+
+<span class="kw">class</span> Node&lt;T&gt; {
+  <span class="dt">value</span>: T;
+  <span class="dt">left</span>:  Tree&lt;T&gt;;
+  <span class="dt">right</span>: Tree&lt;T&gt;;
+  <span class="fu">constructor</span>(value, left, right) {
+    <span class="kw">this</span>.<span class="fu">value</span> = value
+    <span class="kw">this</span>.<span class="fu">left</span>  = left
+    <span class="kw">this</span>.<span class="fu">right</span> = right
+  };
+}
+
+<span class="kw">class</span> EmptyTree {}</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> find&lt;T&gt;(pred: (v: T) =&gt; boolean, tree: Tree&lt;T&gt;): T | <span class="kw">void</span> {
+  <span class="kw">var</span> leftResult
+
+  <span class="kw">if</span> (tree <span class="kw">instanceof</span> Node) {
+    leftResult = <span class="fu">find</span>(pred, <span class="ot">tree</span>.<span class="fu">left</span>)
+    <span class="kw">if</span> (<span class="kw">typeof</span> leftResult !== <span class="st">&#39;undefined&#39;</span>) { <span class="kw">return</span> leftResult }
+    <span class="kw">else</span> <span class="kw">if</span> (<span class="fu">pred</span>(<span class="ot">tree</span>.<span class="fu">value</span>))             { <span class="kw">return</span> <span class="ot">tree</span>.<span class="fu">value</span> }
+    <span class="kw">else</span>                                   { <span class="kw">return</span> <span class="fu">find</span>(pred, <span class="ot">tree</span>.<span class="fu">right</span>) }
+  }
+
+  <span class="kw">else</span> <span class="kw">if</span> (tree <span class="kw">instanceof</span> EmptyTree) {
+    <span class="kw">return</span> <span class="kw">undefined</span>;
+  }
+}</code></pre>
+</section>
+<section class="slide level6">
+
+<pre class="sourceCode javascript"><code class="sourceCode javascript">declare <span class="kw">class</span> UnderscoreStatic {
+  findWhere&lt;T&gt;(<span class="dt">list</span>: Array&lt;T&gt;, <span class="dt">properties</span>: {}): T;
+}
+
+declare <span class="kw">var</span> _: UnderscoreStatic;</code></pre>
+</section>
+<section class="slide level6">
+
+<pre><code>$ npm install -g react-tools</code></pre>
+<pre><code>$ jsx --strip-types --harmony --watch src/ build/</code></pre>
+</section>
+<section class="slide level6">
+
+<dl>
+<dt>Flow</dt>
+<dd>http://flowtype.org/
+</dd>
+<dt>slides</dt>
+<dd>http://sitr.us/talks/flow/
+</dd>
+</dl>
+</section>
+    </div>
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/head.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/js/reveal.min.js"></script>
+
+  <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: 'slide', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+//          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; }, }
+//          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+]});
+    </script>
+    </body>
+</html>

@@ -1,0 +1,414 @@
+---
+layout: deckjs
+title: Type classes in JavaScript
+description: Presentation at pdxfunc 2012-03
+author: Jesse Hallett
+---
+
+<section class="slide" id="create-a-document">
+    <pre class="brush: coffee">
+create = (db, document) -&gt;
+  deferred = new $.Deferred()
+
+  $.getJSON("/_uuids").success (resp) -&gt;
+    id = resp.uuids[0]
+    docURL = "/#{db}/#{id}"
+
+    $.putJSON(docURL, document).success -&gt;
+
+      $.getJSON(docURL).success (updatedDoc) -&gt;
+        deferred.resolve updatedDoc
+
+  deferred
+    </pre>
+</section>
+
+<section class="slide" id="create-a-document-with-js">
+    <table><tbody><tr>
+    <td style="vertical-align:middle"><pre class="brush: coffee">
+create = (db, document) -&gt;
+  deferred = new $.Deferred()
+
+  $.getJSON("/_uuids").success (resp) -&gt;
+    id = resp.uuids[0]
+    docURL = "/#{db}/#{id}"
+
+    $.putJSON(docURL, document).success -&gt;
+
+      $.getJSON(docURL).success (updatedDoc) -&gt;
+        deferred.resolve updatedDoc
+
+  deferred
+    </pre></td>
+
+    <td style="vertical-align:middle"><pre class="brush: js">
+function create(db, document) {
+    var deferred = new $.Deferred()
+
+    $.getJSON("/_uuids").success(function(resp) {
+        var id = resp.uuids[0];
+        var docURL = "/"+ db +"/"+ id;
+
+        $.putJSON(docURL, document).success(function() {
+
+            $.getJSON(docURL).success(function(updatedDoc) {
+                deferred.resolve(updatedDoc);
+            });
+        });
+    });
+
+    return deferred;
+}
+    </pre></td>
+    </tr></tbody></table>
+</section>
+
+<section class="slide" id="promises">
+    <table><tbody><tr>
+    <td style="vertical-align:middle"><pre class="brush: coffee">
+asyncFunction = (arg) -&gt;
+  deferred = new $.Deferred()
+
+  doStuff arg, (result) -&gt;
+    deferred.resolve result
+
+  deferred
+
+asyncFunction("foo").done (result) -&gt;
+  print result
+    </pre></td>
+
+    <td style="vertical-align:middle"><pre class="brush: coffee">
+asyncFunction = (arg, callback) -&gt;
+  doStuff arg, (result) -&gt;
+    callback(result)
+
+asyncFunction "foo", (result) -&gt;
+  print result
+    </pre></td>
+    </tr></tbody></table>
+</section>
+
+<section class="slide" id="error-handling">
+    <pre class="brush: coffee">
+create = (db, document) -&gt;
+  deferred = new $.Deferred()
+
+  $.getJSON("/_uuids").success((resp) -&gt;
+    id = resp.uuids[0]
+    docURL = "/#{db}/#{id}"
+
+    $.putJSON(docURL, document).success( -&gt;
+
+      $.getJSON(docURL).success((updatedDoc) -&gt;
+        deferred.resolve updatedDoc
+      ).error (xhr, textStatus) -&gt;
+        deferred.reject xhr, textStatus
+
+    ).error (xhr, textStatus) -&gt;
+      deferred.reject xhr, textStatus
+
+  ).error (xhr, textStatus) -&gt;
+    deferred.reject xhr, textStatus
+
+  deferred
+    </pre>
+</section>
+
+<section class="slide" id="monadic-requests">
+    <pre class="brush: coffee">
+create = (db, document) -&gt;
+  do
+    resp &lt;- $.getJSON "/_uuids"
+
+    id = resp.uuids[0]
+    docURL = "/#{db}/#{id}"
+
+    _ &lt;- $.putJSON docURL, document
+
+    updatedDoc &lt;- $getJSON docURL
+
+  yield
+    updatedDoc
+    </pre>
+</section>
+
+<section class="slide" id="translated-comprehension">
+    <pre class="brush: coffee">
+create = (db, document) -&gt;
+  $.getJSON("/_uuids").flatMap (resp) -&gt;
+    id = resp.uuids[0]
+    docURL = "/#{db}/#{id}"
+
+    $.putJSON(docURL, document).flatMap (_) -&gt;
+
+      $.getJSON(docURL).map (updatedDoc) -&gt;
+        updatedDoc
+    </pre>
+</section>
+
+<section class="slide" id="flatMap">
+    <pre class="brush: coffee">
+$.Deferred.prototype.flatten = -&gt;
+  deferred = new $.Deferred()
+
+  this.done (deferredPrime) -&gt;
+    deferredPrime.done (values...) -&gt;
+      deferred.resolve values...
+
+    deferredPrime.fail (msgs...) -&gt;
+      deferred.reject msgs...
+
+  this.fail (msgs...) -&gt;
+    deferred.reject msgs...
+
+  deferred
+
+$.Deferred.prototype.map = (f) -&gt;
+  deferred = new $.Deferred()
+
+  this.done (values...) -&gt;
+    deferred.resolve (f values...)
+
+  this.fail (msgs...) -&gt;
+    deferred.reject msgs...
+
+  deferred
+
+$.Deferred.prototype.flatMap = (f) -&gt;
+  (this.map f).flatten
+    </pre>
+</section>
+
+<section class="slide" id="translated-comprehension-compared">
+    <table><tbody><tr>
+    <td style="vertical-align:middle"><pre class="brush: coffee">
+create = (db, document) -&gt;
+  $.getJSON("/_uuids").flatMap (resp) -&gt;
+    id = resp.uuids[0]
+    docURL = "/#{db}/#{id}"
+
+    $.putJSON(docURL, document).flatMap -&gt;
+
+      $.getJSON(docURL).map (updatedDoc) -&gt;
+        updatedDoc
+    </pre></td>
+
+    <td style="vertical-align:middle"><pre class="brush: coffee">
+create = (db, document) -&gt;
+  deferred = new $.Deferred()
+
+  $.getJSON("/_uuids").success((resp) -&gt;
+    id = resp.uuids[0]
+    docURL = "/#{db}/#{id}"
+
+    $.putJSON(docURL, document).success( -&gt;
+
+      $.getJSON(docURL).success((updatedDoc) -&gt;
+        deferred.resolve updatedDoc
+      ).error (xhr, textStatus) -&gt;
+        deferred.reject xhr, textStatus
+
+    ).error (xhr, textStatus) -&gt;
+      deferred.reject xhr, textStatus
+
+  ).error (xhr, textStatus) -&gt;
+    deferred.reject xhr, textStatus
+
+  deferred
+    </pre></td>
+    </tr></tbody></table>
+</section>
+
+<section class="slide" id="game-of-life">
+    <pre class="brush: coffee">
+gameOfLife = (board) -&gt;
+  do
+    row  &lt;- board
+    cell &lt;- row
+  yield
+    { x, y, isAlive } = cell
+
+    stillAlive = switch neighborCount(x, y)
+      when 2 then isAlive
+      when 3 then true
+      else false
+
+    { x: x, y: y, isAlive: stillAlive }
+    </pre>
+</section>
+
+<section class="slide" id="flatmap-workaround">
+    <pre class="brush: coffee">
+flatMap = (obj, f) -&gt;
+  if $.isArray obj
+    mapped = obj.map f
+    mapped.reduce ((out, e) -&gt; out.concat e), []
+  else
+    obj.flatMap f
+    </pre>
+</section>
+
+<section class="slide" id="show-class">
+    <pre class="brush: hs">
+class Show a where
+    show :: a -&gt; String
+
+instance Show String where
+    show s = s
+
+show "foo" == "foo"
+
+instance (Show a) =&gt; Show [a] where
+    show l = "["++ (intercalate "," $ map show l) ++"]"
+
+show [1, 2, 3, 4] == "[1, 2, 3, 4]"
+    </pre>
+</section>
+
+<section class="slide" id="clojure-protocols">
+    <pre class="brush: clojure">
+(defprotocol Show
+  "Produce a string representation of a given value"
+  (show [a] "returns a string representation of a"))
+
+(deftype Foo [])
+(deftype Bar [prop])
+
+(extend Foo Show
+  {:show (fn [x] "foo")})
+
+(extend Bar Show
+  {:show (fn [x] (let [s show (. x prop)]
+           (str "bar[" s "]")))})
+
+(let [foo (new Foo)]
+  (= (show foo) "foo"))
+
+(let [foo (new Foo)
+      bar (new Bar foo)]
+  (= (show bar) "bar[foo]"))
+    </pre>
+</section>
+
+<section class="slide" id="show-in-javascript">
+    <pre class="brush: coffee">
+Show = Protocol
+  show: Protocol.required
+
+extend String, Show
+  show: (s) -&gt; s
+
+extend Array, Show
+  show: (a) -&gt; "["+ (a.map (e) -&gt; show e).join(", ") +"]"
+
+show "foo" == "foo"
+
+show ["foo", "bar"] == "[foo, bar]"
+    </pre>
+</section>
+
+<section class="slide" id="create-a-document">
+    <pre class="brush: coffee">
+Functor = new Protocol
+  map: Protocol.required
+
+Monad = new Protocol
+  flatMap: (m, f) -&gt; Monad.flatten (Functor.map m, f)
+  flatten: (m)    -&gt; Monad.flatMap m, (v) -&gt; v
+  compose: (m, k) -&gt; Monad.flatMap m, (_) -&gt; k
+    </pre>
+</section>
+
+<section class="slide" id="monadic-requests-again">
+    <pre class="brush: coffee">
+create = (db, document) -&gt;
+  do
+    resp &lt;- $.getJSON "/_uuids"
+
+    id = resp.uuids[0]
+    docURL = "/#{db}/#{id}"
+
+    _ &lt;- $.putJSON docURL, document
+
+    updatedDoc &lt;- $getJSON docURL
+
+  yield
+    updatedDoc
+    </pre>
+</section>
+
+<section class="slide" id="constructor-chain">
+    <pre class="brush: coffee">
+Protocol = (signatures) -&gt;
+  @impls = {}
+
+  findImpl = (object) -&gt;
+    constructor = object.constructor
+    impl = @impls[constructor]
+    if impl
+      impl
+    else if (constructor and
+             constructor.prototype and
+             constructor.prototype !== Object
+      getImplementation constructor.prototype
+
+  Object.keys(signatures).forEach (name) =&gt;
+    @[name] = (firstArg, args...) -&gt;
+      impl = findImpl firstArg
+      func = impl[name]
+
+      func firstArg, args...
+    </pre>
+</section>
+
+<section class="slide" id="protocol-crumb">
+    <pre class="brush: coffee">
+Protocol = (signatures) -&gt;
+  @impls = {}
+
+  findImpl = (object) -&gt;
+    @impls["__protocol_crumb__"]
+
+  Object.keys(signatures).forEach (name) =&gt;
+    @[name] = (firstArg, args...) -&gt;
+      impl = findImpl firstArg
+      func = impl[name]
+
+      func firstArg, args...
+
+Protocol.counter = 0
+
+extend = (type, protocol, impl) -&gt;
+  type.prototype["__protocol_crumb__"] = Protocol.counter
+  protocol.impls[Protocol.counter] = impl
+  Protocol.counter += 1
+    </pre>
+</section>
+
+<section class="slide" id="alternate-syntax">
+    <pre class="brush: coffee">
+_ = undefined
+signature = Protocol.signature
+
+Functor = new Protocol (a) -&gt;
+  map: signature _, a
+
+extend Array, Functor,
+  map: (f, array) -&gt; array.map f
+    </pre>
+</section>
+
+<section class="slide" id="references">
+    <h2>Links</h2>
+    <ul>
+        <li>basic implementation &mdash; <a href="https://github.com/hallettj/etiquette.js">github.com/hallettj/etiquette.js</a>
+        <li>these slides &mdash; <a href="http://sitr.us/talks/js-type-classes/">sitr.us/talks/js-type-classes</a>
+    </ul>
+</section>
+
+<script>
+    setTimeout(function() {
+        $('.slide > div, .slide > table').addClass('vcenter')
+    }, 500);
+</script>

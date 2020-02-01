@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Jesse Hallett &lt;jesse@sitr.us&gt;">
+  <title>How do I Babel 6?</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/reveal.css"/>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #303030; color: #cccccc; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #cccccc; background-color: #303030; }
+code > span.kw { color: #f0dfaf; } /* Keyword */
+code > span.dt { color: #dfdfbf; } /* DataType */
+code > span.dv { color: #dcdccc; } /* DecVal */
+code > span.bn { color: #dca3a3; } /* BaseN */
+code > span.fl { color: #c0bed1; } /* Float */
+code > span.ch { color: #dca3a3; } /* Char */
+code > span.st { color: #cc9393; } /* String */
+code > span.co { color: #7f9f7f; } /* Comment */
+code > span.ot { color: #efef8f; } /* Other */
+code > span.al { color: #ffcfaf; } /* Alert */
+code > span.fu { color: #efef8f; } /* Function */
+code > span.er { color: #c3bf9f; } /* Error */
+code > span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+code > span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code > span.sc { color: #dca3a3; } /* SpecialChar */
+code > span.vs { color: #cc9393; } /* VerbatimString */
+code > span.ss { color: #cc9393; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { } /* Variable */
+code > span.cf { color: #f0dfaf; } /* ControlFlow */
+code > span.op { color: #f0efd0; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code > span.at { } /* Attribute */
+code > span.do { color: #7f9f7f; } /* Documentation */
+code > span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code > span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code > span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/theme/black.css" id="theme">
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/print/pdf.css' : 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">How do I Babel 6?</h1>
+    <h2 class="author">Jesse Hallett &lt;jesse@sitr.us&gt;</h2>
+    <h3 class="date">PDXjs, January 2016</h3>
+</section>
+
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="op">{</span> readFile <span class="op">}</span> <span class="im">from</span> <span class="st">&#39;fs&#39;</span>
+
+<span class="im">export</span> <span class="kw">function</span> <span class="at">main</span>() <span class="op">{</span>
+  <span class="at">readFile</span>(<span class="st">&#39;greeting.txt&#39;</span><span class="op">,</span> (err<span class="op">,</span> data) <span class="op">=&gt;</span> <span class="op">{</span>
+    <span class="va">console</span>.<span class="at">log</span>(<span class="vs">`output: </span><span class="sc">${</span>data<span class="sc">}</span><span class="vs">`</span>)
+  <span class="op">}</span>)
+<span class="op">}</span></code></pre></div>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&#39;use strict&#39;</span><span class="op">;</span>
+
+<span class="va">Object</span>.<span class="at">defineProperty</span>(exports<span class="op">,</span> <span class="st">&quot;__esModule&quot;</span><span class="op">,</span> <span class="op">{</span>
+  <span class="dt">value</span><span class="op">:</span> <span class="kw">true</span>
+<span class="op">}</span>)<span class="op">;</span>
+<span class="va">exports</span>.<span class="at">main</span> <span class="op">=</span> main<span class="op">;</span>
+
+<span class="kw">var</span> _fs <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;fs&#39;</span>)<span class="op">;</span>
+
+<span class="kw">function</span> <span class="at">main</span>() <span class="op">{</span>
+  (<span class="dv">0</span><span class="op">,</span> <span class="va">_fs</span>.<span class="at">readFile</span>)(<span class="st">&#39;greeting.txt&#39;</span><span class="op">,</span> <span class="kw">function</span> (err<span class="op">,</span> data) <span class="op">{</span>
+    <span class="va">console</span>.<span class="at">log</span>(<span class="st">&#39;output: &#39;</span> <span class="op">+</span> data)<span class="op">;</span>
+  <span class="op">}</span>)<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+</section>
+<section class="slide level6">
+
+<pre><code>$ npm install babel-cli
+
+$ export PATH=&quot;node_modules/.bin:$PATH&quot;
+
+$ babel main.es6 &gt; main.js</code></pre>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// .babelrc</span>
+
+<span class="op">{</span>
+  <span class="st">&quot;presets&quot;</span><span class="op">:</span> [
+    <span class="st">&quot;es2015&quot;</span>
+  ]
+<span class="op">}</span></code></pre></div>
+</section>
+<section class="slide level6">
+
+<pre><code>check-es2015-constants
+transform-es2015-arrow-functions
+transform-es2015-block-scoped-functions
+transform-es2015-block-scoping
+transform-es2015-classes
+transform-es2015-computed-properties
+transform-es2015-destructuring
+transform-es2015-for-of
+transform-es2015-function-name
+transform-es2015-literals
+transform-es2015-modules-commonjs
+transform-es2015-object-super
+transform-es2015-parameters
+transform-es2015-shorthand-properties
+transform-es2015-spread
+transform-es2015-sticky-regex
+transform-es2015-template-literals
+transform-es2015-typeof-symbol
+transform-es2015-unicode-regex
+transform-regenerator</code></pre>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// .babelrc</span>
+
+<span class="op">{</span>
+  <span class="st">&quot;presets&quot;</span><span class="op">:</span> [
+    <span class="st">&quot;es2015&quot;</span>
+  ]
+<span class="op">}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// package.json</span>
+
+<span class="st">&quot;devDependencies&quot;</span><span class="op">:</span> <span class="op">{</span>
+  <span class="st">&quot;babel-cli&quot;</span><span class="op">:</span> <span class="st">&quot;6.4.5&quot;</span><span class="op">,</span>
+  <span class="st">&quot;babel-preset-es2015&quot;</span><span class="op">:</span> <span class="st">&quot;6.3.13&quot;</span>
+<span class="op">}</span></code></pre></div>
+</section>
+<section class="slide level6">
+
+<pre><code>$ babel main.es6 &gt; main.js
+
+$ node
+&gt; require(&#39;./main&#39;).main()
+
+&gt; output: hello world</code></pre>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="op">{</span>
+  <span class="st">&quot;presets&quot;</span><span class="op">:</span> [
+    <span class="st">&quot;react&quot;</span><span class="op">,</span>
+    <span class="st">&quot;es2015&quot;</span>
+  ]<span class="op">,</span>
+  <span class="st">&quot;plugins&quot;</span><span class="op">:</span> [
+    <span class="st">&quot;transform-runtime&quot;</span><span class="op">,</span>
+    <span class="st">&quot;transform-class-properties&quot;</span>
+  ]
+<span class="op">}</span></code></pre></div>
+<div class="fragment">
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;devDependencies&quot;</span><span class="op">:</span> <span class="op">{</span>
+  <span class="st">&quot;babel-cli&quot;</span><span class="op">:</span> <span class="st">&quot;6.4.5&quot;</span><span class="op">,</span>
+  <span class="st">&quot;babel-plugin-transform-class-properties&quot;</span><span class="op">:</span> <span class="st">&quot;6.4.0&quot;</span><span class="op">,</span>
+  <span class="st">&quot;babel-plugin-transform-runtime&quot;</span><span class="op">:</span> <span class="st">&quot;6.3.13&quot;</span><span class="op">,</span>
+  <span class="st">&quot;babel-preset-es2015&quot;</span><span class="op">:</span> <span class="st">&quot;6.3.13&quot;</span><span class="op">,</span>
+  <span class="st">&quot;babel-preset-react&quot;</span><span class="op">:</span> <span class="st">&quot;6.3.13&quot;</span>
+<span class="op">},</span>
+<span class="st">&quot;dependencies&quot;</span><span class="op">:</span> <span class="op">{</span>
+  <span class="st">&quot;babel-runtime&quot;</span><span class="op">:</span> <span class="st">&quot;6.3.19&quot;</span>
+<span class="op">}</span></code></pre></div>
+</div>
+</section>
+<section class="slide level6">
+
+<p>②ality – JavaScript and more</p>
+<p>www.2ality.com</p>
+</section>
+<section class="slide level6">
+
+<ul>
+<li>Stage 0: strawman</li>
+<li>Stage 1: proposal</li>
+<li>Stage 2: draft</li>
+<li>Stage 3: candidate</li>
+<li>Stage 4: finished</li>
+</ul>
+<p>http://www.2ality.com/2015/11/tc39-process.html</p>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode Makefile"><code class="sourceCode makefile"><span class="co"># Makefile</span>
+
+<span class="ot">.PHONY:</span><span class="dt"> all clean</span>
+
+<span class="dt">babel     </span><span class="ch">:=</span><span class="st"> node_modules/.bin/babel</span>
+<span class="dt">src_files </span><span class="ch">:=</span><span class="st"> </span><span class="ch">$(</span><span class="kw">shell</span><span class="st"> find . -name &#39;*.js.flow&#39; -not -path &#39;./node_modules/*&#39;</span><span class="ch">)</span>
+<span class="dt">out_files </span><span class="ch">:=</span><span class="st"> </span><span class="ch">$(</span><span class="kw">patsubst</span><span class="st"> %.js.flow</span><span class="kw">,</span><span class="st">%.js</span><span class="kw">,</span><span class="ch">$(</span><span class="dt">src_files</span><span class="ch">))</span>
+
+<span class="dv">all:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">out_files</span><span class="ch">)</span>
+
+<span class="dv">%.js:</span><span class="dt"> %.js.flow</span>
+    <span class="ch">$(</span><span class="dt">babel</span><span class="ch">)</span> <span class="ch">$&lt;</span> --out-file <span class="ch">$@</span>
+
+<span class="dv">clean:</span>
+    rm -f <span class="ch">$(</span><span class="dt">out_files</span><span class="ch">)</span></code></pre></div>
+</section>
+<section class="slide level6">
+
+<div class="sourceCode"><pre class="sourceCode Makefile"><code class="sourceCode makefile"><span class="co"># Makefile</span>
+
+<span class="ot">.PHONY:</span><span class="dt"> all clean watch</span>
+
+<span class="dt">src </span><span class="ch">:=</span><span class="st"> </span><span class="ch">$(</span><span class="kw">shell</span><span class="st"> find src</span><span class="ch">)</span>
+
+<span class="dv">all:</span><span class="dt"> </span><span class="ch">$(</span><span class="dt">src</span><span class="ch">)</span>
+  <span class="ch">$(</span><span class="dt">babel</span><span class="ch">)</span> src <span class="ch">\</span>
+    <span class="ch">-</span><span class="fu">-out-dir build </span><span class="ch">\</span>
+<span class="fu">    --source-maps</span>
+
+<span class="dv">watch:</span>
+  <span class="ch">$(</span><span class="dt">babel</span><span class="ch">)</span> src <span class="ch">\</span>
+    <span class="ch">-</span><span class="fu">-out-dir build </span><span class="ch">\</span>
+<span class="fu">    --source-maps </span><span class="ch">\</span>
+<span class="fu">    --watch</span>
+
+<span class="dv">clean:</span>
+    rm -rf build</code></pre></div>
+</section>
+<section class="slide level6">
+
+<pre><code>$ make</code></pre>
+<div class="fragment">
+<pre><code>$ find . -not -path &#39;./node_modules/*&#39; | entr -d make</code></pre>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/head.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Vertical centering of slides
+        center: true,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.0.0/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>

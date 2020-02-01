@@ -1,0 +1,221 @@
+---
+layout: deckjs-pygments
+title: "Initial thoughts on Ember.js"
+author: Jesse Hallett
+---
+
+<section class="slide">
+{% highlight html %}
+{% raw %}
+<!DOCTYPE html>
+<html>
+    <body>
+
+        <script type="text/x-handlebars">
+            <div class="navbar">
+              <div class="navbar-inner">
+                <a class="brand" href="#">Bloggr</a>
+                <ul class="nav">
+                  <li>{{#linkTo 'posts'}}Posts{{/linkTo}}</li>
+                  <li>{{#linkTo 'about'}}About{{/linkTo}}</li>
+                </ul>
+              </div>
+            </div>
+
+            {{outlet}}
+        </script>
+
+        <script type="text/x-handlebars" id="posts">
+            <!-- ... -->
+        </script>
+
+        <script type="text/x-handlebars" id="about">
+            <!-- ... -->
+        </script>
+
+        <!-- ... -->
+
+    </body>
+</html>
+{% endraw %}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{% highlight js %}
+App.Router.map(function() {
+  this.resource('posts', function() {
+    this.resource('post', { path: ':post_id' });
+  });
+  this.resource('about');
+});
+
+// http://myapp.com/#/posts
+// http://myapp.com/#/posts/1
+
+App.PostsRoute = Ember.Route.extend({
+  model: function() {
+    return App.Post.find();
+  }
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{% highlight html %}
+{% raw %}
+<script type="text/x-handlebars" id="posts">
+  <table class="table">
+    <tr><th>Recent Posts</th></tr>
+    {{#each model}}
+    <tr><td>
+      {{#linkTo 'post' this}}{{title}} <small class="muted">by {{author}}</small>{{/linkTo}}
+    </td></tr>
+    {{/each}}
+  </table>
+  <div class="span9">
+    {{outlet}}
+  </div>
+</script>
+
+<script type="text/x-handlebars" id="posts/index">
+  <p class="text-warning">Please select a post.</p>
+</script>
+
+<script type="text/x-handlebars" id="post">
+    <h1>{{title}}</h1>
+    <h2>by {{author}} <small class="muted">{{date publishedAt}}</small></h2>
+    <div>{{intro}}</div>
+    <div>{{extended}}</div>
+</script>
+{% endraw %}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{% highlight js %}
+App.Post = DS.Model.extend({
+  title: DS.attr('string'),
+  author: DS.attr('string'),
+  intro: DS.attr('string'),
+  extended: DS.attr('string'),
+  publishedAt: DS.attr('date')
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{% highlight html %}
+{% raw %}
+{{#if isEditing}}
+  {{partial 'post/edit'}}
+  <button class="btn" {{action 'doneEditing'}}>Done</button>
+{{else}}
+  <button class="btn" {{action 'edit'}}>Edit</button>
+{{/if}}
+{% endraw %}
+{% endhighlight %}
+
+{% highlight js %}
+App.PostController = Ember.ObjectController.extend({
+  isEditing: false,
+  edit: function() {
+    this.set('isEditing', true);
+  },
+  doneEditing: function (){
+    this.set('isEditing', false);
+    this.get('store').commit();
+  }
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{% highlight html %}
+{% raw %}
+<script type="text/x-handlebars" id="post/_edit">
+  <p>{{view Ember.TextField valueBinding='title'}}</p>
+  <p>{{view Ember.TextArea valueBinding='intro'}}</p>
+  <p>{{view Ember.TextArea valueBinding='extended'}}</p>
+</script>
+{% endraw %}
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{% highlight js %}
+App.IndexRoute = Ember.Route.extend({
+  redirect: function() {
+    this.transitionTo('posts');
+  }
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{% highlight js %}
+App.Store = DS.Store.extend({
+  revision: 12,
+  adapter: 'DS.FixtureAdapter'
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{% highlight js %}
+App.Store = DS.Store.extend({
+  revision: 12,
+  adapter: DS.RESTAdapter.extend({
+    url: 'http://localhost:3000'
+  })
+});
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{% highlight html %}
+<script src="js/libs/jquery-1.9.1.js"></script>
+<script src="js/libs/handlebars-1.0.0-rc.3.js"></script>
+<script src="js/libs/ember.js"></script>
+<script src="js/libs/ember-data.js"></script>
+<script src="js/app.js"></script>
+{% endhighlight %}
+</section>
+
+<section class="slide">
+<h2>example code</h2>
+<ul>
+    <li><a href="https://github.com/cmoel/tom_dale_ember_screencast">github.com/cmoel/tom_dale_ember_screencast</a>
+    <li><a href="http://emberjs.com/guides/">emberjs.com/guides/</a>
+</ul>
+</section>
+
+<section class="slide">
+{% highlight html %}
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="#">Bloggr</a>
+    <ul class="nav">
+      <li><a id="ember290" class="ember-view active" href="#/posts">Posts</a>
+      <li><a id="ember291" class="ember-view" href="#/about">About</a>
+    </ul>
+  </div>
+</div>
+
+<script id="metamorph-2-start" type="text/x-placeholder"></script>
+<script id="metamorph-0-start" type="text/x-placeholder"></script>
+<!-- outlet -->
+<script id="metamorph-0-end" type="text/x-placeholder"></script>
+<script id="metamorph-2-end" type="text/x-placeholder"></script>
+{% endhighlight %}
+</section>
+
+<section class="slide">
+{% highlight js %}
+if (window.history && window.history.pushState) {
+  App.Router.reopen({
+    location: 'history'
+  });
+}
+{% endhighlight %}
+</section>
