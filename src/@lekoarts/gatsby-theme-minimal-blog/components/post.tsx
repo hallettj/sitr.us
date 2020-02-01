@@ -52,7 +52,7 @@ const Post = ({
   }
 }: PostProps) => {
   const revisions = sortedRevisions(frontmatter.revisions)
-  const updated = revisions && revisions[0]?.date
+  const updated = revisions && revisions[revisions.length - 1]?.date
   return (
     <Layout>
       <SEO
