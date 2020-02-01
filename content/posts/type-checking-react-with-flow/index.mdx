@@ -35,7 +35,7 @@ When creating a component, be sure to provide type parameters in your class
 declaration to describe the types of your props, default props, and state.
 Here is a modified example from the React blog:
 
-{% highlight js %}
+```js
 import React from 'react'
 
 type Props = { initialCount: number }
@@ -60,7 +60,7 @@ export class Counter extends React.Component<DefaultProps,Props,State> {
 }
 Counter.propTypes = { initialCount: React.PropTypes.number }
 Counter.defaultProps = { initialCount: 0 }
-{% endhighlight %}
+```
 
 The parameter signature is `React.Component<DefaultProps,Props,State>`.
 This is not exactly documented;

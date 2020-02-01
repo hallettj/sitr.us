@@ -22,7 +22,7 @@ ES6 generators allow asynchronous code to be written in a way that looks
 synchronous.  This example uses a hypothetical library called Do (implementation
 below) that makes [promises][] work with generators:
 
-{% highlight js %}
+```js
 var postWithAuthor = Do(function*(id) {
     var post   = yield getJSON('/posts/'+id)
     var author = yield getJSON('/users/'+post.authorId)
@@ -33,7 +33,7 @@ Do(function*() {
     var post = yield postWithAuthor(3)
     console.log('Post written by', post.author.name)
 })()
-{% endhighlight %}
+```
 
 It is possible to use generators now in Node.js version 0.11 by using the
 `--harmony` flag.  Or you can use [Traceur][] to transpile ES6 code with
@@ -63,7 +63,7 @@ which are a lot like promises, except that callbacks on event streams can run
 more than once.  This example uses Bacon to manage a typeahead search feature in
 a web interface:
 
-{% highlight js %}
+```js
 var searchQueries = Do(function*(searchInput) {
     var inputs = $(searchInput).asEventStream('keyup change')
     var singleInputEvent = yield inputs
@@ -87,7 +87,7 @@ var resultView = Do(function*(searchInput, resultsElement) {
 })
 
 resultView('#search', '#results')
-{% endhighlight %}
+```
 
 The idea is that when the user enters more than two characters of text into
 a search box, a background request is dispatched and search results appear on
@@ -95,7 +95,7 @@ the page automatically.  This example requires a library that is a little more
 general than Co, that is able to operate on Bacon event streams in addition to
 promises and thunks.  Here is a basic implementation of that library:
 
-{% highlight js %}
+```js
 function Do(mkGen) {
     return function(/* arguments */) {
         var gen = mkGen.apply(null, arguments)
@@ -134,7 +134,7 @@ function flatMap(m, f, e) {
         throw new TypeError("No implementation of flatMap for this type of argument.")
     }
 }
-{% endhighlight %}
+```
 
 This is the function that makes the example at the top of this post work.  It is
 a simplified version of what Co does - the difference being that Do delegates to
@@ -156,7 +156,7 @@ require immutable, reentrant generators.  ES6 generators are stateful: every
 invocation of a generator changes the way that it will behave on the next
 invocation.  In other words, a generated is mutated on every invocation:
 
-{% highlight js %}
+```js
 var gen = function*() {
     yield 1
     yield 2
@@ -169,12 +169,12 @@ assert(g.next().value === 1)
 assert(g.next().value === 1)
 assert(g.next().value === 3)
 assert(g.next().value === undefined)
-{% endhighlight %}
+```
 
 An immutable implementation would return a new object with a function for the
 next generator entry point, instead of mutating the original generator:
 
-{% highlight js %}
+```js
 var g  = gen()
 var g1 = g.next()
 assert(g1.value === 1)
@@ -186,22 +186,22 @@ assert(g3.value === 3)
 // We can go back to previous entry points.
 assert(g1.next().value === 2)
 assert(g.next().value === 1)
-{% endhighlight %}
+```
 
 An immutable generator could be implemented with some simple syntactic
 transforms.  The basic case:
 
-{% highlight js %}
+```js
 function*(args...) {
     preceding_statements
     var y = yield x
     following_statements
 }
-{% endhighlight %}
+```
 
 would transform to:
 
-{% highlight js %}
+```js
 function(args...) {
     preceding_statements
     return {
@@ -211,7 +211,7 @@ function(args...) {
         }
     }
 }
-{% endhighlight %}
+```
 
 The `next` property is returned is a generator that is used to invoke the next
 step.  In this view generators are just functions.  Not only that - a generator
@@ -227,7 +227,7 @@ generators by using loops in the generators.  This approach is not as general or
 as composable.  Asynchronous pieces would have to be declared specially at the
 top of the function, for example.
 
-{% highlight js %}
+```js
 var searchQueries = function(searchInput) {
     var inputs = $(searchInput).asEventStream('keyup change') 
     frp(inputs, function*(inputs_) {
@@ -246,7 +246,7 @@ var searchQueries = function(searchInput) {
         }
     })
 }
-{% endhighlight %}
+```
 
 Notice that `yield` is overloaded to accept asynchronous values and to return
 results - which requires some awkward logic to inspect generator values.

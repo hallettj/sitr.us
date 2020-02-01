@@ -44,7 +44,7 @@ In jQuery's terms a promise is a read-only view of a deferred.
 
 Here is a simple example of creating and then resolving a promise:
 
-{% highlight js %}
+```js
 function fooPromise() {
     var deferred = $.Deferred();
 
@@ -54,14 +54,14 @@ function fooPromise() {
 
     return deferred.promise();
 }
-{% endhighlight %}
+```
 
 Callbacks can be added to a deferred or a promise using the `.then()`
 method.  The first callback is called on success, the second on failure:
 
 <!-- more -->
 
-{% highlight js %}
+```js
 fooPromise().then(
     function(value) {
         // prints "foo" after 1 second
@@ -69,7 +69,7 @@ fooPromise().then(
     },
     function() { console.log("something went wrong"); }
 );
-{% endhighlight %}
+```
 
 For more information see the
 [jQuery Deferred documentation][jQuery Deferreds].
@@ -92,7 +92,7 @@ have to download data on the post, get the author id, and then make
 another request to get data for the author.  To start with you will want
 functions for downloading a post and a user:
 
-{% highlight js %}
+```js
 function getPost(id) {
     return $.getJSON('/posts/'+ id).then(function(data, status, xhr) {
         return data;
@@ -104,7 +104,7 @@ function getUser(id) {
         return data;
     });
 }
-{% endhighlight %}
+```
 
 In jQuery 1.5 and later all ajax methods return a promise that, on
 a successful request, resolves with the data in the response, the
@@ -123,7 +123,7 @@ works the same way for posts and post ids.
 
 Now, to fetch that author information:
 
-{% highlight js %}
+```js
 function authorForPost(id) {
     var postPromise = getPost(id),
         deferred = $.Deferred();
@@ -138,7 +138,7 @@ function authorForPost(id) {
 
     return deferred.promise();
 }
-{% endhighlight %}
+```
 
 When `authorForPost()` is called it returns a new promise that resolves
 with author information after both the post and author requests complete
@@ -154,14 +154,14 @@ Though it does not implement error handling; and it could be more
 Let's say that you want to fetch two user profiles to display
 side-by-side.  Using the `getUser()` function from the previous section:
 
-{% highlight js %}
+```js
 function getTwoUsers(idA, idB) {
     var userPromiseA = getUser(idA),
         userPromiseB = getUser(idB);
 
     return $.when(userPromiseA, userPromiseB);
 }
-{% endhighlight %}
+```
 
 The requests for userA and userB's profiles will be made in parallel so
 that you can get the results back as quickly as possible.  This function
@@ -173,12 +173,12 @@ the first failed request.
 
 You might use `getTwoUsers()` like this:
 
-{% highlight js %}
+```js
 getTwoUsers(1002, 1008).then(function(userA, userB) {
     $(render(userA)).appendTo('#users');
     $(render(userB)).appendTo('#users');
 });
-{% endhighlight %}
+```
 
 The `getTwoUsers()` promise resolves with two values, one for each
 profile.
@@ -195,7 +195,7 @@ value.
 
 Performing an arbitrary number of actions in parallel is similar:
 
-{% highlight js %}
+```js
 function getPosts(ids) {
     var postPromises = ids.map(getPost);
 
@@ -203,7 +203,7 @@ function getPosts(ids) {
         return $.makeArray(arguments);
     });
 }
-{% endhighlight %}
+```
 
 This code fetches any number of posts in parallel.  I used `apply` to
 pass the post promises to `$.when()` as though they are each a separate
@@ -219,11 +219,11 @@ Let's take the previous examples to their logical conclusion by creating
 a function that, given two post ids, will download information about the
 authors of each post to display them side-by-side.  No problem!
 
-{% highlight js %}
+```js
 function getAuthorsForTwoPosts(idA, idB) {
     return $.when(authorForPost(idA), authorForPost(idB));
 }
-{% endhighlight %}
+```
 
 From the perspective of a function that calls `authorForPost()`, it does
 not matter that two sequential requests are made.  Because
@@ -243,7 +243,7 @@ does a nice job of generalizing synchronizing multiple promises.  What
 we need is a function that does a similar job of generalizing flattening
 nested promises.  Meet flatMap:
 
-{% highlight js %}
+```js
 $.flatMap = function(promise, f) {
     var deferred = $.Deferred();
 
@@ -264,7 +264,7 @@ $.flatMap = function(promise, f) {
 
     return deferred.promise();
 };
-{% endhighlight %}
+```
 
 This function takes a promise and a callback that returns another
 promise.  When the first promise resolves, `$.flatMap()` invokes the
@@ -278,13 +278,13 @@ promise that `$.flatMap()` returns will fail with the same values.
 Using `$.flatMap()` it is possible to write a function like
 `authorForPost()` a bit more succinctly:
 
-{% highlight js %}
+```js
 function authorForPost(id) {
     return $.flatMap(getPost(id), function(post) {
         return getUser(post.authorId);
     });
 }
-{% endhighlight %}
+```
 
 By using `$.flatMap()` you also get error handling for free.  If the
 request to fetch a post fails or the request to fetch the post's author
@@ -296,7 +296,7 @@ access to any of the information on the posts that it downloads.  You
 can combine `$.flatMap()` and `.then()` to create a slightly different
 function that exposes both the post and the author:
 
-{% highlight js %}
+```js
 function postWithAuthor(id) {
     return $.flatMap(getPost(id), function(post) {
         return getUser(post.authorId).then(function(author) {
@@ -304,7 +304,7 @@ function postWithAuthor(id) {
         });
     });
 }
-{% endhighlight %}
+```
 
 The promise that `postWithAuthor()` returns resolves to a post object
 with an added author property containing author information.
@@ -315,7 +315,7 @@ This is the sort of thing that only a dynamic language like JavaScript
 can do.  So if you want to skip the custom function, you could write
 `postWithAuthor()` like this:
 
-{% highlight js %}
+```js
 function postWithAuthor(id) {
     return getPost(id).then(function(post) {
         return getUser(post.authorId).then(function(author) {
@@ -323,7 +323,7 @@ function postWithAuthor(id) {
         });
     });
 }
-{% endhighlight %}
+```
 
 
 ## Other uses for promises
@@ -335,7 +335,7 @@ code from time to time.
 Here is an example of a promise used to represent the outcome of
 a series of user interactions:
 
-{% highlight js %}
+```js
 function getRegistrationDetails() {
     var detailsPromise = openModal($.get('/registrations'));
 
@@ -379,7 +379,7 @@ $(document).ready(function() {
         getRegistrationDetails();
     });
 });
-{% endhighlight %}
+```
 
 I suggest considering using promises anywhere you would otherwise pass
 a callback as an argument.
@@ -451,7 +451,7 @@ it teaches you Haskell.
 Those who are already into category theory will note that `$.flatMap()`
 could also be defined in terms of `.then()` and a `$.join()` function:
 
-{% highlight js %}
+```js
 $.flatMap = function(promise, f) {
     return $.join(promise.then(f));
 };
@@ -473,7 +473,7 @@ $.join = function(promise) {
 
     return deferred.promise();
 };
-{% endhighlight %}
+```
 
 Except that this won't actually work because `.then()` will join the
 inner and outer promises before the result is passed to `$.join()`.

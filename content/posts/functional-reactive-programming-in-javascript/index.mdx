@@ -29,7 +29,7 @@ Here is an example of using FRP to subscribe to changes to a text input.
 This creates an event stream that could be used for a typeahead search
 feature:
 
-{% highlight js %}
+```js
 var inputs = $('#search')
     .asEventStream('keyup change')
     .map(function(event) { return event.target.value; })
@@ -38,7 +38,7 @@ var inputs = $('#search')
 var throttled = inputs.throttle(500 /* ms */);
 
 var distinct = throttled.skipDuplicates();
-{% endhighlight %}
+```
 
 This creates an event stream from all `keyup` and `change` events on the
 given input.  The stream is transformed into a stream of strings matching
@@ -60,7 +60,7 @@ will not occur too frequently, and 3) will not include duplicates.
 That stream can be fed through a service via ajax calls to show a live
 list of results:
 
-{% highlight js %}
+```js
 function searchWikipedia(term) {
     var url = '//en.wikipedia.org/w/api.php?callback=?';
     return $.getJSON(url, {
@@ -83,7 +83,7 @@ suggestions.onValue(function(data) {
         $('<li>').text(s).appendTo($results);
     });
 });
-{% endhighlight %}
+```
 
 Here `suggestions` is a new stream that has been transformed from
 strings to search results using the `searchWikipedia` function.  All
@@ -104,13 +104,13 @@ results that is updated live as the user types.
 There are some other tricks available.  It is possible to bind data from
 an event stream to a DOM element:
 
-{% highlight js %}
+```js
 var query = suggestions.map(function(data) {
     return data.query;
 }).toProperty('--');
 
 query.assign($('#query'), 'text');
-{% endhighlight %}
+```
 
 This creates a new stream that is pared down to just the query used to
 produce each set of results.  Whenever a result set is rendered the

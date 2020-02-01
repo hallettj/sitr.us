@@ -46,20 +46,20 @@ appropriate.
 <!-- more -->
 This example comes from the announcement post:
 
-{% highlight js %}
+```js
 function length(x) {
   return x.length;
 }
 
 var total = length('Hello') + length(null);
 // Type error: x might be null
-{% endhighlight %}
+```
 
 The presence of a use of `length` with a `null` argument informs Flow that there
 should be a null check in that function.
 This version does type-check:
 
-{% highlight js %}
+```js
 function length(x) {
   if (x) {
     return x.length;
@@ -69,7 +69,7 @@ function length(x) {
 }
 
 var total = length('Hello') + length(null);
-{% endhighlight %}
+```
 
 Flow is able to infer that `x` cannot be `null` inside the `if` body.
 
@@ -79,13 +79,13 @@ That would cause Flow to infer a non-nullable type for `x`.
 
 This capability goes further - here is an example from the Flow documentation:
 
-{% highlight js %}
+```js
 var o = null;
 if (o == null) {
   o = 'hello';
 }
 print(o.length);
-{% endhighlight %}
+```
 
 The type of `o` is initially `null`.
 But Flow is able to determine that the type of `o` changes when `o` is
@@ -96,7 +96,7 @@ In addition to null checks,
 Flow also narrows types when it sees dynamic type checks.
 This example (which passes the type checker) comes from the documentation:
 
-{% highlight js %}
+```js
 function foo(b) { if (b) { return 21; } else { return ''; } }
 function bar(b) {
   var x = foo(b);
@@ -105,7 +105,7 @@ function bar(b) {
   return 0;
 }
 var n = bar(1) * bar(2);
-{% endhighlight %}
+```
 
 The inferred return type of `foo` is `string | number`.
 That is a type union,
@@ -123,7 +123,7 @@ and be assured that the rest of the program is using the new object format
 correctly.
 Struct types work using structural types and type aliases:
 
-{% highlight js %}
+```js
 type Point = { x: number; y: number }
 
 function mkPoint(x, y): Point {
@@ -139,7 +139,7 @@ q.z = 4
 
 var r: Point = { x: 5 }
 // Type error: property y not found in object literal
-{% endhighlight %}
+```
 
 Notice the `type` keyword and type annotation on `mkPoint` -
 Facebook's literature is a little misleading,
@@ -189,7 +189,7 @@ object-oriented language.
 
 For example:
 
-{% highlight js %}
+```js
 var n: Object = null;
 // Type error: null is incompatible with object type
 
@@ -198,7 +198,7 @@ var m: ?Object = null;
 
 var o = null;
 // this is ok too - Flow infers that o has a nullable type
-{% endhighlight %}
+```
 
 A type expression `?T` behaves pretty much like `T | null | undefined`.
 (From what I can tell, `null` and `undefined` are distinct types in Flow -
@@ -213,7 +213,7 @@ That is possible too - here is an example that I wrote:
 
 [algebraic types]: https://en.wikipedia.org/wiki/Algebraic_data_type
 
-{% highlight js %}
+```js
 type Tree<T> = Node<T> | EmptyTree
 
 class Node<T> {
@@ -248,7 +248,7 @@ function find<T>(predicate: (v: T) => boolean, tree: Tree<T>): T | void {
     return undefined;
   }
 }
-{% endhighlight %}
+```
 
 Thanks to type narrowing, accessing `tree.value` passes type-checking in the
 `if` body where `tree instanceof Node` is true.

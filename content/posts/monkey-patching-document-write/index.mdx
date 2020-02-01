@@ -25,7 +25,7 @@ The workaround we went with was to disable `document.write()` after page
 load by replacing it with a wrapper that checks whether the jQuery ready
 event has fired.
 
-{% highlight js %}
+```js
 (function() {
     var originalWrite = document.write;
     document.write = function() {
@@ -43,7 +43,7 @@ event has fired.
         }
     }
 })();
-{% endhighlight %}
+```
 
 The new implementation checks the value of `jQuery.isReady` and
 delegates to the original `document.write()` implementation if the page
@@ -61,9 +61,9 @@ A particular problem came up with IE compatibility.  I wanted to use the
 `apply` method that is implemented by all functions in JavaScript to
 invoke the original `document.write()` implementation, like this:
 
-{% highlight js %}
+```js
 return originalWrite.apply(document, arguments);
-{% endhighlight %}
+```
 
 But in older versions of Internet Explorer, `document.write()` is not
 really a function.  There are a lot of examples in IE of native API
@@ -81,24 +81,24 @@ on function-like values like `document.write`.  `call` and `apply` are
 themselves real function values - so `call` and `apply` both implement
 `call` and `apply`.  
 
-{% highlight js %}
+```js
 typeof Function.prototype.apply.apply.apply  // evaluates to 'function'
 typeof Function.prototype.apply.call.call  // evaluates to 'function'
-{% endhighlight %}
+```
 
 In the workaround above I applied `apply` to `document.write` by taking
 the `Function.prototype.apply` value and using its `call` method.  So
 this expression,
 
-{% highlight js %}
+```js
 Function.prototype.apply.call(originalWrite, document, arguments);
-{% endhighlight %}
+```
 
 is equivalent to this one,
 
-{% highlight js %}
+```js
 originalWrite.apply(document, arguments);
-{% endhighlight %}
+```
 
 Except that the first version works in IE7.
 
