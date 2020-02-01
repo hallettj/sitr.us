@@ -5,6 +5,7 @@ import React from "react"
 import Layout from "@lekoarts/gatsby-theme-minimal-blog/src/components/layout"
 import ItemTags from "@lekoarts/gatsby-theme-minimal-blog/src/components/item-tags"
 import SEO from "@lekoarts/gatsby-theme-minimal-blog/src/components/seo"
+import { Revisions } from "../../../components/revisions"
 import { sortedRevisions } from "../../../models/revision"
 
 type PostProps = {
@@ -95,6 +96,9 @@ const Post = ({
         }}
       >
         <MDXRenderer headings={headings}>{post.body}</MDXRenderer>
+        <footer>
+          <Revisions revisions={revisions} />
+        </footer>
       </section>
     </Layout>
   )
