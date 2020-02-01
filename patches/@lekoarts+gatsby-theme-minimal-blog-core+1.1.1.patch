@@ -1,17 +1,18 @@
 diff --git a/node_modules/@lekoarts/gatsby-theme-minimal-blog-core/gatsby-config.js b/node_modules/@lekoarts/gatsby-theme-minimal-blog-core/gatsby-config.js
-index 021fae0..76eebc2 100755
+index 021fae0..1792db4 100755
 --- a/node_modules/@lekoarts/gatsby-theme-minimal-blog-core/gatsby-config.js
 +++ b/node_modules/@lekoarts/gatsby-theme-minimal-blog-core/gatsby-config.js
-@@ -1,3 +1,4 @@
+@@ -1,3 +1,5 @@
++const remarkAbbr = require(`remark-abbr`)
 +const remarkSlug = require(`remark-slug`)
  const withDefaults = require(`./utils/default-options`)
  
  module.exports = themeOptions => {
-@@ -50,6 +51,7 @@ module.exports = themeOptions => {
+@@ -50,6 +52,7 @@ module.exports = themeOptions => {
                },
              },
            ],
-+          remarkPlugins: [remarkSlug],
++          remarkPlugins: [remarkAbbr, remarkSlug],
          },
        },
        `gatsby-transformer-sharp`,

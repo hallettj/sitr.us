@@ -1,13 +1,8 @@
 ---
+layout: post
 title: "Category Theory proofs in Idris"
-author: Jesse Hallett
-date: 2014-05-05
-slug: /2014/05/05/category-theory-proofs-in-idris.html
+date: 2014-05-04
 comments: true
-tags:
-  - type theory
-  - functional programming
-  - Idris
 ---
 
 [Idris][] is a programming language with dependent types.
@@ -39,8 +34,6 @@ dependent types can express quantification
 (i.e., the mathematical concepts of universal quantification (∀) and existential quantification (∃)).
 This makes it possible to translate a lot of interesting math into machine-verified code.
 
-<!-- more -->
-
 This post is written in literate Idris.
 The [original markup][] can be compiled and type-checked.
 Code blocks that are prefixed with greater-than symbols (>) in the markup are evaluated.
@@ -49,28 +42,24 @@ are given for illustrative purposes and are not evaluated.
 
 [original markup]: /Cat.lidr
 
-```idris
-module Cat
-
-import Control.Isomorphism
-import Data.Morphisms
-```
+> module Cat
+>
+> import Control.Isomorphism
+> import Data.Morphisms
 
 In Idris, partial functions are allowed by default.
 A totality requirement can be specified per-function.
 This line enforces totality checking by default for functions in this module.
 
-```idris
-%default total
-```
+> %default total
 
 A function that is *total* is guaranteed to terminate
-and to return a well-typed output for every possible input.[^1]
+and to return a well-typed output for every possible input.[^totality]
 A function that does not terminate,
 or that throws a runtime error for some inputs,
 is said to be *partial*.
 
-[^1]: The [Halting Problem][] states that there are programs that cannot be proven to terminate.  That does not mean that it is impossible to prove that any program terminates.  Idris and other languages with totality checking put some restrictions on the forms that functions are allowed to take so that totality checking is possible.
+[^totality]: The [Halting Problem][] states that there are programs that cannot be proven to terminate.  That does not mean that it is impossible to prove that any program terminates.  Idris and other languages with totality checking put some restrictions on the forms that functions are allowed to take so that totality checking is possible.
 
 [Halting Problem]: http://en.wikipedia.org/wiki/Halting_problem
 
@@ -82,7 +71,7 @@ So totality checking is useful for theorem proving.
 
 Consider the definition of the natural number type in the Idris standard library:
 
-```idris
+``` idris
 data Nat = Z | S Nat
 ```
 
@@ -96,7 +85,7 @@ That describes a type produced by a type constructor
 that takes one or more values as parameters.
 Here is a constructor for indexed types from the Idris standard library:
 
-```idris
+``` idris
 data LTE  : (n, m : Nat) -> Type where
   lteZero : LTE Z    right
   lteSucc : LTE left right -> LTE (S left) (S right)
@@ -124,9 +113,7 @@ Given the definition of `LTE` it is possible to write a proposition,
 such as,
 "zero is less than or equal to every natural number".
 
-```idris
-nonNegative : (n : Nat) -> LTE Z n
-```
+> nonNegative : (n : Nat) -> LTE Z n
 
 The proposition is written as a function that takes a number as input.
 The _value_ that is given is assigned to the variable `n`,
@@ -148,19 +135,15 @@ Thus a type of the form,
 `nonNegative` happens to be a restatement of the axiom, `lteZero`.
 So an implementation / proof is trivial:
 
-```idris
-nonNegative n = lteZero
-```
+> nonNegative n = lteZero
 
 On the other hand, `lteSucc` maps a given proof to a proof of a related proposition.
 It is used in proofs-by-induction.
 For example, a proof that every number is less than or equal to itself:
 
-```idris
-lteReflexive : (n : Nat) -> LTE n n
-lteReflexive Z     = lteZero
-lteReflexive (S n) = lteSucc (lteReflexive n)
-```
+> lteReflexive : (n : Nat) -> LTE n n
+> lteReflexive Z     = lteZero
+> lteReflexive (S n) = lteSucc (lteReflexive n)
 
 The proof that zero is equal to itself is given by the axiom.
 For every other number, the proof is given as an inductive step
@@ -190,10 +173,8 @@ a pair of an arbitrary value and a proof that the proposition holds for that val
 For example, here is a proof of the Archimedean Property of natural numbers,
 "For every natural number, n, there exists a natural number, m, where m > n":
 
-```idris
-archimedean : (n : Nat) -> (m : Nat ** LTE (S n) m)
-archimedean n = (S n ** lteReflexive (S n))
-```
+> archimedean : (n : Nat) -> (m : Nat ** LTE (S n) m)
+> archimedean n = (S n ** lteReflexive (S n))
 
 The quantified proposition uses `(S n)` instead of just `n`
 to indicate that `m` must be strictly greater than `n` -
@@ -232,9 +213,7 @@ about what objects are and what arrows are.
 
 Let's implement a type class to capture this definition.
 
-```idris
-class Category obj (arr : obj -> obj -> Type) where
-```
+> class Category obj (arr : obj -> obj -> Type) where
 
 Arrows are indexed by objects.
 That is, the type of an arrow carries its domain
@@ -250,9 +229,7 @@ For starters, there must be an id arrow for every object.
 This line specifies that an instance of this type class must provide
 a `cId` implementation with the given type:
 
-```idris
-  cId   : (a : obj) -> arr a a
-```
+>   cId   : (a : obj) -> arr a a
 
 As was shown above,
 a function type serves as a proposition with universal quantification.
@@ -266,9 +243,7 @@ and another arrow points from 'b' to 'c',
 then it must be possible to combine them
 to produce an arrow from 'a' to 'c'.
 
-```idris
-  cComp : {a, b, c : obj} -> arr b c -> arr a b -> arr a c
-```
+>   cComp : {a, b, c : obj} -> arr b c -> arr a b -> arr a c
 
 Arguments in curly braces are implicit parameters.
 In most cases the compiler will infer those values.
@@ -278,7 +253,7 @@ However, it is possible to provide implicit parameters explicitly when needed.
 `cId` and `cComp` are the only required functions that actually produce arrows.
 But it is necessary to provide more specific rules about how they should behave.
 
-```idris
+``` idris
   cIdLeft  : {a, b : obj} -> (f : arr a b) -> cId b `cComp` f     = f
   cIdRight : {a, b : obj} -> (f : arr a b) ->     f `cComp` cId a = f
 ```
@@ -292,7 +267,7 @@ they are just proofs that `cId` and `cComp` obey the category laws.
 Here `(=)` is a type constructor, very much like `LTE`.
 Its definition looks like this:
 
-```idris
+``` idris
 data (=) : a -> b -> Type where
   refl : x = x
 ```
@@ -315,7 +290,7 @@ some will have at most one.
 One more proof is required to complete the `Category` type class.
 Arrow composition must be associative.
 
-```idris
+``` idris
   cCompAssociative : (f : arr a b) -> (g : arr b c) -> (h : arr c d) ->
                      h `cComp` (g `cComp` f) = (h `cComp` g) `cComp` f
 ```
@@ -328,14 +303,12 @@ I actually had to list out the implicit parameters
 when applying `cComp` in a type expression.
 The working definitions are a bit more difficult to read:
 
-```idris
-  cIdLeft  : {a, b : obj} -> (f : arr a b) -> cComp {a=a} {b=b} {c=b} (cId b) f = f
-  cIdRight : {a, b : obj} -> (f : arr a b) -> cComp {a=a} {b=a} {c=b} f (cId a) = f
-
-  cCompAssociative : (f : arr a b) -> (g : arr b c) -> (h : arr c d) ->
-                     cComp {a=a} {b=c} {c=d} h (cComp {a=a} {b=b} {c=c} g f) =
-                       cComp {a=a} {b=b} {c=d} (cComp {a=b} {b=c} {c=d} h g) f
-```
+>   cIdLeft  : {a, b : obj} -> (f : arr a b) -> cComp {a=a} {b=b} {c=b} (cId b) f = f
+>   cIdRight : {a, b : obj} -> (f : arr a b) -> cComp {a=a} {b=a} {c=b} f (cId a) = f
+>
+>   cCompAssociative : (f : arr a b) -> (g : arr b c) -> (h : arr c d) ->
+>                      cComp {a=a} {b=c} {c=d} h (cComp {a=a} {b=b} {c=c} g f) =
+>                        cComp {a=a} {b=b} {c=d} (cComp {a=b} {b=c} {c=d} h g) f
 
 It has been pointed out to me that the compiler is not able to determine
 which implementation of `cidLeft`, `cIdRight`, or `cCompAssociative` should be invoked,
@@ -358,11 +331,9 @@ there are arrows that point from each number
 to every other number that is larger,
 and also back to the number itself.
 
-```idris
-instance Category Nat LTE where
-  cId Z     = lteZero
-  cId (S n) = lteSucc (cId n)
-```
+> instance Category Nat LTE where
+>   cId Z     = lteZero
+>   cId (S n) = lteSucc (cId n)
 
 An id arrow in this category is a proof that a number is less than or equal to itself.
 This is the same thing that was proved by `lteReflexive`;
@@ -371,16 +342,14 @@ so the implementation is the same.
 Arrow composition is a proof that the less-than-or-equal-to relation is transitive.
 For reference, here is the type for `cComp` specialized for `LTE`:
 
-```idris
+``` idris
   cComp : {a, b, c : Nat} -> LTE b c -> LTE a b -> LTE a c
 ```
 
 And the proof construction:
 
-```idris
-  cComp _ lteZero = lteZero
-  cComp (lteSucc f) (lteSucc g) = lteSucc (cComp f g)
-```
+>   cComp _ lteZero = lteZero
+>   cComp (lteSucc f) (lteSucc g) = lteSucc (cComp f g)
 
 In the first equation, the second input is `lteZero`;
 which implies that `a` is zero.
@@ -397,7 +366,7 @@ and the type checker is able to confirm that.
 If it were necessary to make explicit that this case is not possible,
 that could be stated with a third equation:
 
-```idris
+``` idris
   cComp lteZero (lteSucc g) impossible
 ```
 
@@ -405,13 +374,11 @@ The keyword `impossible` is one tool available for proofs of falsehood.
 
 Now to prove the remaining category laws.
 
-```idris
-  cIdLeft lteZero     = refl
-  cIdLeft (lteSucc f) = cong (cIdLeft f)
-
-  cIdRight lteZero     = refl
-  cIdRight (lteSucc f) = cong (cIdRight f)
-```
+>   cIdLeft lteZero     = refl
+>   cIdLeft (lteSucc f) = cong (cIdLeft f)
+>
+>   cIdRight lteZero     = refl
+>   cIdRight (lteSucc f) = cong (cIdRight f)
 
 Demonstrating identity under composition of proofs is a little strange.
 What we need to show is that composing an identity arrow with any other arrow
@@ -427,7 +394,7 @@ The inductive step applies `cong`,
 which is a proof of congruence of equal expressions.
 It is defined in the standard library:
 
-```idris
+``` idris
 cong : {f : t -> u} -> (a = b) -> f a = f b
 cong refl = refl
 ```
@@ -448,11 +415,9 @@ so the identity arrow involved could be some `lteSucc` value.
 However the compiler is able to do some normalization automatically.
 That means that it is not necessary to spell out every step.
 
-```idris
-  cCompAssociative lteZero _ _ = refl
-  cCompAssociative (lteSucc f') (lteSucc g') (lteSucc h') =
-    cong $ cCompAssociative f' g' h'
-```
+>   cCompAssociative lteZero _ _ = refl
+>   cCompAssociative (lteSucc f') (lteSucc g') (lteSucc h') =
+>     cong $ cCompAssociative f' g' h'
 
 The proof of associativity follows a similar pattern.
 
@@ -482,10 +447,8 @@ Those indexes will not be meaningful in a category with just one object.
 But for the sake of generality,
 a trivial higher-kinded wrapper around `Nat` is needed.
 
-```idris
-data NatArrow : () -> () -> Type where
-  getNat : Nat -> NatArrow () ()
-```
+> data NatArrow : () -> () -> Type where
+>   getNat : Nat -> NatArrow () ()
 
 In Idris, as in Haskell,
 `()` is a type with exactly one value,
@@ -494,21 +457,19 @@ which is also called `()`.
 To make it clear that a `NatArrow` is really just a `Nat`,
 we can prove that the two types are isomorphic.
 
-```idris
-isoNatNatArrow : Iso Nat (NatArrow () ())
-isoNatNatArrow = MkIso to from toFrom fromTo where
-  to : Nat -> NatArrow () ()
-  to = getNat
-
-  from : NatArrow () () -> Nat
-  from (getNat n) = n
-
-  toFrom : (y : NatArrow () ()) -> to (from y) = y
-  toFrom (getNat y) = refl
-
-  fromTo : (x : Nat) -> from (to x) = x
-  fromTo x = refl
-```
+> isoNatNatArrow : Iso Nat (NatArrow () ())
+> isoNatNatArrow = MkIso to from toFrom fromTo where
+>   to : Nat -> NatArrow () ()
+>   to = getNat
+>
+>   from : NatArrow () () -> Nat
+>   from (getNat n) = n
+>
+>   toFrom : (y : NatArrow () ()) -> to (from y) = y
+>   toFrom (getNat y) = refl
+>
+>   fromTo : (x : Nat) -> from (to x) = x
+>   fromTo x = refl
 
 An isomorphism is a bidirectional mapping that preserves information in both directions.
 `to` and `from` specify the mapping;
@@ -516,16 +477,14 @@ An isomorphism is a bidirectional mapping that preserves information in both dir
 
 Now the definition of the Nat category:
 
-```idris
-instance Category () NatArrow where
-  cId () = getNat 0
-  cComp (getNat f) (getNat g) = getNat (f + g)
-
-  cIdLeft  (getNat f) = cong (plusZeroLeftNeutral  f)
-  cIdRight (getNat f) = cong (plusZeroRightNeutral f)
-  cCompAssociative (getNat f) (getNat g) (getNat h) =
-    cong (plusAssociative h g f)
-```
+> instance Category () NatArrow where
+>   cId () = getNat 0
+>   cComp (getNat f) (getNat g) = getNat (f + g)
+>
+>   cIdLeft  (getNat f) = cong (plusZeroLeftNeutral  f)
+>   cIdRight (getNat f) = cong (plusZeroRightNeutral f)
+>   cCompAssociative (getNat f) (getNat g) (getNat h) =
+>     cong (plusAssociative h g f)
 
 This implementation uses `(+)` for arrow composition.
 It reuses proofs of identity and associativity for `(+)`.
@@ -557,9 +516,7 @@ and check what its outputs are.
 To produce a viable category, it is necessary to introduce
 the axiom of *function extensionality*:
 
-```idris
-funext : (f, g : a -> b) -> ((x : a) -> f x = g x) -> f = g
-```
+> funext : (f, g : a -> b) -> ((x : a) -> f x = g x) -> f = g
 
 If two functions produce the same output for all possible inputs,
 then they are equivalent.
@@ -575,9 +532,7 @@ I am told that it is not possible to prove `funext` in Idris -
 and that that limitation is not unique to Idris.
 Therefore, function extensionality must be given as an axiom:
 
-```idris
-funext f g = believe_me
-```
+> funext f g = believe_me
 
 `believe_me` is a "proof" to use sparingly.
 
@@ -588,63 +543,55 @@ with a predefined `Category` type class.
 But that definition does not include all of the category laws.
 What remains to be defined are proofs of identity and associativity.
 
-```idris
-leftIdPoint : (f : a -> b) -> (x : a) -> id (f x) = f x
-leftIdPoint f x = refl
-
-rightIdPoint : (f : a -> b) -> (x : a) -> f (id x) = f x
-rightIdPoint f x = refl
-```
+> leftIdPoint : (f : a -> b) -> (x : a) -> id (f x) = f x
+> leftIdPoint f x = refl
+>
+> rightIdPoint : (f : a -> b) -> (x : a) -> f (id x) = f x
+> rightIdPoint f x = refl
 
 Proving that `id (f x)` and `f (id x)` reduce to `f x`
 is sufficiently easy that the compiler can do most of the work on its own.
 To make the next step to `f x = f x -> f = f`
 is just a matter of applying `funext`.
 
-```idris
-leftId : (f : a -> b) -> id . f = f
-leftId f = funext (id . f) f $ leftIdPoint f
-
-rightId : (f : a -> b) -> f . id = f
-rightId f = funext (f . id) f $ rightIdPoint f
-```
+> leftId : (f : a -> b) -> id . f = f
+> leftId f = funext (id . f) f $ leftIdPoint f
+>
+> rightId : (f : a -> b) -> f . id = f
+> rightId f = funext (f . id) f $ rightIdPoint f
 
 In order to prove associativity, it is helpful to have a helper proof
 that could be described as, "pointful composition".
 
-```idris
-compPoint : (f : b -> c) -> (g : a -> b) -> (x : a) -> f (g x) = (f . g) x
-compPoint f g x = refl
-```
+> compPoint : (f : b -> c) -> (g : a -> b) -> (x : a) -> f (g x) = (f . g) x
+> compPoint f g x = refl
 
 The proof of associativity is a bit complicated.
 So it is broken into steps here,
 with proven intermediate propositions given for each step.
 
-```idris
-compAssociative : (f : a -> b) -> (g : b -> c) -> (h : c -> d) ->
-                  h . (g . f) = (h . g) . f
-compAssociative f g h = qed where
-  step_1   : (x : _) -> h ((g . f) x) = (h . (g . f)) x
-  step_1   = compPoint h (g . f)
-
-  step_2   : (x : _) -> (h . (g . f)) x = h ((g . f) x)
-  step_2 x = sym (step_1 x)
-
-  step_3   : (x : _) -> (h . g) (f x) = ((h . g) . f) x
-  step_3   = compPoint (h . g) f
-
-  step_4   : (x : _) -> (h . (g . f)) x = ((h . g) . f) x
-  step_4 x = trans (step_2 x) (step_3 x)
-
-  qed      : h . (g . f) = (h . g) . f
-  qed      = funext (h . (g . f)) ((h . g) . f) step_4
-```
+> compAssociative : (f : a -> b) -> (g : b -> c) -> (h : c -> d) ->
+>                   h . (g . f) = (h . g) . f
+> compAssociative f g h = qed where
+>   step_1   : (x : _) -> h ((g . f) x) = (h . (g . f)) x
+>   step_1   = compPoint h (g . f)
+>
+>   step_2   : (x : _) -> (h . (g . f)) x = h ((g . f) x)
+>   step_2 x = sym (step_1 x)
+>
+>   step_3   : (x : _) -> (h . g) (f x) = ((h . g) . f) x
+>   step_3   = compPoint (h . g) f
+>
+>   step_4   : (x : _) -> (h . (g . f)) x = ((h . g) . f) x
+>   step_4 x = trans (step_2 x) (step_3 x)
+>
+>   qed      : h . (g . f) = (h . g) . f
+>   qed      = funext (h . (g . f)) ((h . g) . f) step_4
 
 There are two standard library functions used here that have not been introduced yet.
 They are:
 
-```idris
+``` idris
 sym : {l:a} -> {r:a} -> l = r -> r = l
 sym refl = refl
 
@@ -657,7 +604,7 @@ Idris inserts an additional implicit parameter at the beginning of the expressio
 It is up to the compiler to infer the types of the free variables.
 After carrying out that expansion, the type of `trans` looks like this:
 
-```idris
+``` idris
 trans : {x, y, z : _} -> {a:x} -> {b:y} -> {c:z} -> a = b -> b = c -> a = c
 ```
 
@@ -670,7 +617,7 @@ It seems that is not the case in Idris.
 To work around that, the standard library includes a type, `Morphism`,
 that is isomorphic to the function type.
 
-```idris
+``` idris
 data Morphism : Type -> Type -> Type where
   Mor : (a -> b) -> Morphism a b
 ```
@@ -680,48 +627,42 @@ a category of Types and functions.
 But the definition here uses Morphism for arrows;
 so a little extra translating is necessary.
 
-```idris
-mComp : (b ~> c) -> (a ~> b) -> (a ~> c)
-mComp (Mor f) (Mor g) = Mor (f . g)
-```
+> mComp : (b ~> c) -> (a ~> b) -> (a ~> c)
+> mComp (Mor f) (Mor g) = Mor (f . g)
 
 The operator `(~>)` is an infix alias for `Morphism`.
 
-```idris
-instance Category Type Morphism where
-  cId = Mor id
-  cComp = mComp
-
-  cIdLeft (Mor f) = qed where
-    step_1 : id . f = f
-    step_1 = leftId f
-
-    qed : Mor (id . f) = Mor f
-    qed = cong step_1
-
-  cIdRight (Mor f) = cong (rightId f)
-  cCompAssociative (Mor f) (Mor g) (Mor h) = cong $ compAssociative f g h
-```
+> instance Category Type Morphism where
+>   cId = Mor id
+>   cComp = mComp
+>
+>   cIdLeft (Mor f) = qed where
+>     step_1 : id . f = f
+>     step_1 = leftId f
+>
+>     qed : Mor (id . f) = Mor f
+>     qed = cong step_1
+>
+>   cIdRight (Mor f) = cong (rightId f)
+>   cCompAssociative (Mor f) (Mor g) (Mor h) = cong $ compAssociative f g h
 
 As with `Nat` and `NatArrow`,
 the correspondence between `(->)` and `Morphism` is made official
 with a proof of isomorphism.
 
-```idris
-isoMorphismFunction : Iso (Morphism a b) (a -> b)
-isoMorphismFunction = MkIso to from toFrom fromTo where
-  to : (a ~> b) -> (a -> b)
-  to (Mor f) = f
-
-  from : (a -> b) -> (a ~> b)
-  from = Mor
-
-  toFrom : (y : a -> b) -> to (from y) = y
-  toFrom y = refl
-
-  fromTo : (x : a ~> b) -> from (to x) = x
-  fromTo (Mor x) = refl
-```
+> isoMorphismFunction : Iso (Morphism a b) (a -> b)
+> isoMorphismFunction = MkIso to from toFrom fromTo where
+>   to : (a ~> b) -> (a -> b)
+>   to (Mor f) = f
+>
+>   from : (a -> b) -> (a ~> b)
+>   from = Mor
+>
+>   toFrom : (y : a -> b) -> to (from y) = y
+>   toFrom y = refl
+>
+>   fromTo : (x : a ~> b) -> from (to x) = x
+>   fromTo (Mor x) = refl
 
 It is my hope that I can use these definitions to work out exercises
 as I continue to explore Category theory.
