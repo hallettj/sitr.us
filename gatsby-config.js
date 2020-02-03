@@ -40,7 +40,12 @@ module.exports = {
   plugins: [
     {
       resolve: "@lekoarts/gatsby-theme-minimal-blog",
-      options: {}
+      options: {
+        feed: {
+          title: `sitr.us - posts by Jesse Hallett`,
+          link: "http://feeds.feedburner.com/hallettj"
+        }
+      }
     },
     {
       resolve: "gatsby-plugin-google-analytics",
