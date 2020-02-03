@@ -407,4 +407,4 @@ function myFunc<T,A,B>(F: Functor<T<_>>, f: (x: A) => B): T<B> {
 Flow
   : http://flowtype.org/
 slides
-  : http://sitr.us/talks/flow/
+  : https://sitr.us/talks/flow/

@@ -43,7 +43,7 @@ module.exports = {
       options: {
         feed: {
           title: `sitr.us - posts by Jesse Hallett`,
-          link: "http://feeds.feedburner.com/hallettj"
+          link: "https://feeds.feedburner.com/hallettj"
         }
       }
     },

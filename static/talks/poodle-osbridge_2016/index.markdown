@@ -4,7 +4,7 @@
 
 ---
 
-http://sitr.us/talks/poodle-osbridge_2016
+https://sitr.us/talks/poodle-osbridge_2016
 
 ---
 
@@ -155,4 +155,4 @@ github.com/hallettj/poodle
 
 github.com/hallettj/arfe
 
-http://sitr.us/talks/poodle-osbridge_2016
+https://sitr.us/talks/poodle-osbridge_2016

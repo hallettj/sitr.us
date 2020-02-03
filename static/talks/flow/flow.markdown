@@ -326,4 +326,4 @@ $ jsx --strip-types --harmony --watch src/ build/
 Flow
   : http://flowtype.org/
 slides
-  : http://sitr.us/talks/flow/
+  : https://sitr.us/talks/flow/

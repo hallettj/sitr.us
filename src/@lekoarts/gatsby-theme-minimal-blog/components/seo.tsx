@@ -61,7 +61,7 @@ const SEO = ({ title, description, pathname, image, children }: Props) => {
       <meta name="twitter:creator" content={author} />
       <meta name="gatsby-theme" content="@lekoarts/gatsby-theme-minimal-blog" />
 
-      <link rel="openid.delegate" href="http://sitr.us/" />
+      <link rel="openid.delegate" href="https://sitr.us/" />
       <link rel="openid.server" href="https://indieauth.com/openid" />
       <link
         href="http://feeds.feedburner.com/hallettj"
