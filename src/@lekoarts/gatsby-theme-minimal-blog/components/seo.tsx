@@ -63,12 +63,6 @@ const SEO = ({ title, description, pathname, image, children }: Props) => {
 
       <link rel="openid.delegate" href="https://sitr.us/" />
       <link rel="openid.server" href="https://indieauth.com/openid" />
-      <link
-        href="http://feeds.feedburner.com/hallettj"
-        rel="alternate"
-        title="sitr.us"
-        type="application/atom+xml"
-      />
 
       {children}
     </Helmet>
