@@ -34,10 +34,13 @@ export const TableOfContents = ({
 }
 
 function processedHeadings(
-  headings: Headings,
+  headings?: Headings,
   skip: Array<string | RegExp> = [/table of contents/i]
 ): NestedHeadings {
   const slugger = new Slugger()
+  if (!headings) {
+    return []
+  }
   return nestedHeadings(
     headings
       .map(({ depth, value }) => ({
