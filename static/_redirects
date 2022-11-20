@@ -1,4 +1,4 @@
 https://sitr.us/.well-known/nodeinfo  resource=acct:jesse@sitr.us  https://hachyderm.io/.well-known/nodeinfo  resource=acct:hallettj@hachyderm.io  301
 https://sitr.us/.well-known/webfinger resource=acct:jesse@sitr.us  https://hachyderm.io/.well-known/webfinger resource=acct:hallettj@hachyderm.io  301
 https://sitr.us/.well-known/host-meta resource=acct:jesse@sitr.us  https://hachyderm.io/.well-known/host-meta resource=acct:hallettj@hachyderm.io  301
-https://sitr.us/@jesse                                             https://hachyderm.io/@hallettj
+https://sitr.us/@jesse                                             https://hachyderm.io/@hallettj                                                  301
