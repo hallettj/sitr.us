@@ -17,8 +17,9 @@ module.exports = {
         url: "https://github.com/hallettj/"
       },
       {
-        name: "Twitter",
-        url: "https://twitter.com/hallettj/"
+        name: "Mastodon",
+        url: "https://hachyderm.io/@hallettj",
+        rel: "me"
       },
       {
         name: "Email",
