@@ -23,7 +23,8 @@ module.exports = {
       },
       {
         name: "Email",
-        url: "mailto:jesse@sitr.us"
+        url: "mailto:jesse@sitr.us",
+        rel: "me"
       }
     ],
     navigation: [
