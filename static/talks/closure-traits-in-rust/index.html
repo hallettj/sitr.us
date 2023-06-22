@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Closure Traits in Rust</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.1/reset.min.css"
+      integrity="sha512-Mjxkx+r7O/OLQeKeIBCQ2yspG1P5muhAtv/J+p2/aPnSenciZWm5Wlnt+NOUNA4SHbnBIE/R2ic0ZBiCXdQNUg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.1/reveal.min.css"
+      integrity="sha512-og4MAAhv7j2gLmZ2HNWT/ZqzBvrEWGE+fxjhQN+Svg2jsPaM3HcYF2rLTRzvzbYkp/W4eMFciBsdIHHvsTsxjQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.1/theme/simple.min.css"
+      integrity="sha512-Lne04Eg90RC14WjiJWVF4NWfJZdhuiKOKYcn0ljotlSbe6Cksr32AxRZ4vWOPUnMGlOqLLO2MN4/MK3oQlbokA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- Theme used for syntax highlighting of code -->
+    <!-- <link -->
+    <!--   rel="stylesheet" -->
+    <!--   href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css" -->
+    <!--   integrity="sha512-hasIneQUHlh06VNBe7f6ZcHmeRTLIaQWFd43YriJ0UND19bvYRauxthDg8E4eVNPm9bRUhr5JGeqH7FRFXQu5g==" -->
+    <!--   crossorigin="anonymous" -->
+    <!--   referrerpolicy="no-referrer" -->
+    <!-- /> -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/grayscale.min.css"
+      integrity="sha512-l1aMiXy5BTqq3S5n9RlJZzuCPA9VV2DOxkbW8eOErdvJhTdhkKVnuJd+tjY0FA5HXrYHao64+234j2Iuuzjceg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- <link -->
+    <!--   rel="stylesheet" -->
+    <!--   href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/ascetic.min.css" -->
+    <!--   integrity="sha512-iaqCaYPu17nYG5ICr2vVaHgKT+LevpdqKwOGgR4YSpodnacEkfR/EM956YI0+1OWXIhDNQ1u1PCjMGBxZVUQ1g==" -->
+    <!--   crossorigin="anonymous" -->
+    <!--   referrerpolicy="no-referrer" -->
+    <!-- /> -->
+
+    <style>
+      /* Hide line numbers. Reveal.js has a feature for highlighting lines in
+       * code blocks - but enabling it also displays line numbers. I like the
+       * highlighting, but I don't like the numbers.
+       */
+      .hljs-ln-numbers {
+        display: none;
+      }
+
+      .reveal section.noborder img {
+        background: none;
+        border: none;
+        box-shadow: none;
+      }
+
+      .reveal section.two-column {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .reveal section.two-column pre {
+        width: 95%;
+      }
+
+      .reveal section .right-aligned-column {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	margin-right: 1em;
+      }
+
+      .reveal section .left-aligned-column {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	margin-left: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section
+          data-markdown="./index.markdown"
+          data-separator="^---$"
+          data-separator-vertical="^--$"
+          data-separator-notes="^Note:"
+          data-charset="utf8"
+        >
+          <!--
+            Note that Windows uses `\r\n` instead of `\n` as its linefeed character.
+            For a regex that supports all operating systems, use `\r?\n` instead of `\n`.
+          -->
+        </section>
+      </div>
+    </div>
+
+    <script type="module">
+      import Highlight from "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.1/plugin/highlight/highlight.esm.min.js"
+      import Markdown from "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.1/plugin/markdown/markdown.esm.min.js"
+      import Zoom from "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.1/plugin/zoom/zoom.esm.min.js"
+      import Reveal from "https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.1/reveal.esm.min.js"
+
+      Reveal.initialize({
+        hash: true,
+        // It's important to list `Highlight` after `Markdown`
+        plugins: [Markdown, Highlight, Zoom]
+      })
+    </script>
+  </body>
+</html>
