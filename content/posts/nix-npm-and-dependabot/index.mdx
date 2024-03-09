@@ -10,6 +10,8 @@ tags:
 revisions:
   - date: 2024-03-08
     message: Fixed some typos
+  - date: 2024-03-08
+    message: Change programming language tag for example of writing hash to a file
 ---
 
 I have a project, [git-format-staged][], that I build with Nix.
@@ -125,7 +127,7 @@ in
 
 In that case the update script would look like this:
 
-```nix
+```sh
 hash=$(prefetch-npm-deps package-lock.json 2>/dev/null) # get the new hash
 echo "updated npm dependency hash: $hash" >&2
 echo "$hash" > npm-deps-hash
