@@ -7,6 +7,9 @@ tags:
   - Nix
   - Github
   - TypeScript
+revisions:
+  - date: 2024-03-08
+    message: Fixed some typos
 ---
 
 I have a project, [git-format-staged][], that I build with Nix.
@@ -41,7 +44,7 @@ I have implemented test runs as derivations which means they run in Nix'
 sandboxed build environment.
 To get reproducibility that means network requests are not allowed unless
 I specify the hash of what's going to be downloaded up front.
-The hash here as a recursive hash of a directory of downloaded NPM packages that
+The hash here is a recursive hash of a directory of downloaded NPM packages that
 can be installed later by running `npm install --cache`.
 
 (When I'm working on Rust projects I use [Crane][] which is able to infer
@@ -55,7 +58,7 @@ NPM, so for now at least I have this hash to keep up to date.)
 
 So what I want is an automated process that updates that hash when
 `package-lock.json` changes.
-That means I to be able to:
+That means I need to be able to:
 
 1. compute the new dependencies hash
 2. update `test/test.nix` with the new hash
@@ -136,8 +139,8 @@ but did not update that hash.
 So the next step was to set up a Github workflow to run the hash-updating script
 after every change from Dependabot.
 
-It would be great if configure Dependabot to run a custom shell command along
-with its updates.
+It would be great if I could configure Dependabot to run a custom shell command
+along with its updates.
 But as far as I can tell that is not an option.
 Instead I added a workflow that runs on pushes to Dependabot's PR branches.
 Those all have names of the form `dependabot/npm_and_yarn/*`.
@@ -211,7 +214,7 @@ Instead it pre-populates a local cache that can be "installed" later.
 
 Normally Dependabot will refuse to automatically update one of its PRs after
 someone else has pushed commits to it.
-That workflow includes `[dependabot skip]` in its commit messages to signal to
+The workflow includes `[dependabot skip]` in its commit messages to signal to
 Dependabot that it is OK to throw those commits out when it recreates or rebases
 its PRs.
 When that happens the workflow runs again, and re-applies the correct hash.
