@@ -60,6 +60,9 @@ typings/
 .env.*
 !.env.example
 
+# Nix & direnv
+/.direnv
+
 .cache
 **/.cache
 public
