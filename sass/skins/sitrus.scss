@@ -1,9 +1,27 @@
-// $cartograph-font-url: "http://static.sitr.us/Cartograph%20CF";
-//
-//  @font-face {
-//   font-family: Cartograph CF;
-//   src: url("#{$cartograph-font-url}/CartographCF-Regular.woff2") format("woff2");
-// }
+$cartograph-font-url: "http://static.sitr.us/CartographCF";
+
+@font-face {
+  font-family: "Cartograph CF";
+  src:
+    url("#{$cartograph-font-url}/CartographCF-Regular.woff2") format("woff2"),
+    url("#{$cartograph-font-url}/CartographCF-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Cartograph CF";
+  font-style: italic;
+  src:
+    url("#{$cartograph-font-url}/CartographCF-RegularItalic.woff2") format("woff2"),
+    url("#{$cartograph-font-url}/CartographCF-RegularItalic.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Cartograph CF";
+  font-weight: bold;
+  src:
+    url("#{$cartograph-font-url}/CartographCF-Bold.woff2") format("woff2"),
+    url("#{$cartograph-font-url}/CartographCF-Bold.woff") format("woff");
+}
 
 :root {
   --primary-color: #1460bd; // indigo, Contrast ratio: 6.1:1
