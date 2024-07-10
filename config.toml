@@ -1,0 +1,60 @@
+base_url = "https://sitr.us"
+title = "sitr.us"
+author = "Jesse Hallett"
+compile_sass = true
+build_search_index = true
+default_language = "en"
+generate_feeds = true
+theme = "tabi"
+
+taxonomies = [
+  { name = "tags", feed = true },
+  { name = "series", feed = true },
+]
+
+[markdown]
+bottom_footnotes = true
+extra_syntaxes_and_themes = ["syntaxes"]
+highlight_code = true
+highlight_theme = "css"
+smart_punctuation = true
+
+[extra]
+favicon = "images/icon.svg"
+full_content_in_feed = true
+show_author = true
+skin = "sitrus"
+
+# Adds javascript - this could be moved to be per-page
+add_src_to_code_block = true
+
+# Add links to blog source, and to change history for each post
+remote_repository_url = "https://github.com/hallettj/sitr.us"
+remote_repository_git_platform = "auto"
+remote_repository_branch = "main"
+show_remote_changes = true
+show_remote_source = true
+
+allowed_domains = [
+  { directive = "font-src", domains = ["'self'", "data:", "http://static.sitr.us"] },
+  { directive = "img-src", domains = ["'self'", "https://*", "data:"] },
+  { directive = "script-src", domains = ["'self'"] },
+  { directive = "style-src", domains = ["'self'"] },
+  { directive = "frame-src", domains = ["https://www.youtube-nocookie.com"] },
+]
+
+copyright = "Copyright © 2007-$CURRENT_YEAR $AUTHOR $SEPARATOR Unless otherwise noted, the content in this website is available under the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license.\n\nCode font is Cartograph CF © Connary Fagen Inc. / connary.com"
+
+menu = [
+  { name = "archive", url = "archive", trailing_slash = true },
+  { name = "tags", url = "tags", trailing_slash = true },
+  { name = "projects", url = "projects", trailing_slash = true },
+  { name = "about", url = "about", trailing_slash = true },
+]
+
+socials = [
+  { name = "Email", url = "mailto:jesse@sitr.us", icon = "email" },
+  { name = "Mastodon", url = "https://hachyderm.io/@hallettj", icon = "mastodon" },
+  { name = "Github", url = "https://github.com/hallettj", icon = "github" },
+  { name = "Keybase", url = "https://keybase.io/hallettj", icon = "keybase" },
+]

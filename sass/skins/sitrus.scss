@@ -1,0 +1,98 @@
+// $cartograph-font-url: "http://static.sitr.us/Cartograph%20CF";
+//
+//  @font-face {
+//   font-family: Cartograph CF;
+//   src: url("#{$cartograph-font-url}/CartographCF-Regular.woff2") format("woff2");
+// }
+
+:root {
+  --primary-color: #1460bd; // indigo, Contrast ratio: 6.1:1
+}
+[data-theme='dark'] {
+  --primary-color: #ec984f; // orange, Contrast ratio: 7.19:1. Accessible.
+}
+
+// Use gray for code block headers instead of main highlight color
+.z-code {
+  --primary-color: #727272;
+}
+[data-theme='dark'] .z-code {
+  --primary-color: #b3b3b3;
+}
+
+:root {
+  --code-font: Cartograph CF, monospace;
+
+  // Cartograph CF needs a slightly higher line-height than Tabi's default 1.4
+  // to avoid vertical overflow in code blocks.
+  pre { line-height: 1.51; }
+}
+
+// Customize syntax highlighting
+
+.z-code {
+  tab-size: 4;
+}
+
+.z-name { font-style: normal !important; }
+.z-variable.z-function, // function invocations in go
+.z-support.z-class, // class references in Ruby
+.z-code .z-entity.z-other.z-attribute-name {
+  font-style: normal; 
+}
+
+// Built-in symbols should be italicized
+.z-builtin,
+.z-support.z-class,.z-builtin,
+.z-keyword,
+.z-keyword.z-operator.z-expression, // typeof in Typescript (unlike other z-operators which are non-alpha symbols)
+.z-modifier,
+.z-storage.z-rust, // for languages that declare variables with a keyword instead of a type
+.z-storage.z-ts,
+.z-echo, // `echo` command in shell
+.z-constant.z-language,
+.z-variable.z-language {
+  font-style: italic; 
+}
+
+// except operators which should not be italicized
+.z-keyword.z-operator {
+  font-style: normal;
+}
+
+.z-comment { font-style: normal; }
+
+.z-annotation.z-rust, .z-annotation.z-rust .z-punctuation {
+  color: var(--overlay0); 
+}
+
+main > .list {
+  margin-top: 8em;
+}
+
+.talklist-row {
+  padding: 0.75rem 0;
+
+  &:first-of-type {
+    padding-top: 2rem;
+  }
+
+  .date {
+    font-weight: 300;
+    color: var(--meta-color);
+  }
+}
+
+// Text alignment in tables using Markdown won't work unless the content
+// security policy is changed to allow "unsafe inline" styles. Instead of doing
+// that I'm going to set all tables in article content to be left-aligned.
+article .body tr {
+  text-align: left;
+}
+
+// There is a note in an aside in
+// @/2012-07-31_promise-pipelines-in-javascript/index.md about a Spanish
+// translation.
+article aside {
+  font-style: italic;
+}
