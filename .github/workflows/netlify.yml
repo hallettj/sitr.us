@@ -22,7 +22,7 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
         with:
-          netlify-config-path: ./netlify.yml
+          netlify-config-path: ./netlify.toml
           publish-dir: ./public
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
