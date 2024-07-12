@@ -1,3 +1,6 @@
 /public
 /.direnv
 /result
+
+# Encrypted assets are unpacked here
+/static/assets

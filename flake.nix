@@ -17,46 +17,37 @@
         (import rust-overlay)
         (final: prev: {
           # Get Zola v0.19.1
-          zola = final.callPackage ./zola.nix { };
-
-          # Get newer Rust version to build zola
-          rustToolchain = final.pkgsBuildHost.rust-bin.stable."1.79.0".minimal;
-          rustPlatform = final.makeRustPlatform {
-            cargo = final.rustToolchain;
-            rustc = final.rustToolchain;
+          zola = final.callPackage ./nix/zola.nix {
+            # Get newer Rust version to build zola
+            rustPlatform =
+              let
+                rustToolchain = final.pkgsBuildHost.rust-bin.stable."1.79.0".minimal;
+              in
+              final.makeRustPlatform {
+                cargo = rustToolchain;
+                rustc = rustToolchain;
+              };
           };
+
+          writeNushellApplication = final.callPackage ./nix/writeNushellApplication.nix { };
         })
       ];
     in
     {
       packages = perSystem (pkgs: rec {
-        default = public;
-
-        # Website files to deploy to static site hosting.
-        # The build requires submodules for this repo, so build with:
-        #
-        #     nix build .?submodules=1#public
-        #
-        public = pkgs.stdenvNoCC.mkDerivation {
-          name = "sitrus-public";
-          src = ./.;
-          nativeBuildInputs = [ zola ];
-
-          buildPhase = ''
-            zola build --output-dir public
-          '';
-
-          installPhase = ''
-            mv public $out
-          '';
-        };
-
+        # Program that builds the blog, and writes files to ./public
+        build = pkgs.callPackage ./nix/build.nix { inherit decrypt-assets; };
+        decrypt-assets = pkgs.callPackage ./nix/decrypt-assets.nix { };
         zola = pkgs.zola;
       });
 
       devShells = perSystem (pkgs: {
         default = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [ zola ];
+          nativeBuildInputs = with self.packages.${pkgs.system}; [
+            build
+            decrypt-assets
+            zola
+          ];
         };
       });
     };

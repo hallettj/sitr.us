@@ -1,11 +1,12 @@
 base_url = "https://sitr.us"
 title = "sitr.us"
 author = "Jesse Hallett"
+theme = "tabi"
 compile_sass = true
 build_search_index = true
 default_language = "en"
 generate_feeds = true
-theme = "tabi"
+ignored_static = ["*.gpg"]
 
 taxonomies = [
   { name = "tags", feed = true },
@@ -34,14 +35,6 @@ remote_repository_git_platform = "auto"
 remote_repository_branch = "main"
 show_remote_changes = true
 show_remote_source = true
-
-allowed_domains = [
-  { directive = "font-src", domains = ["'self'", "data:", "http://static.sitr.us"] },
-  { directive = "img-src", domains = ["'self'", "https://*", "data:"] },
-  { directive = "script-src", domains = ["'self'"] },
-  { directive = "style-src", domains = ["'self'"] },
-  { directive = "frame-src", domains = ["https://www.youtube-nocookie.com"] },
-]
 
 copyright = "Copyright © 2007-$CURRENT_YEAR $AUTHOR $SEPARATOR Unless otherwise noted, the content in this website is available under the [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license.\n\nCode font is Cartograph CF © Connary Fagen Inc. / connary.com"
 
