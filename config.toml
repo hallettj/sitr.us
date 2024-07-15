@@ -23,6 +23,7 @@ smart_punctuation = true
 [extra]
 favicon = "images/icon.svg"
 full_content_in_feed = true
+invert_title_order = true
 show_author = true
 skin = "sitrus"
 
