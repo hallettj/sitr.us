@@ -55,6 +55,7 @@ $cartograph-font-url: "/assets/CartographCF";
 .z-name { font-style: normal !important; }
 .z-variable.z-function, // function invocations in go
 .z-support.z-class, // class references in Ruby
+.z-yaml.z-block-scalar, // pipes indicating a block string value in yaml
 .z-code .z-entity.z-other.z-attribute-name {
   font-style: normal; 
 }
