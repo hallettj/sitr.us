@@ -83,7 +83,7 @@ class Status {
     if (this.account.display_name) {
       return emojify(escapeHtml(this.account.display_name), this.emojis);
     } else {
-      return this.account.username;
+      return escapeHtml(this.account.username);
     }
   }
 }
