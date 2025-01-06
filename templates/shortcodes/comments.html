@@ -1,0 +1,20 @@
+<section id="comments">
+  <h2>Comments</h2>
+  <p><a href="{{ tootUrl }}">Respond to this post</a> with an account on the Fediverse (like Mastodon).</p>
+
+  <mastodon-comments src="{{ tootUrl }}">
+    <noscript><p>Loading comments relies on JavaScript. If you do not want to enable JavaScript you may view <a href="{{ tootUrl }}">comments on Mastodon</a>.</p></noscript>
+  </mastodon-comments>
+
+  <!-- This modulepreload declares a hash for this external script which matches
+       a hash in this site's content security policy. Without the preload and
+       CSP policy external scripts are not allowed.
+  -->
+  <link 
+    rel="modulepreload" 
+    href="https://unpkg.com/dompurify@3.2.3/dist/purify.es.mjs" 
+    integrity="sha384-Q8WImnnQPhbg13l/gPSPMHp4R//1GIQcP/rJhiTk1mYW5Px14bJgBwzzH/DcZ6T9" />
+  <link rel="modulepreload" href="{{ get_url(path='/comments/parsers.mjs', trailing_slash=false) | safe }}" />
+  <script type="module" src="{{ get_url(path='/comments/comments.mjs', trailing_slash=false) | safe }}"></script>
+</section>
+

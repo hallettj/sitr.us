@@ -1,0 +1,6 @@
+{
+  "version": "4",
+  "remote": {
+    "https://unpkg.com/dompurify@3.2.3/dist/purify.es.mjs": "c5a11a9718ceb98d9d574c5eff9b4a991076ba8f178131e8d912fd503253dc52"
+  }
+}
