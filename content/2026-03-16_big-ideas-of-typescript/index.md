@@ -1,8 +1,13 @@
-# The N Big Ideas of Typescript
+# The 7 Big Ideas of Typescript
 
 If you want to get a quick handle on what Typescript is all about,
 and you have experience with other programming languages,
 this post will show you what is special about Typescript.
+Typescript's take on type checking is unusually expressive compared to
+similarly popular type-checked languages.
+Whether or not you have experience with type-checking in other languages,
+it is helpful to learn the particulars of the Typescript way.
+
 This is a big-picture view -
 I like this kind of introduction because my preferred learning style includes
 starting with abstract descriptions of the big ideas, and filling in details
@@ -27,13 +32,14 @@ the compiler speaks through error messages, completion suggestions, and quick
 fixes.
 When the compiler understands what you mean it can help you to get to
 the code that you want.
-Sometimes the compiler needs more explanation to catch up with your thinking,
-which means more type annotations.
 
-TODO: from Aron: contracts; conversation with yourself, reflection of your mind
-
+It's an exchange that matches your mental picture of your code with what
+is actually written. Types get you and your compiler on the same page, but the
+conversation also helps you to reflect on your design to understand your own
+ideas better.
 When you write code you have in mind ideas about what kind of values can be
 assigned to certain variables, or passed to certain functions.
+That is true with or without type checking.
 You always have some kind of mental model of what the data flowing through your
 program looks like.
 Types make that mental model explicit in code.
@@ -93,7 +99,7 @@ programmer and the compiler is complete, and you don't need the types anymore.
 It's sort of like how code comments don't affect how your program runs -
 types don't affect the runtime either.[^optimization]
 The difference is that only humans can read comments,
-but Typescript can read and understand types.
+but the Typescript compiler can read and understand types.
 
 [^optimization]:
     In many compiled languages the compiler can use what it learns
@@ -146,8 +152,9 @@ be assigned the value "hello, world!", "hunter2", or any other string.
 Typescript takes a purist approach to types by directly providing union and
 intersection set operations. Unlike in many languages, Typescript allows you to
 build up larger types (sets with more possible values, a.k.a. supertypes) from
-smaller types using the union operator. You can also describe
-partially-overlapping types using the intersection operator.
+smaller types using the union operator.
+You can also define types as the overlap of values from some existing types
+using the intersection operator.
 You can describe unit types which are so specific that they only contain one
 possible value,
 and there is even a type for the empty set (`never`).
@@ -236,7 +243,7 @@ function foo(a: string | null, b: string) {
 
 Again, the `null` in that signature appears in a type expression meaning that it
 references the _type_ `null`. Like with string literal types, the type `null` is
-a set with one member which is the value `null`. There is a similar
+a set with one member, which is the value `null`. There is a similar
 `undefined` type which also has one member.[^void]
 
 [^void]:
@@ -278,7 +285,7 @@ The type `ErrorWithCode` describes that set.
 [error]: https://developer.mozilla.org/en-US/docs/web/javascript/reference/global_objects/error
 
 I have a more detailed look at types as sets in
-[When to use `never` and `unknown` in TypeScript](https://blog.logrocket.com/when-to-use-never-and-unknown-in-typescript-5e4d6c5799ad/).
+[When to use `never` and `unknown` in Typescript](https://blog.logrocket.com/when-to-use-never-and-unknown-in-typescript-5e4d6c5799ad/).
 
 ## 3. Types are structural
 
@@ -288,7 +295,7 @@ Typescript is designed to work with existing Javascript idioms so it supports
 the same idea.
 But unlike Javascript, Typescript checks at design time that a given object
 argument has the appropriate properties with the appropriate types;
-so instead of saying that Typescript "duck typed" we say that it is
+so instead of saying that Typescript is "duck typed", we say that it is
 "structurally typed".
 For example,
 
@@ -331,7 +338,7 @@ The type checker will reject `totalLength([3])` because numbers do not have
 a `length` property, and will reject `totalLength(3)` because `3` is not an
 array.
 
-> ⚠️ ADon't make assumptions about what is not described! An important
+> ⚠️ Don't make assumptions about what is not described! An important
 > consequence of structural typing is that you can't make assumptions about
 > object properties that are not specifically listed in a variable's type. Even
 > though the type of `x` only lists one property, we can't assume that if we
@@ -384,8 +391,8 @@ The check often catches typos in property names so it is on balance a time saver
 IMO.
 This is one example of the Typescript team's tendency to opt for pragmatism over
 philosophical purity.
-But I do ofter forget about excess property checking (including while writing
-this post), and it does trip me up sometimes.
+But I do often forget about excess property checking (including while writing
+this primer), and it does trip me up sometimes.
 
 In the case of `updateRecord` the best fix is to use a generic type variable
 with a bound instead of relying solely on structural typing:
@@ -406,7 +413,8 @@ But due to the way Typescript implements structural typing you aren't
 technically guaranteed to get an instance of the given class.
 For example,
 
-// TODO: Typescript defines Error as an interface??
+// TODO: Typescript defines Error as an interface?? Use an example with a type
+that is actually a class.
 
 ```ts
 function prettyPrintError(error: Error) {
@@ -428,17 +436,18 @@ prettyPrintError({
 Sort of. Typescript has both classes and interfaces, and they are different.
 But you can define a class and use it as an interface if you want to.
 
-So what's the difference? A class is an interface with a constructor and
+So what's the difference? A class is an interface with a constructor, and
 a predefined implementation.
 
 Defining a class defines two things at once: a type which only exists at design
 time, and a constructor function that exists at runtime. It happens that both
-things have the same name. That works because types and values exist in separate
-name spaces.
+things have the same name.
+That works because in Typescript types and values exist in two separate
+namespaces.
 
 ## 4. Functions have two parameter lists
 
-Functions take arguments, and return a value. In TypeScript functions also take
+Functions take arguments, and return a value. In Typescript functions also take
 _type_ arguments, and have a return type. Let's take a look at `useState` from
 React.
 
@@ -451,7 +460,7 @@ a function to set a new value. In this example because the type of the input
 value is `string` Typescript is able to infer that the type of `mode` is also
 `string`, and the type of `setMode` is `(value: string) => void`. (That setter
 type is simplified for this example - the real type accepts a callback or
-a plain value.) To understand how TypeScript can make that inference let's take
+a plain value.) To understand how Typescript can make that inference let's take
 a look at the type signature for `useState` (simplified for purposes of this
 example):
 
@@ -465,12 +474,12 @@ function useState<S>(initialState: S): [S, (value: S) => void] {
 }
 ```
 
-There are the two parameter lists. The usual value parameter list is the part in
+There are the two parameter lists. The familiar value parameter list is the part in
 parenthesis.
 Immediately before that the we see the type parameter list which is in angle
 brackets, and lists the single parameter `S`.
-`S` is a variable that will have a type bound to it based on how the function is
-called, much like how `initialState` is a variable that will have a value bound
+`S` is a variable that will have a _type_ bound to it based on how the function is
+called, much like how `initialState` is a variable that will have a _value_ bound
 to it based on the value argument that the function is called with.[^parameters-vs-arguments]
 
 [^parameters-vs-arguments]:
@@ -516,7 +525,8 @@ function useState<S>(
 
 ): [S, (value: S) => void]
 // ╰─────────┬───────────╯
-// `useState` returns a pair (a two-element array)
+// `useState` returns a pair (a two-element array, with a specified type for
+// each array position)
 
    [S, (value: S) => void]
 // ╰┬╯
@@ -542,9 +552,9 @@ function useState<S>(
 
 The signature tells us that the first argument to `useState` must have type `S`.
 The return type declares that it returns a pair (a two-element array) where the
-type of the first element is `S` (so the same type as `initialValue`), and the
-second element is a function that can be called with an argument of type `S`,
-but that may not be called with an argument of a different type.
+type of the first element is `S` (so the same type as `initialValue`),
+and the second element is a function that that must be called with an argument
+of type `S`.
 
 > ℹ️ Many functions do not require type parameters. In those cases the type
 > parameter list is omitted: you don't include any angle brackets in the
@@ -556,11 +566,11 @@ but that may not be called with an argument of a different type.
 So if `useState` has two parameter lists why did we only provide one list of
 arguments when we called it? And how does Typescript decide what type to bind
 to `S`? Well you _can_ provide a type argument list when you call a function!
-But type parameters are implicit parameters - if you don't specify them then
-Typescript will do its best to figure out what the types should be. Because `S`
-appears in the type of a value parameter Typescript can figure out that `S`
-should be the type that it infers for the string literal, "open" - which happens
-to be the type `string`.[^widening]
+But type parameters are implicit - if you don't specify type arguments then
+Typescript will do its best to figure out what those arguments should be.
+Because `S` appears in the type of a value parameter Typescript can figure out
+that `S` should be the type that it infers for the string literal, "open" -
+which happens to be the type `string`.[^widening]
 
 [^widening]:
     Since we already discussed string literal types you might expect
@@ -582,8 +592,8 @@ const [mode, setMode] = useState<"open" | "closed">("open")
 ```
 
 That binds the type argument `"open" | "closed"` to the parameter `S`.
-(As we discussed previously that type is a set with only two possible values,
-the strings `"open"` or `"closed"`.)
+(As we discussed previously this union type is a set with only two possible
+values, the strings `"open"` or `"closed"`.)
 Now Typescript infers that the type of `mode` is also `"open" | "closed"`, and
 will only allow calling `setMode` with an argument of the same type. Typescript
 will also verify that the initial value provided has a type that is assignable
@@ -592,6 +602,9 @@ to the type argument.
 > ℹ️ You will often want to provide an explicit type argument like this if the
 > initial value given to `useState` is `null`. In that case Typescript has no good
 > way to infer the type you have in mind.
+>
+> Remember that a nullable type is specified as a union, such as `"open"
+> | "closed" | null` or `string | null`
 
 ### Constraints on type parameters
 
@@ -643,38 +656,76 @@ function isNonNullable<T>(x: T): x is NonNullable<T> {
 }
 ```
 
-TODO: this is an example of a constrained type parameter
-
 `getOrDefault` is called with an object, a key of that object, and a default
 value. If the object property value for the given key is not `null` or
 `undefined` that value is returned. Otherwise the default value is returned
 instead which may not be `null` or `undefined`.
+Note that the type parameter `Key` is **constrained** using a reference to the
+preceding type parameter, `Obj`.
 
-The syntax `Obj[Key]` evaluates to the type of a property with a given key in
-the object type, `Obj`. It mirrors the value expression `obj[key]` which
-evaluates to the value at a given key.
+Here is an example of how `getOrDefault` can be used:
 
-TODO: delete this info block
+```ts
+interface User {
+  name: string,
+  role: "viewer" | "commenter" | "editor" | null
+}
 
-> ℹ️ In type-level property access `Key` is a type which means that instead of
-> a literal string type like `"foo"` `Key` could be a union of string literal
-> types. In that case you get back a union of property types. For example if
-> `Obj` is the object type `{ foo: number, bar: string, baz: boolean }` then
-> `Obj["foo" | "bar"]` evaluates to `number | string`. And `Obj[string]`
-> evaluates to the union of types of all string-keyed properties which is
-> `number | string | boolean`.
+function test(user: User) {
+  const role = getOrDefault(user, "role", "viewer")
+  //    ╰┬─╯
+  // Type of role is "viewer" | "commenter" | "editor"
 
-The second type parameter, `Key`, is constrained to the type of keys of `Obj`.
-The operator `keyof T` produces a union type. For example `keyof { foo: 1, bar: 2 }` evaluates to the type `"foo" | "bar"`. So Typescript will check at design
-time that `key` matches a property name in `obj`.
+  // Error: argument of type null is not assignable to the parameter of
+  // type 'NonNullable<"viewer" | "commenter" | "editor" | null>'
+  getOrDefault(user, "role", null)
 
-You might expect `Obj` to have a constraint like `Obj extends Record<string, unknown>`. But that isn't necessary. The function would throw an exception if
-`obj` was `null` or `undefined`, but `keyof null` and `keyof undefined` both
-evaluate to empty sets so `getOrDefault` is not callable if `obj` is `null`
-because there is no possible value to provide for `key`.
+  // Error: argument of type "viewwer" is not assignable to the parameter of
+  // type 'NonNullable<"viewer" | "commenter" | "editor" | null>'
+  getOrDefault(user, "role", "viewwer")
 
-`NonNullable<T>` is a built-in helper function that evaluates to a type that
-excludes `null` or `undefined`.
+  // Error: argument of type "rrole" is not assignable to the parameter of
+  // type 'keyof User'
+  getOrDefault(user, "rrole", "viewer")
+}
+```
+
+TODO: This example throws a lot at the reader at once.
+
+The syntax `keyof Obj` gives a type that is a union of the _types_ of keys in
+`Obj`.
+For example the _type_ `User` has keys `"name"` and `"role"`;
+so `keyof User` evaluates to `"name" | "role"`.
+The type parameter `Key` is constrained so that it must be a subtype of `keyof
+Obj`, whatever type is bound to `Obj`.
+In the example above where the object type is `User`, and the `key` argument to
+`getOrDefault` is `"role"`, Typescript infers that the type of `Key` is `"role"`
+the type `"role"` is a subtype of `"name" | "role"`:
+the one possible value of type `"role"` (the string `"role"`) is also a possible
+value of the type `"name" | "role"`.
+So that works out.
+
+The syntax `Obj[Key]` evaluates to the _type_ of a property with a given key in
+the object type, `Obj`. 
+In the example `Obj` gets the type `User`, and `Key` gets the type `"role"`;
+so `Obj[Key]` evaluates to `User["role"]`.
+From the given interface you can see that `User["role"]` evaluates to the type
+`"viewer" | "commenter" | "editor" | null`.
+
+This mirrors the _value_ expression `obj[key]` which evaluates to the value at
+a given key. For example for a _value_ `user` of type `User`, `user["name"]`
+might have a value like `"Jesse"`.
+
+> ℹ️ You might expect `Obj` to have a constraint like `Obj extends
+> Record<string, unknown>`. 
+> But that isn't necessary.
+> The function would throw an exception if
+> `obj` was `null` or `undefined`, but `keyof null` and `keyof undefined` both
+> evaluate to empty sets so `getOrDefault` is not callable if `obj` is `null`
+> because there is no possible value to provide for `key`.
+
+`NonNullable<T>` is a built-in helper that evaluates to a type that excludes
+`null` or `undefined` from whatever union type it is given.
 
 ## 5. Type aliases are type-level functions
 
@@ -694,6 +745,8 @@ function getActive(users: UserMap): UserMap {
 > Typescript can usually infer the appropriate types by referencing types of
 > value arguments at a function's call sites. But in type expressions there are
 > no value arguments to look at.
+
+We already saw `NonNullable<T>` ...
 
 TODO: This section needs expansion. I think this is an important, and
 often-misunderstand idea so I think it is worthwhile to keep it in some form.
