@@ -411,41 +411,79 @@ But due to the way Typescript implements structural typing you aren't
 technically guaranteed to get an instance of the given class.
 For example,
 
-// TODO: Typescript defines Error as an interface?? Use an example with a type
-that is actually a class.
-
 ```ts
-function prettyPrintError(error: Error) {
-  /* ... */
+class Rectangle {
+  constructor(public width: number, public height: number) { }
+  area() {
+    return this.width * this.height
+  }
 }
 
-// This type-checks.
-prettyPrintError({
-  name: "An error!",
-  message: "This is totally an Error instance - trust me!",
-})
+// This assigned value is not an instance of the class, but it is structurally compatible
+const myRect: Rectangle = {
+  width: 6,
+  height: 2,
+  area: function() { return this.width * this.height },
+}
+
+function test(rect: Rectangle) {
+  // We know this will work, and will return a number.
+  rect.area()
+
+  // This might be true or false! We don't have enough information to know at this point
+  rect instanceof Rectangle
+}
 ```
 
-`Error` is a built-in class in most Javascript environments.
-
+Typescript treats an object as **assignable** to the type of a class if the
+object has the same properties and methods, with the same types and signatures.
+In the vast majority of cases structural typing does what you expect.
+But there are some cases, like that `instanceof` check, where you might get an
+unexpected result.
 
 ### Classes are interfaces
 
 Sort of. Typescript has both classes and interfaces, and they are different.
 But you can define a class and use it as an interface if you want to.
 
-So what's the difference? A class is an interface with a constructor, and
+So what's the difference? A class is an interface with a constructor and
 a predefined implementation.
 
-Defining a class defines two things at once: a type which only exists at design
-time, and a constructor function that exists at runtime. It happens that both
-things have the same name.
-That works because in Typescript types and values exist in two separate
-namespaces.
+```ts
+class RectangleClass {
+  constructor(public width: number, public height: number) { }
+  area() {
+    return this.width * this.height
+  }
+}
+
+interface RectangleInterface {
+  width: number
+  height: number
+  area(): number
+}
+```
+
+Defining a class defines two things at once: a type (basically an interface)
+that only exists at design time, and a constructor function that exists at
+runtime. It happens that both things have the same name. That works because
+types and values exist in separate namespaces.
+
+```ts
+// Imports the class type, but not the constructor. Because types are design-time
+// only, this import is erased at build time.
+import type { RectangleClass } from "./shapes"
+
+// Imports both the type and the constructor
+import { RectangleClass } from "./shapes"
+
+// Only the constructor exists at runtime
+console.log(typeof RectangleClass) // prints `function`
+```
 
 ## 4. Functions have two parameter lists
 
-Functions take arguments, and return a value. In Typescript functions also take
+Functions take arguments, and return a value. In TypeScript functions also take
 _type_ arguments, and have a return type. Let's take a look at `useState` from
 React.
 
@@ -750,7 +788,7 @@ TODO: This section needs expansion. I think this is an important, and
 often-misunderstand idea so I think it is worthwhile to keep it in some form.
 But it does seem maybe less fundamental than the other ideas.
 
-## 6. Types and values occupy two distinct name spaces
+## 6. Types and values occupy two distinct namespaces
 
 A class is an interface plus a constructor.
 
