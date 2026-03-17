@@ -68,11 +68,9 @@ const sum = (x: number, y: number): number => x + y
 ```
 
 In my mind type checking revolves around function signatures.
-When running Typescript in strict mode type annotations are required for
+When running Typescript in strict mode type annotations are usually required for
 parameters of named functions,
 but annotations for variables and function return types are optional.
-(By "named functions" I mean functions that are not inline anonymous functions,
-like a callbacks.)
 This is because if Typescript knows the types for every function parameter it
 can usually figure out the correct types for variables, and the return type for
 each function using flow-based type inference.
@@ -769,17 +767,10 @@ idioms, and with untagged unions.
 
 ## TODO
 
-TODO: Should the structural types discussion go before the "types are sets"
-discussion? The concept of structural types is important for understanding the
-intersection type example.
-
-I want to order the big ideas by importance, and I think that types being sets
-is more important than structural types. But structural types are probably more
-important than the two parameter lists idea.
 
 TODO: Are these ideas big enough to justify more content in this post?
 
-- types are non-nullable by default (discussed in Unions section)
-- types are erased (discussed in section 0)
-- narrowing
+- types are non-nullable by default (discussed in Unions section) - no
+- types are erased (discussed in section 0) - no
+- narrowing - yes
 
