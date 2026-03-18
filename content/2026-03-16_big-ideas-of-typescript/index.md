@@ -3,7 +3,7 @@ title = "The 6 Big Ideas of Typescript"
 date = 2026-03-17
 
 [taxonomies]
-tags = ["TypeScript"]
+tags = ["TypeScript", "type theory"]
 
 [extra]
 toc_ignore_pattern = "Table of Contents"
