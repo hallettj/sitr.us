@@ -1,4 +1,14 @@
-# The 6 Big Ideas of Typescript
++++
+title = "The 6 Big Ideas of Typescript"
+date = 2026-03-17
+
+[taxonomies]
+tags = ["TypeScript"]
+
+[extra]
+toc_ignore_pattern = "Table of Contents"
+toc_levels = 2
++++
 
 If you want to get a quick handle on what Typescript is all about,
 and you have experience with other programming languages,
