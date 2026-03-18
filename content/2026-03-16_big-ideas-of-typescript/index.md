@@ -8,6 +8,8 @@ similarly popular type-checked languages.
 Whether or not you have experience with type-checking in other languages,
 it is helpful to learn the particulars of the Typescript way.
 
+<!-- more -->
+
 This is a big-picture view -
 I like this kind of introduction because my preferred learning style includes
 starting with abstract descriptions of the big ideas, and filling in details
@@ -21,6 +23,10 @@ reading [The Typescript Handbook][], and [Effective Typescript][].
 
 [the typescript handbook]: https://www.typescriptlang.org/docs/handbook/intro.html
 [effective typescript]: https://effectivetypescript.com/
+
+## Table of Contents
+
+<!-- toc -->
 
 ## 0. Types are the language that you use to talk to the compiler
 
@@ -223,6 +229,11 @@ Now Typescript will check that `log` is only called with one of those three
 strings for the `logLevel` argument.
 
 [set theory]: https://brilliant.org/wiki/sets-union-and-intersection-easy/
+
+> ℹ️ Other languages support types that are defined as unions of other types.
+> One example is Rust `enum` types.
+> But Rust `enum`s are "tagged" by constructors.
+> Typescript's unions are unusual in that they are "untagged".
 
 ### Nullable types
 
@@ -495,9 +506,9 @@ import { RectangleClass } from "./shapes"
 console.log(typeof RectangleClass) // prints `function`
 ```
 
-## 4. Type Inference Is Guided by Flow Control
+## 4. Type inference is guided by flow control
 
-When you have type unions it is important to be able to identify which branch of
+When you have union types it is important to be able to identify which branch of
 the union a given value belongs to. Typescript has a type-safe way to do this:
 **narrowing**.
 Typescript uses flow control to make inferences about which types are possible
@@ -522,9 +533,15 @@ function abort(statusCode: number, message: string | null) {
 }
 ```
 
+Effectively the same variable has a different type at different points in the
+code. A handy way to observe this is to use an IDE, write a variable name in
+a control flow block, and hover over the variable to see its type at that point.
+
 Narrowing applies to any code that runs conditionally. For example we could have
 alternatively written `message != null && console.log(message.trim())` with the
 same result.
+
+### Type guards
 
 There are a number of built-in checks that implicitly narrow types. For example,
 
@@ -543,10 +560,62 @@ if (Array.isArray(xs)) {
 }
 ```
 
-You can also implement custom type guard functions. For more details see [the
-handbook][narrowing].
+You can also implement custom type guard functions. For more details see [The
+Typescript Handbook][narrowing].
 
 [narrowing]: https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+
+### Algebraic Data Types
+
+Union types, object types, and narrowing combine to enable a powerful
+abstraction: **algebraic data types**.
+ADTs are seen in Rust in the form of enums and structs, in Scala as case
+classes, and so on. Here is an example of a binary tree implemented using an
+ADT:
+
+```ts
+type Tree<T> = Node<T> | Leaf<T> | Empty
+
+type Node<T> = { tag: "node", leftSubtree: Tree<T>, rightSubtree: Tree<T>, value: T }
+type Leaf<T> = { tag: "leaf", value: T }
+type Empty = { tag: "empty" }
+
+function depth<T>(tree: Tree<T>): number {
+  switch (tree.tag) {
+    case "node":
+      // Typescript infers that `tree` has type `Node` here, so it allows
+      // accessing `leftSubtree` and `rightSubtree` without errors.
+      return Math.max(depth(tree.leftSubtree), depth(tree.rightSubtree))
+    case "leaf":
+      return 1
+    case "empty":
+      return 0
+    // No need for a default case - Typescript infers that all possible cases
+    // have been handled.
+  }
+}
+```
+
+In object-oriented programming a tree would be implemented using either an
+interface or an abstract class for `Tree`, and subclasses for `Leaf` and `Node`.
+(`Empty` might be replaced with `null`.)
+
+The advantage of ADTs over subclasses is that a union type, like `Tree`, is
+**sealed**:
+it can't be extended.
+That enables Typescript to perform **exhaustiveness checking**. 
+If someday we added another variant to the `Tree` union without updating the
+`depth` function that would introduce a bug -
+`depth` would return `undefined` for any tree that contained the new variant.
+But because `tree.tag` forms a set of known values, Typescript is able to detect
+whether all possible cases have been handled.
+So instead of a bug we would get a compiler error to remind us to update
+`depth`.
+(That's why I didn't included a `default` branch in the `switch`.
+If we added a `default` case that throws an "unknown tree type" error that would
+avoid the bug of returning `undefined`.
+But it would lead to an unexpected exception instead -
+and we wouldn't get a compiler error to remind us to handle the new variant.)
 
 ## 5. Functions have two parameter lists
 
@@ -663,6 +732,8 @@ of type `S`.
 > parameter list is omitted: you don't include any angle brackets in the
 > function declaration. But you can imagine there is an implied, zero-length
 > type parameter list.
+> 
+> A function that does have type parameters is called **generic**.
 
 ### Type parameters are implicit
 
@@ -829,30 +900,76 @@ might have a value like `"Jesse"`.
 > `getOrDefault` is not callable if `obj` is `null` because there is no possible
 > value to provide for `key`.
 
-## 6. Type aliases are type-level functions
+## 6. Types can be functions too
 
 We've seen how functions can have type parameters.
-Type aliases, interfaces, and classes can also have type parameters.
-A type alias is a way to assign a type to a name:
+Classes, interfaces, and type aliases can also have type parameters.
+As with functions, other types that have type parameters are called **generic**.
+
+For example, arrays are generic over the type of elements they contain.
 
 ```ts
-type UserMap = Map<string, User>
-
-function getActive(users: UserMap): UserMap {
-  /* ... */
+function first<T>(xs: Array<T>): T {
+  return xs[0]
 }
 ```
 
-> ℹ️ Unlike with functions, the type parameters to type aliases, interfaces, and
-> classes are **not** implicit. Function type parameters can be implicit because
+You can have `Array<number>`, `Array<string>`, `Array<User>` -
+they are all different types, but the `Array` class defines common behavior.
+
+In type theory `Array` is called a **type constructor** because you need to
+invoke it with a type argument to get a **concrete type**.
+For example `Array<number>` is a concrete type.
+Another way to put it is that `Array` is a function, but at the type level.
+Unlike a value function, which transforms input values into an output value,
+a type-level function transforms input types into an output type.
+
+> ℹ️ Usually an array type is given using the shorthand `T[]` instead of
+> `Array<T>`.
+> The above example uses the long form for clarity.
+> The two forms are equivalent.
+
+The idea that types can be functions becomes more clear when you look at generic
+type aliases. Here's an example from [The Typescript Handbook][Flatten] that
+transforms a nested array type into a flat array type:
+
+[Flatten]: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
+
+```ts
+type Flatten<T> = T extends any[] ? T[number] : T
+
+const xs = [[1, 2], [3, 4]]
+//    ╰┬╯
+// Type of `xs` is number[][]
+
+const ys: Flatten<typeof xs> = xs.flat()
+//    ╰┬╯
+// Type of `ys` is number[]
+
+console.log(ys) // prints: [1, 2, 3, 4]
+```
+
+Typescript has type-level programming capabilities that are, in my opinion,
+astonishing.
+When you're ready to have your mind blown, read through the documentation on
+[conditional types][] and [mapped types][].
+
+[conditional types]: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
+[mapped types]: https://www.typescriptlang.org/docs/handbook/2/mapped-types.html
+
+> ℹ️ Unlike with functions, the type parameters to classes, interfaces, and type
+> aliases are **not** implicit. Function type parameters can be implicit because
 > Typescript can usually infer the appropriate types by referencing types of
 > value arguments at a function's call sites. But in type expressions there are
 > no value arguments to look at.
 
-We already saw `NonNullable<T>` ...
+## Conclusion
 
-TODO: This section needs expansion. I think this is an important, and
-often-misunderstand idea so I think it is worthwhile to keep it in some form.
-But it does seem maybe less fundamental than the other ideas.
-
-
+So those are the big ideas.
+Some will have been very familiar if you have experience with other type-checked
+languages.
+Generics are everywhere; ADTs have gained popularity.
+Some are unusual, like untagged unions, intersections, and narrowing.
+Conditional and mapped types give a level of expressive power that is rare to
+see.
+When you put all the ideas into one package, you get Typescript.
