@@ -92,8 +92,11 @@ can usually figure out the correct types for variables, and the return type for
 each function using flow-based type inference.
 At that point Typescript knows the rules for the entire flow of your program.
 
-> ℹ️ The types of a function's inputs and its return type make up a function's
-> **type signature**.
+
+{% info() %}
+The types of a function's inputs and its return type make up a function's **type
+signature**.
+{% end %}
 
 The more that Typescript understands about your code the more it can help you.
 I find that I get most value from Typescript when I use a functional programming
@@ -101,9 +104,11 @@ I find that I get most value from Typescript when I use a functional programming
 FP encourages pure functions which is helpful because the observable behavior of
 a pure function can be described by its type signature.
 
-> ℹ️ Types are also useful for communicating with other programmers! Type
-> expressions communicate important information concisely, and they don't go out
-> of date the way that code comments do.
+{% tip() %}
+Types are also useful for communicating with other programmers! Type expressions
+communicate important information concisely, and they don't go out of date the
+way that code comments do.
+{% end %}
 
 Types are ideas that are used at **design time** (the time when the type checker
 runs, before your program is compiled to Javascript). During compilation types
@@ -143,11 +148,13 @@ the right track.
 [babel]: https://babeljs.io/docs/en/babel-preset-typescript
 [swc]: https://swc.rs/
 
-> ⚠️ Always run Typescript with the `strict` compiler option if you can!
-> Most material you read (including this primer) assumes that [strict][] mode is
-> enabled.
+{% warning() %}
+Always run Typescript with the `strict` compiler option if you can! Most
+material you read (including this primer) assumes that [strict][] mode is
+enabled.
 
 [strict]: https://www.typescriptlang.org/tsconfig#strict
+{% end %}
 
 If you have been writing Javascript you will need to make some changes to
 accommodate Typescript's style.
@@ -209,9 +216,11 @@ The difference is that the type is exclusively part of your conversation with
 the compiler, while the value represents bytes in memory in your running
 program.
 
-> ℹ️ In type theory any type that represents exactly one possible value is
-> called a **unit type**.
-> In Typescript they are often called singleton types, or literal types.
+{% info() %}
+In type theory any type that represents exactly one possible value is called
+a **unit type**. In Typescript they are often called singleton types, or literal
+types.
+{% end %}
 
 Because the type of `logLevel` is a string literal type, Typescript will only
 allow `error` to be called with the string `"error"` as the second argument.
@@ -240,10 +249,11 @@ strings for the `logLevel` argument.
 
 [set theory]: https://brilliant.org/wiki/sets-union-and-intersection-easy/
 
-> ℹ️ Other languages support types that are defined as unions of other types.
-> One example is Rust `enum` types.
-> But Rust `enum`s are "tagged" by constructors.
-> Typescript's unions are unusual in that they are "untagged".
+{% info() %}
+Other languages support types that are defined as unions of other types. One
+example is Rust `enum` types. But Rust `enum`s are "tagged" by constructors.
+Typescript's unions are unusual in that they are "untagged".
+{% end %}
 
 ### Nullable types
 
@@ -303,10 +313,13 @@ The type `ErrorWithCode` describes that set.
 
 [error]: https://developer.mozilla.org/en-US/docs/web/javascript/reference/global_objects/error
 
-> ℹ️ Typescript implements subtyping. Because a union type is a bigger set than
-> the possible values of its member types individually, a union type is
-> a **supertype** of each its members. On the other hand an intersection type is
-> a **subtype** of each of its members.
+
+{% info() %}
+Typescript implements subtyping. Because a union type is a bigger set than the
+possible values of its member types individually, a union type is
+a **supertype** of each its members. On the other hand an intersection type is
+a **subtype** of each of its members.
+{% end %}
 
 I have a more detailed look at types as sets in
 [When to use `never` and `unknown` in Typescript](https://blog.logrocket.com/when-to-use-never-and-unknown-in-typescript-5e4d6c5799ad/).
@@ -362,14 +375,16 @@ The type checker will reject `totalLength([3])` because numbers do not have
 a `length` property, and will reject `totalLength(3)` because `3` is not an
 array.
 
-> ⚠️ Don't make assumptions about what is not described! An important
-> consequence of structural typing is that you can't make assumptions about
-> object properties that are not specifically listed in a variable's type. Even
-> though the type of `x` only lists one property, we can't assume that if we
-> iterate over the properties of `x` we will only get `length` because x can,
-> and does, have other properties. If you want to iterate over the properties of
-> an object you have to have some way of knowing beyond the type system what
-> kind of properties you will get.
+{% warning() %}
+Don't make assumptions about what is not described! An important consequence of
+structural typing is that you can't make assumptions about object properties
+that are not specifically listed in a variable's type. Even though the type of
+`x` only lists one property, we can't assume that if we iterate over the
+properties of `x` we will only get `length` because x can, and does, have other
+properties. If you want to iterate over the properties of an object you have to
+have some way of knowing beyond the type system what kind of properties you will
+get.
+{% end %}
 
 [duck typed]: https://devopedia.org/duck-typing
 
@@ -496,8 +511,11 @@ interface RectangleInterface {
 const rect = new RectangleClass(6, 2)
 ```
 
-> ℹ️ The biggest difference between class and interface types is that interfaces
-> are extensible through [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html).
+{% info() %}
+The biggest difference between class and interface types is that interfaces are
+extensible through [declaration
+merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html).
+{% end %}
 
 Defining a class defines two things at once: a type that only exists at design
 time, and a constructor function that exists at runtime. It happens that both
@@ -690,8 +708,10 @@ type relates to types of its inputs.
 A type parameter can also describe how the types of a function's inputs relate
 to each other.
 
-> ℹ️ Traditionally type parameters are written as a single capital letter. But
-> you can use any identifier.
+{% tip() %}
+Traditionally type parameters are written as a single capital letter. But you
+can use any identifier.
+{% end %}
 
 That signature has a lot of pieces, so let's break them down:
 
@@ -724,13 +744,15 @@ function useState<S>(
 // value won't be used.
 ```
 
-> ℹ️ There is an equivalent arrow function syntax for a generic function:
->
-> ```ts
-> const useState = <S>(initialState: S): [S, (value: S) => void] => {
->   /* ... */
-> }
-> ```
+{% tip() %}
+There is an equivalent arrow function syntax for a generic function:
+
+```ts
+const useState = <S>(initialState: S): [S, (value: S) => void] => {
+  /* ... */
+}
+```
+{% end %}
 
 The signature tells us that the first argument to `useState` must have type `S`.
 The return type declares that it returns a pair (a two-element array) where the
@@ -738,12 +760,14 @@ type of the first element is `S` (so the same type as `initialValue`),
 and the second element is a function that that must be called with an argument
 of type `S`.
 
-> ℹ️ Many functions do not require type parameters. In those cases the type
-> parameter list is omitted: you don't include any angle brackets in the
-> function declaration. But you can imagine there is an implied, zero-length
-> type parameter list.
-> 
-> A function that does have type parameters is called **generic**.
+{% info() %}
+Many functions do not require type parameters. In those cases the type parameter
+list is omitted: you don't include any angle brackets in the function
+declaration. But you can imagine there is an implied, zero-length type parameter
+list.
+
+A function that does have type parameters is called **generic**.
+{% end %}
 
 ### Type parameters are implicit
 
@@ -783,12 +807,14 @@ will only allow calling `setMode` with an argument of the same type. Typescript
 will also verify that the initial value provided has a type that is
 **assignable** to the type argument.
 
-> ℹ️ You will often want to provide an explicit type argument like this if the
-> initial value given to `useState` is `null`. In that case Typescript has no good
-> way to infer the type you have in mind.
->
-> Remember that a nullable type is specified as a union, such as `"open"
-> | "closed" | null` or `string | null`
+{% tip() %}
+You will often want to provide an explicit type argument like this if the
+initial value given to `useState` is `null`. In that case Typescript has no good
+way to infer the type you have in mind.
+
+Remember that a nullable type is specified as a union, such as `"open"
+| "closed" | null` or `string | null`
+{% end %}
 
 ### Constraints on type parameters
 
@@ -901,14 +927,13 @@ This mirrors the _value_ expression `obj[key]` which evaluates to the value at
 a given key. For example for a _value_ `user` of type `User`, `user["name"]`
 might have a value like `"Jesse"`.
 
-> ℹ️ You might expect `Obj` to have a constraint like `Obj extends
-> object`. 
-> But that isn't necessary.
-> Yes, the function would throw an exception if
-> `obj` was `null` or `undefined`.
-> But `keyof null` and `keyof undefined` both evaluate to empty sets so
-> `getOrDefault` is not callable if `obj` is `null` because there is no possible
-> value to provide for `key`.
+{% tip() %}
+You might expect `Obj` to have a constraint like `Obj extends object`. But that
+isn't necessary. Yes, the function would throw an exception if `obj` was `null`
+or `undefined`. But `keyof null` and `keyof undefined` both evaluate to empty
+sets so `getOrDefault` is not callable if `obj` is `null` because there is no
+possible value to provide for `key`.
+{% end %}
 
 ## 6. Types can be functions too
 
@@ -934,10 +959,10 @@ Another way to put it is that `Array` is a function, but at the type level.
 Unlike a value function, which transforms input values into an output value,
 a type-level function transforms input types into an output type.
 
-> ℹ️ Usually an array type is given using the shorthand `T[]` instead of
-> `Array<T>`.
-> The above example uses the long form for clarity.
-> The two forms are equivalent.
+{% info() %}
+Usually an array type is given using the shorthand `T[]` instead of `Array<T>`.
+The above example uses the long form for clarity. The two forms are equivalent.
+{% end %}
 
 The idea that types can be functions becomes more clear when you look at generic
 type aliases. Here's an example from [The Typescript Handbook][Flatten] that
@@ -967,11 +992,13 @@ When you're ready to have your mind blown, read through the documentation on
 [conditional types]: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
 [mapped types]: https://www.typescriptlang.org/docs/handbook/2/mapped-types.html
 
-> ℹ️ Unlike with functions, the type parameters to classes, interfaces, and type
-> aliases are **not** implicit. Function type parameters can be implicit because
-> Typescript can usually infer the appropriate types by referencing types of
-> value arguments at a function's call sites. But in type expressions there are
-> no value arguments to look at.
+{% info() %}
+Unlike with functions, the type parameters to classes, interfaces, and type
+aliases are **not** implicit. Function type parameters can be implicit because
+Typescript can usually infer the appropriate types by referencing types of value
+arguments at a function's call sites. But in type expressions there are no value
+arguments to look at.
+{% end %}
 
 ## Conclusion
 
