@@ -1,4 +1,4 @@
-# The 7 Big Ideas of Typescript
+# The 6 Big Ideas of Typescript
 
 If you want to get a quick handle on what Typescript is all about,
 and you have experience with other programming languages,
@@ -282,6 +282,11 @@ The type `ErrorWithCode` describes that set.
 
 [error]: https://developer.mozilla.org/en-US/docs/web/javascript/reference/global_objects/error
 
+> ℹ️ Typescript implements subtyping. Because a union type is a bigger set than
+> the possible values of its member types individually, a union type is
+> a **supertype** of each its members. On the other hand an intersection type is
+> a **subtype** of each of its members.
+
 I have a more detailed look at types as sets in
 [When to use `never` and `unknown` in Typescript](https://blog.logrocket.com/when-to-use-never-and-unknown-in-typescript-5e4d6c5799ad/).
 
@@ -452,7 +457,7 @@ a predefined implementation.
 ```ts
 class RectangleClass {
   constructor(public width: number, public height: number) { }
-  area() {
+  area(): number {
     return this.width * this.height
   }
 }
@@ -462,16 +467,25 @@ interface RectangleInterface {
   height: number
   area(): number
 }
+
+// In 99% of cases the *types* RectangleClass and RectangleInterface are
+// interchangeable.
+
+// But only RectangleClass can be initialized with its constructor.
+const rect = new RectangleClass(6, 2)
 ```
 
-Defining a class defines two things at once: a type (basically an interface)
-that only exists at design time, and a constructor function that exists at
-runtime. It happens that both things have the same name. That works because
-types and values exist in separate namespaces.
+> ℹ️ The biggest difference between class and interface types is that interfaces
+> are extensible through [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html).
+
+Defining a class defines two things at once: a type that only exists at design
+time, and a constructor function that exists at runtime. It happens that both
+things have the same name. That works because types and values exist in separate
+namespaces.
 
 ```ts
-// Imports the class type, but not the constructor. Because types are design-time
-// only, this import is erased at build time.
+// Imports the class type, but not the constructor. Because types are
+// a design-time concept, this import is erased at compile time.
 import type { RectangleClass } from "./shapes"
 
 // Imports both the type and the constructor
@@ -481,7 +495,60 @@ import { RectangleClass } from "./shapes"
 console.log(typeof RectangleClass) // prints `function`
 ```
 
-## 4. Functions have two parameter lists
+## 4. Type Inference Is Guided by Flow Control
+
+When you have type unions it is important to be able to identify which branch of
+the union a given value belongs to. Typescript has a type-safe way to do this:
+**narrowing**.
+Typescript uses flow control to make inferences about which types are possible
+in which code locations.
+
+```ts
+function abort(statusCode: number, message: string | null) {
+  //                               ╰─────────┬──────────╯
+  // When this function is called, we don't know whether `message` is null.
+
+  if (message != null) {
+    // It is not possible that `message` is null in this if branch. So
+    // Typescript infers that the type of `message` in this block is `string`,
+    // not `string | null`
+    console.log(message.trim())
+  } else {
+    // In the else branch `message` must be null.
+    message.trim() // Type error: 'message' is possibly null
+  }
+
+  process.exit(statusCode)
+}
+```
+
+Narrowing applies to any code that runs conditionally. For example we could have
+alternatively written `message != null && console.log(message.trim())` with the
+same result.
+
+There are a number of built-in checks that implicitly narrow types. For example,
+
+```ts
+if (typeof message == "string") {
+  // Narrow to a primitive type with Javascript's built-in typeof operator
+}
+
+if (rect instanceof Rectangle) {
+  // `rect` has type Rectangle here. This requires that `rect` was constructed using
+  // the `Rectangle` constructor.
+}
+
+if (Array.isArray(xs)) {
+  // xs must be an array
+}
+```
+
+You can also implement custom type guard functions. For more details see [the
+handbook][narrowing].
+
+[narrowing]: https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+
+## 5. Functions have two parameter lists
 
 Functions take arguments, and return a value. In TypeScript functions also take
 _type_ arguments, and have a return type. Let's take a look at `useState` from
@@ -632,8 +699,8 @@ That binds the type argument `"open" | "closed"` to the parameter `S`.
 values, the strings `"open"` or `"closed"`.)
 Now Typescript infers that the type of `mode` is also `"open" | "closed"`, and
 will only allow calling `setMode` with an argument of the same type. Typescript
-will also verify that the initial value provided has a type that is assignable
-to the type argument.
+will also verify that the initial value provided has a type that is
+**assignable** to the type argument.
 
 > ℹ️ You will often want to provide an explicit type argument like this if the
 > initial value given to `useState` is `null`. In that case Typescript has no good
@@ -660,7 +727,7 @@ function findById<T extends { id: string }>(
 ```
 
 The syntax `T extends { id: string }` means that the parameter `T` will only
-accept types that are **assignable** to `{ id: string }`. Every object type that
+accept types that are assignable to `{ id: string }`. Every object type that
 has an `id` property that is a string is assignable to `{ id: string }`, even if
 it also has other properties.
 With that constraint in place the implementation of `findById` can make
@@ -679,16 +746,10 @@ may reference other parameters in the same list.
 function getOrDefault<Obj, Key extends keyof Obj>(
   obj: Obj,
   key: Key,
-  def: NonNullable<Obj[Key]>
-): NonNullable<Obj[Key]> {
+  def: Obj[Key]
+): Obj[Key] {
   const value = obj[key]
-  return isNonNullable(value) ? value : def
-}
-
-// This is a type guard: a function that returns a boolean, and that
-// simultaneously provides extra information about the type of its argument.
-function isNonNullable<T>(x: T): x is NonNullable<T> {
-  return x != null // x shouldn't be `null` or `undefined`
+  return value != null ? value : def
 }
 ```
 
@@ -696,8 +757,15 @@ function isNonNullable<T>(x: T): x is NonNullable<T> {
 value. If the object property value for the given key is not `null` or
 `undefined` that value is returned. Otherwise the default value is returned
 instead which may not be `null` or `undefined`.
+The type signature requires that the type of the default value matches the type
+of the object's property for the given key.
+
 Note that the type parameter `Key` is **constrained** using a reference to the
 preceding type parameter, `Obj`.
+The `extends` keyword specifies that the only valid types for the variable `Key`
+are subtypes of `keyof Obj`.
+The value for `key` will be a string, but it can't be any string. It must match
+one of the known keys of the type `Obj`.
 
 Here is an example of how `getOrDefault` can be used:
 
@@ -726,14 +794,10 @@ function test(user: User) {
 }
 ```
 
-TODO: This example throws a lot at the reader at once.
-
 The syntax `keyof Obj` gives a type that is a union of the _types_ of keys in
 `Obj`.
 For example the _type_ `User` has keys `"name"` and `"role"`;
 so `keyof User` evaluates to `"name" | "role"`.
-The type parameter `Key` is constrained so that it must be a subtype of `keyof
-Obj`, whatever type is bound to `Obj`.
 In the example above where the object type is `User`, and the `key` argument to
 `getOrDefault` is `"role"`, Typescript infers that the type of `Key` is `"role"`
 the type `"role"` is a subtype of `"name" | "role"`:
@@ -753,19 +817,18 @@ a given key. For example for a _value_ `user` of type `User`, `user["name"]`
 might have a value like `"Jesse"`.
 
 > ℹ️ You might expect `Obj` to have a constraint like `Obj extends
-> Record<string, unknown>`. 
+> object`. 
 > But that isn't necessary.
-> The function would throw an exception if
-> `obj` was `null` or `undefined`, but `keyof null` and `keyof undefined` both
-> evaluate to empty sets so `getOrDefault` is not callable if `obj` is `null`
-> because there is no possible value to provide for `key`.
+> Yes, the function would throw an exception if
+> `obj` was `null` or `undefined`.
+> But `keyof null` and `keyof undefined` both evaluate to empty sets so
+> `getOrDefault` is not callable if `obj` is `null` because there is no possible
+> value to provide for `key`.
 
-`NonNullable<T>` is a built-in helper that evaluates to a type that excludes
-`null` or `undefined` from whatever union type it is given.
+## 6. Type aliases are type-level functions
 
-## 5. Type aliases are type-level functions
-
-Type aliases, interfaces, and classes can also take type arguments.
+We've seen how functions can have type parameters.
+Type aliases, interfaces, and classes can also have type parameters.
 A type alias is a way to assign a type to a name:
 
 ```ts
@@ -788,27 +851,4 @@ TODO: This section needs expansion. I think this is an important, and
 often-misunderstand idea so I think it is worthwhile to keep it in some form.
 But it does seem maybe less fundamental than the other ideas.
 
-## 6. Types and values occupy two distinct namespaces
-
-A class is an interface plus a constructor.
-
-This might be covered sufficiently in section 1. The idea of a class having
-a type part and a value part is important, but is it important enough for its
-own discussion? This could be incorporated into the structural types discussion.
-
-## 7. Type Inference Is Informed by Flow Control
-
-(Narrowing)
-
-Very important in a language that aims to meet the dynamic needs of Javascript
-idioms, and with untagged unions.
-
-## TODO
-
-
-TODO: Are these ideas big enough to justify more content in this post?
-
-- types are non-nullable by default (discussed in Unions section) - no
-- types are erased (discussed in section 0) - no
-- narrowing - yes
 
