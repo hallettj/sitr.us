@@ -746,8 +746,8 @@ may reference other parameters in the same list.
 function getOrDefault<Obj, Key extends keyof Obj>(
   obj: Obj,
   key: Key,
-  def: Obj[Key]
-): Obj[Key] {
+  def: NonNullable<Obj[Key]>
+): NonNullable<Obj[Key]> {
   const value = obj[key]
   return value != null ? value : def
 }
@@ -759,6 +759,10 @@ value. If the object property value for the given key is not `null` or
 instead which may not be `null` or `undefined`.
 The type signature requires that the type of the default value matches the type
 of the object's property for the given key.
+Typescript's built-in `NonNullable` [utility type][] restricts the
+default value type so that it cannot be `null` or `undefined`.
+
+[utility type]: https://www.typescriptlang.org/docs/handbook/utility-types.html
 
 Note that the type parameter `Key` is **constrained** using a reference to the
 preceding type parameter, `Obj`.
