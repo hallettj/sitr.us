@@ -1,6 +1,7 @@
 +++
 title = "The 6 Big Ideas of Typescript"
-date = 2026-03-17
+date = 2026-03-18
+path = "2026/03/18/big-ideas-of-typescript.html"
 
 [taxonomies]
 tags = ["TypeScript", "type theory"]
@@ -12,21 +13,13 @@ toc_levels = 2
 
 If you want to get a quick handle on what Typescript is all about,
 and you have experience with other programming languages,
-this post will show you what is special about Typescript.
+this post will give you a high-level overview of what is special about Typescript.
 Typescript's take on type checking is unusually expressive compared to
 similarly popular type-checked languages.
 Whether or not you have experience with type-checking in other languages,
 it is helpful to learn the particulars of the Typescript way.
 
 <!-- more -->
-
-This is a big-picture view -
-I like this kind of introduction because my preferred learning style includes
-starting with abstract descriptions of the big ideas, and filling in details
-from there.
-Look at this as a way to dip your toe into Typescript.
-If you like what you see then knowing the big ideas will prime your brain to
-learn more as effectively as possible.
 
 This is not a complete guide - I recommend following up on this primer by
 reading [The Typescript Handbook][], and [Effective Typescript][].
@@ -50,8 +43,8 @@ When the compiler understands what you mean it can help you to get to
 the code that you want.
 
 It's an exchange that matches your mental picture of your code with what
-is actually written. Types get you and your compiler on the same page, but the
-conversation also helps you to reflect on your design to understand your own
+is actually written. Types get you and your compiler on the same page.
+The conversation also helps you to reflect on your design to understand your own
 ideas better.
 When you write code you have in mind ideas about what kind of values can be
 assigned to certain variables, or passed to certain functions.
@@ -92,22 +85,27 @@ can usually figure out the correct types for variables, and the return type for
 each function using flow-based type inference.
 At that point Typescript knows the rules for the entire flow of your program.
 
-
-{% info() %}
-The types of a function's inputs and its return type make up a function's **type
-signature**.
+{% tip() %}
+Types are also useful for communicating with other programmers! Type expressions
+communicate important information concisely, and they don't go out of date the
+way that code comments do.
 {% end %}
 
 The more that Typescript understands about your code the more it can help you.
 I find that I get most value from Typescript when I use a functional programming
 (FP) style.
-FP encourages pure functions which is helpful because the observable behavior of
-a pure function can be described by its type signature.
+FP encourages minimizing side-effects.
+Instead you try to write functions that are only used for their return values.
+That is helpful because observable behavior can then be described by function
+signatures.
 
-{% tip() %}
-Types are also useful for communicating with other programmers! Type expressions
-communicate important information concisely, and they don't go out of date the
-way that code comments do.
+{% info() %}
+Some languages can encode side-effects in function signatures.
+But Typescript doesn't do this.
+Try to limit side-effects to places where you really need them so that as much
+of your program design as possible is communicated in function signatures.
+See [Type-Driven Development with
+TypeScript](@/2018-02-12_type-driven-development-with-typescript/index.md).
 {% end %}
 
 Types are ideas that are used at **design time** (the time when the type checker
