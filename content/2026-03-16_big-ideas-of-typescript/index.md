@@ -16,6 +16,11 @@ and you have experience with other programming languages,
 this post will give you a high-level overview of what is special about Typescript.
 Typescript's take on type checking is unusually expressive compared to
 similarly popular type-checked languages.
+That's because Javascript, being a dynamically typed language, is extremely
+flexible.
+Typescript is designed to let you write Javascript as freely as you normally
+would,
+but with great type-checking added on.
 Whether or not you have experience with type-checking in other languages,
 it is helpful to learn the particulars of the Typescript way.
 
@@ -23,6 +28,9 @@ it is helpful to learn the particulars of the Typescript way.
 
 This is not a complete guide - I recommend following up on this primer by
 reading [The Typescript Handbook][], and [Effective Typescript][].
+I'm focusing on what makes Typescript different from Javascript -
+which is the type-checking part.
+So I'm not going to get into special Javascript features, like async/await.
 
 [the typescript handbook]: https://www.typescriptlang.org/docs/handbook/intro.html
 [effective typescript]: https://effectivetypescript.com/
@@ -1114,6 +1122,19 @@ Some will have been very familiar if you have experience with other type-checked
 languages.
 Generics are everywhere; ADTs have gained popularity.
 Some are unusual, like untagged unions, intersections, and narrowing.
-Conditional and mapped types give a level of expressive power that is rare to
-see.
-When you put all the ideas into one package, you get Typescript.
+Conditional and mapped types give a level of expressive power that you won't see
+outside of research languages.
+When you put all the ideas into one package, you get Typescript!
+
+If there is one feature I miss from other languages it is ad-hoc polymorphism
+which you see in Rust as traits, and in Haskell as type classes.
+But that is a feature that is only possible with a compiler that uses type
+information to write a compiled program.
+That's contrary to Typescript's nature.
+Typescript is Javascript, with the types written in the source file instead of
+in your head.
+You can take a Typescript program, cover up the type parts with your fingers,
+and it's Javascript.
+Or you can take any Javascript program,
+and with enough work type-check every part of it.
+Typescript does what it needs to do to make that work.
