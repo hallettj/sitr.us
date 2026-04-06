@@ -320,7 +320,7 @@ a **subtype** of each of its members.
 {% end %}
 
 I have a more detailed look at types as sets in
-[When to use `never` and `unknown` in Typescript](https://blog.logrocket.com/when-to-use-never-and-unknown-in-typescript-5e4d6c5799ad/).
+[When to use `never` and `unknown` in Typescript](/2019/01/29/never-and-unknown-in-typescript.html/).
 
 ## 3. Types are structural
 
@@ -441,7 +441,7 @@ async function updateRecord<T extends { id: number }>(record: T) {
 }
 ```
 
-I'll talk more about bounds on generic type variables in the section on big idea #4.
+I'll talk more about bounds on generic type variables in the section on big idea #5.
 
 ### Classes are suggestions
 
@@ -700,7 +700,7 @@ to it based on the value argument that the function is called with.[^parameters-
     different) type. To pass type checking the type of an argument must be
     _assignable_ to the type of the corresponding parameter.
 
-The use of a type parameter makes `useState` **generic**.
+A function or other type that uses type parameters is called **generic**.
 The type parameter allows the programmer to describe how the function return
 type relates to types of its inputs.
 A type parameter can also describe how the types of a function's inputs relate
@@ -935,35 +935,55 @@ possible value to provide for `key`.
 
 ## 6. Types can be functions too
 
-We've seen how functions can have type parameters.
+This last section gets into advanced topics that aren't necessary for most
+Typescript programming.
+But it points to an idea that makes Typescript special,
+that you might be benefiting from without realizing it.
+Feel free to come back to this one after you've had time to become comfortable
+with the other ideas.
+
+We've seen how functions can have type parameters - they can be generic.
 Classes, interfaces, and type aliases can also have type parameters.
-As with functions, other types that have type parameters are called **generic**.
-
 For example, arrays are generic over the type of elements they contain.
-
-```ts
-function first<T>(xs: Array<T>): T {
-  return xs[0]
-}
-```
-
 You can have `Array<number>`, `Array<string>`, `Array<User>` -
-they are all different types, but the `Array` class defines common behavior.
+those are all different types.
 
-In type theory `Array` is called a **type constructor** because you need to
-invoke it with a type argument to get a **concrete type**.
-For example `Array<number>` is a concrete type.
-Another way to put it is that `Array` is a function, but at the type level.
-Unlike a value function, which transforms input values into an output value,
-a type-level function transforms input types into an output type.
-
-{% info() %}
+{% tip() %}
 Usually an array type is given using the shorthand `T[]` instead of `Array<T>`.
-The above example uses the long form for clarity. The two forms are equivalent.
+I'm using the long form to illustrate the connection to other generic types.
+The two forms are equivalent.
 {% end %}
 
-The idea that types can be functions becomes more clear when you look at generic
-type aliases. Here's an example from [The Typescript Handbook][Flatten] that
+The type `Array` without a type argument is **not** a concrete type.
+In type theory `Array` is called a **type constructor** because it constructs
+concrete types when given some input type.
+Like a function!
+But this function operates on the type level:
+instead of value inputs, and a value output it takes _type_ inputs, and gives
+a type output.
+You can take an input type, like `number`, feed it to the `Array` type
+constructor, and get the concrete type that we write as
+`Array<number>`.[^first-class type constructors]
+
+```ts
+// Value-level function application
+let xs = new Array(1)
+
+// Type-level function application
+type NumericArray = Array<number>
+```
+
+[^first-class type constructors]:
+  Typescript does not let you use `Array` as a type by itself.
+  For example, you can't write `type MyArray = Array`.
+  Same goes for any other type constructor. Although Typescript (like Javascript)
+  has first-class functions, it does not have first-class type constructors.
+  Instead you have to write `type MyArray<T> = Array<T>`.
+
+The idea of type constructors exists in every language with generic types.
+But the idea of type-level functions goes much further in Typescript!
+Things get really interesting when you start using generic type aliases.
+Here's an example from [The Typescript Handbook][Flatten] that
 transforms a nested array type into a flat array type:
 
 [Flatten]: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
@@ -973,30 +993,119 @@ type Flatten<T> = T extends any[] ? T[number] : T
 
 const xs = [[1, 2], [3, 4]]
 //    ╰┬╯
-// Type of `xs` is number[][]
+//   Type of `xs` is number[][] - an array of arrays
 
 const ys: Flatten<typeof xs> = xs.flat()
 //    ╰┬╯
-// Type of `ys` is number[]
+//   Type of `ys` is number[] - an array of numbers
 
 console.log(ys) // prints: [1, 2, 3, 4]
 ```
 
-Typescript has type-level programming capabilities that are, in my opinion,
-astonishing.
-When you're ready to have your mind blown, read through the documentation on
-[conditional types][] and [mapped types][].
+`Flatten` is a type-level function that transforms a nested array type into
+a flat array type.
+The definition introduces some new concepts, so let's walk through them.
+The first is [conditional types][], which brings branching logic to the type
+level.
 
-[conditional types]: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
-[mapped types]: https://www.typescriptlang.org/docs/handbook/2/mapped-types.html
+```ts
+type Flatten<T> = T extends any[] ? T[number] : T
+//          ╰┬╯   ╰────────┬────╯   ╰───┬───╯  ╰┬╯
+// `T` could be anything   │            │       │
+//                         │            │       │
+//      check: is T an array type?      │       │
+//                                      │       │
+//      if yes, let Flatten<T> be element type  │
+//                                              │
+//        otherwise, let Flatten<T> the same type as T
+```
 
-{% info() %}
-Unlike with functions, the type parameters to classes, interfaces, and type
-aliases are **not** implicit. Function type parameters can be implicit because
-Typescript can usually infer the appropriate types by referencing types of value
-arguments at a function's call sites. But in type expressions there are no value
-arguments to look at.
+Another concept is [indexed access][].
+At the value level,
+given an array of, let's say, strings, you can get a string value by accessing
+an index of the array.
+
+```ts
+const xs = ["foo", "bar"]
+const x = xs[1] // evaluates to "bar"
+```
+
+Because `xs` is an array of strings, for any numeric index you put into the
+indexed access (as long as that index is within the array bounds) you get
+a string back. Typescript's type-level indexed access lets you make the same
+statement in the form of a type expression:
+
+```ts
+type ElementType<T> = T[number]  // Oh look, another type-level function!
+type XsElemType = ElementType<typeof xs>  // `XsElemType` is now an alias for `string`
+```
+
+{% tip() %}
+Indexed access also works on object types.
+Consider the type, `type User = { name: string, age: number }`.
+The type expression `User["name"]` simplifies to `string` because every `User`
+value has a `string` value in its `name` property.
+And `User["name" | "age"]` simplifies to `string | number`.
+Going a step further, `User[keyof User]` also simplifies to `string | number`.
 {% end %}
+
+Putting conditional types and indexed access together,
+we can follow an application of `Flatten`:
+
+```ts
+type Flatten<T> = T extends any[] ? T[number] : T
+
+// We'll use some made-up syntax to walk through the evaluation steps
+Flatten<number[][]>
+  → number[][] extends any[] ? (number[][])[number] : number[][]  // yes, number[][] is a subtype of any[]
+  //                           ╰───────┬──────────╯
+  //         ┌─────────────────────────┘
+  → (number[][])[number]  // simplifies to type of one element of the number[][] array type
+  // ╰──┬───╯
+  //    │
+  → number[]
+```
+
+So `Flatten<number[][]>` simplifies to `number[]`,
+which flattens one level of the nested array type.
+
+What if we used `Flatten` on a non-array type?
+
+```ts
+Flatten<number>
+  → number extends any[] ? (number)[number] : number  // no, number is not a subtype of any[]
+  //                                          ╰─┬──╯
+  //   ┌────────────────────────────────────────┘
+  → number
+```
+
+Then you get out the same type you put in.
+If you'd rather this case be an error you can specify that there are no allowed
+values of the type `Flatten<number>` by using the empty set type, `never`:
+
+```ts
+type Flatten<T> = T extends any[] ? T[number] : never
+```
+
+Can you write a recursive type to flatten an arbitrarily deeply nested array
+type!
+You sure can!
+It takes same care because it's easy to overshoot, and evaluate to the scalar
+element type instead of a type for a flat array.
+If you're interested, copy the snippet below into the [Typescript Playground][],
+and modify the `Flatten` type until there are no errors.
+
+```ts
+type Flatten<T> = T extends any[] ? T[number] : T
+
+const xs: Flatten<number[][][]> = [1, 2, 3]
+```
+
+This is a taste of Typescript's type-level programming capabilities.
+I didn't get into [mapped types][],
+which are fantastic for type-safe data parsing.
+For more on that topic see my article,
+[Checking Types Against the Real World in TypeScript](/2018/04/12/checking-types-against-the-real-world.html/).
 
 ## Conclusion
 
