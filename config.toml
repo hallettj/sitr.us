@@ -23,7 +23,7 @@ smart_punctuation = true
 [extra]
 allowed_domains = [
   { directive = "connect-src", domains = ["hachyderm.io"] },
-  { directive = "font-src", domains = ["'self'", "data:"] },
+  { directive = "font-src", domains = ["'self'", "data:", "https://fonts.gstatic.com"] },
   { directive = "img-src", domains = ["'self'", "https://*", "data:"] },
   # The hash here is for the dompurify library from unpkg.com
   { directive = "script-src", domains = ["'self'", "'sha384-Q8WImnnQPhbg13l/gPSPMHp4R//1GIQcP/rJhiTk1mYW5Px14bJgBwzzH/DcZ6T9'"] },

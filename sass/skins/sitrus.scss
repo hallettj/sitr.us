@@ -23,6 +23,21 @@ $cartograph-font-url: "/assets/CartographCF";
     url("#{$cartograph-font-url}/CartographCF-Bold.woff") format("woff");
 }
 
+// Get a font to cover box drawing characters, since Cartograph CF doesn't have
+// its own glyphs for those.
+@font-face {
+  font-family: 'MonospaceSymbols';
+  src: url(https://fonts.gstatic.com/s/firacode/v27/uU9eCBsR6Z2vfE9aq3bL0fxyUs4tcw4W_D1sJeraE8PZqw.woff2) format('woff2');
+  size-adjust: 102.5%;  // Try to match glyph width of Cartograph CF
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range:
+    U+2500-257F,  // Box Drawing
+    U+2580-259F,  // Block Elements
+    U+25A0-25FF;  // Geometric Shapes
+}
+
 :root {
   --primary-color: #1460bd; // indigo, Contrast ratio: 6.1:1
 }
@@ -39,7 +54,7 @@ $cartograph-font-url: "/assets/CartographCF";
 }
 
 :root {
-  --code-font: Cartograph CF, monospace;
+  --code-font: MonospaceSymbols, Cartograph CF, monospace;
 
   // Cartograph CF needs a slightly higher line-height than Tabi's default 1.4
   // to avoid vertical overflow in code blocks.
