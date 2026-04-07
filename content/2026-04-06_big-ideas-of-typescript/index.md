@@ -1,7 +1,7 @@
 +++
 title = "The 6 Big Ideas of Typescript"
-date = 2026-03-18
-path = "2026/03/18/big-ideas-of-typescript.html"
+date = 2026-04-06
+path = "2026/04/06/big-ideas-of-typescript.html"
 
 [taxonomies]
 tags = ["TypeScript", "type theory"]
