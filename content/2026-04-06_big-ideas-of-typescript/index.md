@@ -1003,6 +1003,10 @@ let xs = new Array(1)
 type NumericArray = Array<number>
 ```
 
+`Array` is not _technically_ a function,
+but the idea is basically the same:
+transform some inputs into some mechanically-determined output.
+
 [^first-class type constructors]:
     Typescript does not let you use `Array` as a type by itself.
     For example, you can't write `type MyArray = Array`.
