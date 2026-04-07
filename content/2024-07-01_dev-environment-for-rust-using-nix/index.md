@@ -2,6 +2,7 @@
 title = "Dev environment for Rust using Nix"
 draft = true
 date = 2024-06-01
+path = "2024/06/01/dev-environment-for-rust-using-nix.html"
 
 [taxonomies]
 tags = ["Nix", "Rust"]
