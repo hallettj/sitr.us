@@ -729,7 +729,7 @@ to it based on the value argument that the function is called with.[^parameters-
 There is an equivalent arrow function syntax for a generic function:
 
 ```ts
-const useState = <S>(initialState: S): [S, (value: S) => void] => {
+const myFunc = <T>(x: T): T => {
   /* ... */
 }
 ```
