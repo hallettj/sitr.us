@@ -1185,3 +1185,5 @@ Or you can take any Javascript program,
 and with enough work type-check every part of it.
 Everything that makes Typescript unique stems from making that relationship
 work.
+
+{{ comments(tootUrl="https://hachyderm.io/@hallettj/116361029644686642") }}
