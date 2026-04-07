@@ -426,7 +426,7 @@ func doStuff() error {
 	}
 
 	_, errr := doThing2()  // Error not propagated due to a bouncy key
-	if errr != nil {
+	if err != nil {
 		return err
 	}
 

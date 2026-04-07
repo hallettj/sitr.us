@@ -10,7 +10,7 @@ tags = ["TypeScript", "type theory"]
 _This is an excerpt of [a post][original] that I wrote for [LogRocket][]._
 
 {{ invertible_image(
-  src="/2019/01/29/never-and-unknown-in-typescript.html/string-union-number.png"
+  src="string-union-number.png"
   alt="venn diagram of the string and number types, and their union"
 ) }}
 

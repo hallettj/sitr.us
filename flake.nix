@@ -8,7 +8,13 @@
     };
   };
 
-  outputs = { self, nixpkgs, systems, rust-overlay }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      systems,
+      rust-overlay,
+    }:
     let
       perSystem = callback: nixpkgs.lib.genAttrs (import systems) (system: callback (mkPkgs system));
       mkPkgs = system: import nixpkgs { inherit system overlays; };
@@ -16,19 +22,6 @@
       overlays = [
         (import rust-overlay)
         (final: prev: {
-          # Get Zola v0.19.1
-          zola = final.callPackage ./nix/zola.nix {
-            # Get newer Rust version to build zola
-            rustPlatform =
-              let
-                rustToolchain = final.pkgsBuildHost.rust-bin.stable."1.79.0".minimal;
-              in
-              final.makeRustPlatform {
-                cargo = rustToolchain;
-                rustc = rustToolchain;
-              };
-          };
-
           writeNushellApplication = final.callPackage ./nix/writeNushellApplication.nix { };
         })
       ];
@@ -43,7 +36,7 @@
 
       devShells = perSystem (pkgs: {
         default = pkgs.mkShell {
-          nativeBuildInputs = with self.packages.${pkgs.system}; [
+          packages = with self.packages.${pkgs.system}; [
             build
             decrypt-assets
             zola

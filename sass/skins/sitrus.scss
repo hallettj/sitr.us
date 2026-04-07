@@ -38,11 +38,31 @@ $cartograph-font-url: "/assets/CartographCF";
     U+25A0-25FF;  // Geometric Shapes
 }
 
-:root {
-  --primary-color: #1460bd; // indigo, Contrast ratio: 6.1:1
+@mixin theme-variables($theme) {
+    @if $theme =='light' {
+        --primary-color: #1460bd;
+    }
+    @else if $theme == 'dark' {
+        --primary-color: #ec984f;
+    }
 }
+
+// Apply light theme variables by default.
+:root {
+    @include theme-variables('light');
+}
+
+// Apply dark theme variables when dark theme is explicitly set.
 [data-theme='dark'] {
-  --primary-color: #ec984f; // orange, Contrast ratio: 7.19:1. Accessible.
+    @include theme-variables('dark');
+}
+
+// Apply dark theme variables when user's system prefers dark mode
+// and the theme is not explicitly set to light.
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        @include theme-variables('dark');
+    }
 }
 
 // Use gray for code block headers instead of main highlight color
@@ -56,9 +76,9 @@ $cartograph-font-url: "/assets/CartographCF";
 :root {
   --code-font: MonospaceSymbols, Cartograph CF, monospace;
 
-  // Cartograph CF needs a slightly higher line-height than Tabi's default 1.4
-  // to avoid vertical overflow in code blocks.
-  pre { line-height: 1.55; }
+  // When I set the font to Cartograph CF a vertical scroll bar appears with
+  // a tiny amount of scrolling. Hide that bar!
+  pre code { overflow-y: hidden; }
 }
 
 // Customize syntax highlighting
@@ -68,21 +88,26 @@ $cartograph-font-url: "/assets/CartographCF";
 }
 
 .z-name { font-style: normal !important; }
-.z-variable.z-function, // function invocations in go
+/* .z-variable.z-function, // function invocations in go */
 .z-support.z-class, // class references in Ruby
-.z-yaml.z-block-scalar, // pipes indicating a block string value in yaml
+.z-support.z-type, // built-in types
+[data-lang=yaml] .z-key-value + .z-keyword, // pipes indicating a block string value in yaml
+.z-storage.z-arrow, // arrow function arrow in Typescript
+[data-lang=go] .z-storage, // Go uses types to signal declarations instead of keywords - don't italicize the types
+[data-lang=ruby] .z-punctuation + .z-constant.z-language, // symbols in Ruby
 .z-code .z-entity.z-other.z-attribute-name {
   font-style: normal; 
 }
 
 // Built-in symbols should be italicized
 .z-builtin,
-.z-support.z-class,.z-builtin,
+.z-support.z-type.z-builtin, // null in typescript
 .z-keyword,
-.z-keyword.z-operator.z-expression, // typeof in Typescript (unlike other z-operators which are non-alpha symbols)
 .z-modifier,
-.z-storage.z-rust, // for languages that declare variables with a keyword instead of a type
-.z-storage.z-ts,
+.z-storage, // declarations & declaration modifiers including 'let', 'const', 'function', '=>', 'async'
+/* .z-storage.z-rust, // declarations for langs that use a keyword instead of a type to indicate a new variable */
+/* [data-lang=typescript] .z-storage, // declarations & declaration modifiers including 'let', 'const', 'function', '=>', 'async' */
+/* [data-lang=typescript] .z-storage, // declarations & declaration modifiers including 'let', 'const', 'function', '=>', 'async' */
 .z-echo, // `echo` command in shell
 .z-constant.z-language,
 .z-variable.z-language {

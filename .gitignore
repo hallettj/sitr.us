@@ -4,3 +4,7 @@
 
 # Encrypted assets are unpacked here
 /static/assets
+
+# Generated assets
+/static/giallo-dark.css
+/static/giallo-light.css

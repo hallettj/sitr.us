@@ -15,10 +15,16 @@ taxonomies = [
 
 [markdown]
 bottom_footnotes = true
-extra_syntaxes_and_themes = ["syntaxes"]
-highlight_code = true
-highlight_theme = "css"
 smart_punctuation = true
+
+[markdown.highlighting]
+error_on_missing_language = true
+style = "class"
+light_theme = "catppuccin-frappe"
+dark_theme = "catppuccin-macchiato"
+extra_grammars = [
+  "grammars/idris/syntaxes/idris.tmLanguage.json"
+]
 
 [extra]
 allowed_domains = [

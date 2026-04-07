@@ -1,3 +1,6 @@
 [submodule "themes/tabi"]
 	path = themes/tabi
 	url = https://github.com/welpo/tabi.git
+[submodule "grammars/idris"]
+	path = grammars/idris
+	url = https://github.com/meraymond2/idris-vscode.git
