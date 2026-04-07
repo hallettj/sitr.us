@@ -18,9 +18,9 @@ Typescript's take on type checking is unusually expressive compared to
 similarly popular type-checked languages.
 That's because Javascript, being a dynamically typed language, is extremely
 flexible.
-Typescript is designed to let you write Javascript as freely as you normally
+Typescript is designed to let you write Javascript almost as freely as you normally
 would,
-but with great type-checking added on.
+but with accurate type-checking added on.
 Whether or not you have experience with type-checking in other languages,
 it is helpful to learn the particulars of the Typescript way.
 
@@ -30,7 +30,7 @@ This is not a complete guide - I recommend following up on this primer by
 reading [The Typescript Handbook][], and [Effective Typescript][].
 I'm focusing on what makes Typescript different from Javascript -
 which is the type-checking part.
-So I'm not going to get into special Javascript features, like async/await.
+So I'm not going to get into special Javascript features like async/await.
 
 [the typescript handbook]: https://www.typescriptlang.org/docs/handbook/intro.html
 [effective typescript]: https://effectivetypescript.com/
@@ -54,7 +54,7 @@ It's an exchange that matches your mental picture of your code with what
 is actually written. Types get you and your compiler on the same page.
 The conversation also helps you to reflect on your design to understand your own
 ideas better.
-When you write code you have in mind ideas about what kind of values can be
+When you write code you have ideas in your mind about what kind of values can be
 assigned to certain variables, or passed to certain functions.
 That is true with or without type checking.
 You always have some kind of mental model of what the data flowing through your
@@ -78,10 +78,10 @@ const sum = (x: number, y: number): number => x + y
 //                                   │
 //                        the function returns a number
 //
-// If I call the function `sum` with non-numbers it was a mistake, so please
-// show me an error. Assuming that `x` and `y` are numbers if I write the
-// implementation for `sum` so that it returns something other than a number
-// then that must have been a mistake.
+// If I call the function `sum` with non-numbers it was a mistake, so
+// please show me an error. Assuming that `x` and `y` are numbers if
+// I write the implementation for `sum` so that it returns something
+// other than a number then that must have been a mistake.
 ```
 
 In my mind type checking revolves around function signatures.
@@ -129,8 +129,8 @@ but the Typescript compiler can read and understand types.
 [^optimization]:
     In many compiled languages the compiler can use what it learns
     from types not just to flag potential errors, but also to optimize to compiled
-    output. In these cases types do have a certain effect on runtime behavior.
-    Unfortunately Typescript does not do type-based optimization.
+    output. In these cases types do have an effect on runtime behavior.
+    But Typescript does not do this.
 
 ## 1. Typescript is Javascript with types
 
@@ -165,8 +165,8 @@ enabled.
 If you have been writing Javascript you will need to make some changes to
 accommodate Typescript's style.
 But the design decisions that make Typescript unique were made specifically so
-that Typescript's types mesh well with idiomatic Javascript -
-so you won't need to make huge changes.
+that Typescript's types mesh well with idiomatic Javascript.
+So you won't need to make huge changes.
 Features like structural types, and union and intersection operators allow types
 to describe Javascript's dynamic style.
 
@@ -177,7 +177,7 @@ But when you break the concept of a "type" down to its core idea, a type is
 a set of possible values. For example a variable with the type `string` could
 be assigned the value "hello, world!", "hunter2", or any other string.
 Typescript takes a purist approach to types by directly providing union and
-intersection set operations. Unlike in many languages, Typescript allows you to
+intersection set operations. Unlike many other languages, Typescript allows you to
 build up larger types (sets with more possible values, a.k.a. supertypes) from
 smaller types using the union operator.
 You can also define types as the overlap of values from some existing types
@@ -255,6 +255,13 @@ strings for the `logLevel` argument.
 
 [set theory]: https://brilliant.org/wiki/sets-union-and-intersection-easy/
 
+```ts
+log("program started", "info") // valid use
+
+// Error: "warm" is not assignable to type "info" | "warn" | "error"
+log("clearing cache", "warm")
+```
+
 {% info() %}
 Other languages support types that are defined as unions of other types. One
 example is Rust `enum` types. But Rust `enum`s are "tagged" by constructors.
@@ -302,13 +309,13 @@ One common use case is where you have a predefined object type,
 and you want a new type that adds properties to the existing type:
 
 ```ts
-// Defines an object type that has all of the same properties the `Error` type
-// does, *and* also has the property `code`.
+// Defines an object type that has all of the same properties the
+// `Error` type does, *and* also has the property `code`.
 type ErrorWithCode = Error & { code: number }
 ```
 
 There are many possible objects that have the properties required by the
-[Error][] class (`name`, `message`, and optionally `stack`).
+[Error][] interface (`name`, `message`, and optionally `stack`).
 Because types are structural in Typescript this set includes objects that have
 other properties in addition to those required by the `Error` type.
 There are also many possible objects that have a `code` property (and possibly
@@ -319,26 +326,27 @@ The type `ErrorWithCode` describes that set.
 
 [error]: https://developer.mozilla.org/en-US/docs/web/javascript/reference/global_objects/error
 
-
 {% info() %}
-Typescript implements subtyping. Because a union type is a bigger set than the
-possible values of its member types individually, a union type is
-a **supertype** of each its members. On the other hand an intersection type is
-a **subtype** of each of its members.
+Because a union type is a bigger set than the possible values of its member types individually,
+a union type is a **supertype** of each its members.
+On the other hand an intersection type is a **subtype** of each of its members.
 {% end %}
 
 I have a more detailed look at types as sets in
-[When to use `never` and `unknown` in Typescript](/2019/01/29/never-and-unknown-in-typescript.html/).
+[When to use `never` and `unknown` in Typescript](@/2019-01-29_never-and-unknown-in-typescript/index.md).
 
 ## 3. Types are structural
 
-Javascript is "[duck typed][]": code that operates on an object will work with
-any object that has the appropriate set of properties.
+Javascript is "[duck typed][]":
+code that accesses object methods or properties doesn't need to be given an
+object of a specific type -
+it works as long as it is given some object that has methods or properties with
+the right names.
 Typescript is designed to work with existing Javascript idioms so it supports
 the same idea.
 But unlike Javascript, Typescript checks at design time that a given object
-argument has the appropriate properties with the appropriate types;
-so instead of saying that Typescript is "duck typed", we say that it is
+argument has the appropriate properties with the appropriate types.
+So instead of saying that Typescript is "duck typed", we say that it is
 "structurally typed".
 For example,
 
@@ -404,16 +412,16 @@ Based on what you've read so far you might be surprised by the type error in
 this code:
 
 ```ts
-// Update a previously-saved record. A previously-saved record always has an
-// `id` property.
+// Update a previously-saved record. A previously-saved record always has
+// an `id` property.
 async function updateRecord(record: { id: number }) {
   /* ... */
 }
 
 // Type error: Argument of type '{ id: number; name: string; }' is not
-// assignable to parameter of type '{ id: number; }'. Object literal may only
-// specify known properties, and 'name' does not exist in type '{ id: number;
-// }'.
+// assignable to parameter of type '{ id: number; }'. Object literal may
+// only specify known properties, and 'name' does not exist in type
+// '{ id: number; }'.
 updateRecord({ id: 1, name: "Jesse" })
 ```
 
@@ -429,11 +437,10 @@ const record = { id: 1, name: "Jesse" }
 updateRecord(record)
 ```
 
-The excess property check only applies when you assign an object literal
-directly to a variable or argument position whose type does not specifically
-list all of the properties in the object literal.
-The check often catches typos in property names so it is on balance a time saver
-IMO.
+The excess property check only applies when you use an object literal as an
+argument or as the value of a variable assignment where the expected type does
+not specifically list all of the properties in the object literal.
+The check often catches typos in property names so it is on balance a time saver.
 This is one example of the Typescript team's tendency to opt for pragmatism over
 philosophical purity.
 But I do often forget about excess property checking (including while writing
@@ -449,7 +456,8 @@ async function updateRecord<T extends { id: number }>(record: T) {
 }
 ```
 
-I'll talk more about bounds on generic type variables in the section on big idea #5.
+I'll talk more about bounds on generic type variables in the section on
+[big idea #5](#5-functions-have-two-parameter-lists).
 
 ### Classes are suggestions
 
@@ -466,7 +474,8 @@ class Rectangle {
   }
 }
 
-// This assigned value is not an instance of the class, but it is structurally compatible
+// This assigned value is not an instance of the class, but it is
+// structurally compatible
 const myRect: Rectangle = {
   width: 6,
   height: 2,
@@ -477,13 +486,14 @@ function test(rect: Rectangle) {
   // We know this will work, and will return a number.
   rect.area()
 
-  // This might be true or false! We don't have enough information to know at this point
+  // This might be true or false! We don't have enough information to
+  // know at this point
   rect instanceof Rectangle
 }
 ```
 
 Typescript treats an object as **assignable** to the type of a class if the
-object has the same properties and methods, with the same types and signatures.
+object has properties and methods with the same names, and with the same types and signatures.
 In the vast majority of cases structural typing does what you expect.
 But there are some cases, like that `instanceof` check, where you might get an
 unexpected result.
@@ -551,15 +561,16 @@ in which code locations.
 ```ts
 function abort(statusCode: number, message: string | null) {
   //                               ╰─────────┬──────────╯
-  // When this function is called, we don't know whether `message` is null.
+  // When this function is called, we don't know whether `message` is
+  // null.
 
   if (message != null) {
-    // It is not possible that `message` is null in this if branch. So
-    // Typescript infers that the type of `message` in this block is `string`,
-    // not `string | null`
+    // It is not possible that `message` is null after the `if` check.
+    // So Typescript infers that the type of `message` in this block is
+    // `string`, not `string | null`
     console.log(message.trim())
   } else {
-    // In the else branch `message` must be null.
+    // In the else case `message` *must* be null.
     message.trim() // Type error: 'message' is possibly null
   }
 
@@ -581,12 +592,13 @@ There are a number of built-in checks that implicitly narrow types. For example,
 
 ```ts
 if (typeof message == "string") {
-  // Narrow to a primitive type with Javascript's built-in typeof operator
+  // Narrow to a primitive type with Javascript's built-in typeof
+  // operator
 }
 
 if (rect instanceof Rectangle) {
-  // `rect` has type Rectangle here. This requires that `rect` was constructed using
-  // the `Rectangle` constructor.
+  // `rect` has type Rectangle here. This requires that `rect` was
+  // constructed using the `Rectangle` constructor.
 }
 
 if (Array.isArray(xs)) {
@@ -610,7 +622,12 @@ ADT:
 ```ts
 type Tree<T> = Node<T> | Leaf<T> | Empty
 
-type Node<T> = { tag: "node", leftSubtree: Tree<T>, rightSubtree: Tree<T>, value: T }
+type Node<T> = { 
+  tag: "node",
+  leftSubtree: Tree<T>,
+  rightSubtree: Tree<T>,
+  value: T
+}
 type Leaf<T> = { tag: "leaf", value: T }
 type Empty = { tag: "empty" }
 
@@ -624,13 +641,13 @@ function depth<T>(tree: Tree<T>): number {
       return 1
     case "empty":
       return 0
-    // No need for a default case - Typescript infers that all possible cases
-    // have been handled.
+    // No need for a default case - Typescript infers that all possible
+    // cases have been handled.
   }
 }
 ```
 
-In object-oriented programming a tree would be implemented using either an
+In object-oriented programming a tree might be implemented using either an
 interface or an abstract class for `Tree`, and subclasses for `Leaf` and `Node`.
 (`Empty` might be replaced with `null`.)
 
@@ -708,6 +725,16 @@ to it based on the value argument that the function is called with.[^parameters-
     different) type. To pass type checking the type of an argument must be
     _assignable_ to the type of the corresponding parameter.
 
+{% tip() %}
+There is an equivalent arrow function syntax for a generic function:
+
+```ts
+const useState = <S>(initialState: S): [S, (value: S) => void] => {
+  /* ... */
+}
+```
+{% end %}
+
 A function or other type that uses type parameters is called **generic**.
 The type parameter allows the programmer to describe how the function return
 type relates to types of its inputs.
@@ -724,41 +751,34 @@ That signature has a lot of pieces, so let's break them down:
 ```ts
 function useState<S>(
   //             ╰┬╯
-  // declaration of the type variable, `S`, which is a parameter to `useState`
+  // declaration of the type variable, `S`, which is a parameter to
+  // `useState`
 
   initialState: S
   //          ╰┬╯
-  // `initialState` has type `S`; the specific type bound to `S` is determined
-  // by the caller.
+  // `initialState` has type `S`; the specific type bound to `S` is
+  // determined by the caller.
 
 ): [S, (value: S) => void]
 // ╰─────────┬───────────╯
-// `useState` returns a pair (a two-element array, with a specified type for
-// each array position)
+// `useState` returns a pair (a two-element array, with a specified type
+// for each array position)
+
+// Breaking down that return type further:
 
    [S, (value: S) => void]
 // ╰┬╯
 // The first element of the returned pair is a value of the same type as
-// `initialValue`. We don't know what that type will be yet, but we can see that
-// whatever it is, it is the same type for both values.
+// `initialValue`. We don't know what that type will be yet, but we can
+// see that whatever it is, it is the same type for both values.
 
    [S, (value: S) => void]
 //     ╰────────┬───────╯
 // The second element of the returned pair is a function that takes one
-// argument. The argument has the same type as `initialValue` (`S`). The return
-// type of the the function is `void` which is a way of saying that the return
-// value won't be used.
+// argument. The argument has the same type as `initialValue` (`S`). The
+// return type of the the function is `void` which is a way of saying
+// that the return value won't be used.
 ```
-
-{% tip() %}
-There is an equivalent arrow function syntax for a generic function:
-
-```ts
-const useState = <S>(initialState: S): [S, (value: S) => void] => {
-  /* ... */
-}
-```
-{% end %}
 
 The signature tells us that the first argument to `useState` must have type `S`.
 The return type declares that it returns a pair (a two-element array) where the
@@ -771,8 +791,6 @@ Many functions do not require type parameters. In those cases the type parameter
 list is omitted: you don't include any angle brackets in the function
 declaration. But you can imagine there is an implied, zero-length type parameter
 list.
-
-A function that does have type parameters is called **generic**.
 {% end %}
 
 ### Type parameters are implicit
@@ -780,7 +798,7 @@ A function that does have type parameters is called **generic**.
 So if `useState` has two parameter lists why did we only provide one list of
 arguments when we called it? And how does Typescript decide what type to bind
 to `S`? Well you _can_ provide a type argument list when you call a function!
-But type parameters are implicit - if you don't specify type arguments then
+But type parameters are **implicit** - if you don't specify type arguments then
 Typescript will do its best to figure out what those arguments should be.
 Because `S` appears in the type of a value parameter Typescript can figure out
 that `S` should be the type that it infers for the string literal, "open" -
@@ -901,23 +919,24 @@ function test(user: User) {
   // type 'NonNullable<"viewer" | "commenter" | "editor" | null>'
   getOrDefault(user, "role", null)
 
-  // Error: argument of type "viewwer" is not assignable to the parameter of
-  // type 'NonNullable<"viewer" | "commenter" | "editor" | null>'
+  // Error: argument of type "viewwer" is not assignable to the parameter
+  // of type 'NonNullable<"viewer" | "commenter" | "editor" | null>'
   getOrDefault(user, "role", "viewwer")
 
-  // Error: argument of type "rrole" is not assignable to the parameter of
-  // type 'keyof User'
+  // Error: argument of type "rrole" is not assignable to the parameter
+  // of type 'keyof User'
   getOrDefault(user, "rrole", "viewer")
 }
 ```
 
 The syntax `keyof Obj` gives a type that is a union of the _types_ of keys in
 `Obj`.
-For example the _type_ `User` has keys `"name"` and `"role"`;
+For example the type `User` has keys `"name"` and `"role"`;
 so `keyof User` evaluates to `"name" | "role"`.
 In the example above where the object type is `User`, and the `key` argument to
-`getOrDefault` is `"role"`, Typescript infers that the type of `Key` is `"role"`
-the type `"role"` is a subtype of `"name" | "role"`:
+`getOrDefault` is `"role"`, Typescript infers that the type of `Key` is
+`"role"`.
+The type `"role"` is a subtype of `"name" | "role"`:
 the one possible value of type `"role"` (the string `"role"`) is also a possible
 value of the type `"name" | "role"`.
 So that works out.
@@ -946,11 +965,14 @@ possible value to provide for `key`.
 This last section gets into advanced topics that aren't necessary for most
 Typescript programming.
 But it points to an idea that makes Typescript special,
-that you might be benefiting from without realizing it.
+that you might benefit from without realizing it.
 Feel free to come back to this one after you've had time to become comfortable
 with the other ideas.
 
-We've seen how functions can have type parameters - they can be generic.
+### Type constructors
+
+We've seen how functions can have type parameters.
+(In other words, they can be generic.)
 Classes, interfaces, and type aliases can also have type parameters.
 For example, arrays are generic over the type of elements they contain.
 You can have `Array<number>`, `Array<string>`, `Array<User>` -
@@ -982,11 +1004,13 @@ type NumericArray = Array<number>
 ```
 
 [^first-class type constructors]:
-  Typescript does not let you use `Array` as a type by itself.
-  For example, you can't write `type MyArray = Array`.
-  Same goes for any other type constructor. Although Typescript (like Javascript)
-  has first-class functions, it does not have first-class type constructors.
-  Instead you have to write `type MyArray<T> = Array<T>`.
+    Typescript does not let you use `Array` as a type by itself.
+    For example, you can't write `type MyArray = Array`.
+    Same goes for any other type constructor. Although Typescript (like Javascript)
+    has first-class functions, it does not have first-class type constructors.
+    Instead you have to write `type MyArray<T> = Array<T>`.
+
+### Generic type aliases
 
 The idea of type constructors exists in every language with generic types.
 But the idea of type-level functions goes much further in Typescript!
@@ -1013,8 +1037,13 @@ console.log(ys) // prints: [1, 2, 3, 4]
 `Flatten` is a type-level function that transforms a nested array type into
 a flat array type.
 The definition introduces some new concepts, so let's walk through them.
+
+### Conditional types
+
 The first is [conditional types][], which brings branching logic to the type
 level.
+
+[conditional types]: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
 
 ```ts
 type Flatten<T> = T extends any[] ? T[number] : T
@@ -1028,10 +1057,14 @@ type Flatten<T> = T extends any[] ? T[number] : T
 //        otherwise, let Flatten<T> the same type as T
 ```
 
+### Indexed types
+
 Another concept is [indexed access][].
 At the value level,
 given an array of, let's say, strings, you can get a string value by accessing
 an index of the array.
+
+[indexed access]: https://www.typescriptlang.org/docs/handbook/2/indexed-access-types.html
 
 ```ts
 const xs = ["foo", "bar"]
@@ -1045,17 +1078,24 @@ statement in the form of a type expression:
 
 ```ts
 type ElementType<T> = T[number]  // Oh look, another type-level function!
-type XsElemType = ElementType<typeof xs>  // `XsElemType` is now an alias for `string`
+
+// This defines `XsElemType` to be an alias for `string`
+type XsElemType = ElementType<typeof xs>
 ```
 
 {% tip() %}
 Indexed access also works on object types.
 Consider the type, `type User = { name: string, age: number }`.
 The type expression `User["name"]` simplifies to `string` because every `User`
-value has a `string` value in its `name` property.
+value has a `string` value in its name property.
 And `User["name" | "age"]` simplifies to `string | number`.
 Going a step further, `User[keyof User]` also simplifies to `string | number`.
+
+We already saw this briefly in [Relations between type
+parameters](#relations-between-type-parameters).
 {% end %}
+
+### The complete picture
 
 Putting conditional types and indexed access together,
 we can follow an application of `Flatten`:
@@ -1065,10 +1105,11 @@ type Flatten<T> = T extends any[] ? T[number] : T
 
 // We'll use some made-up syntax to walk through the evaluation steps
 Flatten<number[][]>
-  → number[][] extends any[] ? (number[][])[number] : number[][]  // yes, number[][] is a subtype of any[]
+  // yes, number[][] is a subtype of any[]
+  → number[][] extends any[] ? (number[][])[number] : number[][]
   //                           ╰───────┬──────────╯
   //         ┌─────────────────────────┘
-  → (number[][])[number]  // simplifies to type of one element of the number[][] array type
+  → (number[][])[number]  // simplifies to type of one element
   // ╰──┬───╯
   //    │
   → number[]
@@ -1081,7 +1122,8 @@ What if we used `Flatten` on a non-array type?
 
 ```ts
 Flatten<number>
-  → number extends any[] ? (number)[number] : number  // no, number is not a subtype of any[]
+  // no, number is not a subtype of any[]
+  → number extends any[] ? (number)[number] : number
   //                                          ╰─┬──╯
   //   ┌────────────────────────────────────────┘
   → number
@@ -1096,12 +1138,14 @@ type Flatten<T> = T extends any[] ? T[number] : never
 ```
 
 Can you write a recursive type to flatten an arbitrarily deeply nested array
-type!
+type?
 You sure can!
 It takes same care because it's easy to overshoot, and evaluate to the scalar
 element type instead of a type for a flat array.
 If you're interested, copy the snippet below into the [Typescript Playground][],
 and modify the `Flatten` type until there are no errors.
+
+[Typescript Playground]: https://www.typescriptlang.org/play/
 
 ```ts
 type Flatten<T> = T extends any[] ? T[number] : T
@@ -1113,12 +1157,14 @@ This is a taste of Typescript's type-level programming capabilities.
 I didn't get into [mapped types][],
 which are fantastic for type-safe data parsing.
 For more on that topic see my article,
-[Checking Types Against the Real World in TypeScript](/2018/04/12/checking-types-against-the-real-world.html/).
+[Checking Types Against the Real World in TypeScript](@/2018-04-12_checking-types-against-the-real-world/index.md).
+
+[mapped types]: https://www.typescriptlang.org/docs/handbook/2/mapped-types.html
 
 ## Conclusion
 
 So those are the big ideas.
-Some will have been very familiar if you have experience with other type-checked
+Some will have been familiar if you have experience with other type-checked
 languages.
 Generics are everywhere; ADTs have gained popularity.
 Some are unusual, like untagged unions, intersections, and narrowing.
@@ -1137,4 +1183,5 @@ You can take a Typescript program, cover up the type parts with your fingers,
 and it's Javascript.
 Or you can take any Javascript program,
 and with enough work type-check every part of it.
-Typescript does what it needs to do to make that work.
+Everything that makes Typescript unique stems from making that relationship
+work.
