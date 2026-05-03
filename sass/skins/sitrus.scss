@@ -87,6 +87,14 @@ $cartograph-font-url: "/assets/CartographCF";
   tab-size: 4;
 }
 
+// Style for highlighted lines of code
+.z-hl {
+  background-color: #414559; // Surface 0, Frappe
+}
+[data-theme='dark'] .z-hl {
+  background-color: #363a4f; // Surface 0, Macchiato
+}
+
 .z-name { font-style: normal !important; }
 /* .z-variable.z-function, // function invocations in go */
 .z-support.z-class, // class references in Ruby
