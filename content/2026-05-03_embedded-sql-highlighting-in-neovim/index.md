@@ -9,6 +9,9 @@ tags = ["Neovim", "Treesitter", "Nix", "Rust"]
 [extra]
 toc_ignore_pattern = "Table of Contents"
 toc_levels = 2
+revisions = [
+  { date = 2026-05-04, message = "Updated the inconsistent highlighting discussion to discuss conflicting injection" }
+]
 +++
 
 This is the story of the rabbit hole I went down because I wanted pretty syntax highlighting for embedded SQL queries in my Rust code.
@@ -82,9 +85,9 @@ Here is syntax highlighting for a JSON value in Rust code:
 
 {% info() %}
 Injections also make Rust macro highlighting look mostly correct.
-The source code input to a macro invocation is not technically Rust code -
+The source code input to a macro invocation is not necessarily Rust code -
 it's a token tree, or a token stream.
-But it's often desirable to read it as though it is Rust code.
+But it's often desirable to assume it is Rust code, and to highlight it accordingly.
 The nvim-treesitter queries use injections to apply Rust highlighting to preserve the illusion.
 {% end %}
 
@@ -243,13 +246,6 @@ but `@lsp.type.string` no longer links to `String`.
 
 I expected that setting a language injection for a node would prevent any highlights from the parent language from applying to the injection content node, and it's children.
 But it turns out that Neovim applies both the parent language highlights, and the injection language highlights.
-The text color you end up with depends on priorities.
-
-As I said previously, Neovim highlights have priorities.
-All Treesitter highlights, including language injections, have priority 100 by default.
-My SQL injection highlighting wound up having equal priority with the Rust string highlight.
-Neovim seemed to pick a winner at random every time I started the editor -
-half the time the highlighting would be correct, half the time the entire SQL expression would be green.
 
 Here's that `:Inspect` output again:
 
@@ -260,11 +256,14 @@ Treesitter
   - @string.rust links to String   priority: 100   language: rust                                                              
 ```
 
-You can set a custom priority for any highlight in the syntax highlighting queries for a language.
-But AFAIK there isn't a way to override the priority of a stock highlight from my own config.
-And AFAIK there isn't a way to increase priority of injection highlights from an injection query.
+In the case of my SQL query injection the injected SQL highlighting appeared to be fighting with the Rust string highlighting.
+In every Neovim session the editor seemed to pick a winner at random.
+Half the time the highlighting was correct, half the time the entire expression was green.
 
-The nvim-treesitter [contributing guide](https://github.com/nvim-treesitter/nvim-treesitter/blob/main/CONTRIBUTING.md) has a couple of notes on best practices for setting highlight priorities on nodes that might be targeted by injections.
+At first I thought the problem was that the SQL and string highlights have equal priority.
+I thought to fix the problem I would have to reduce the Rust string priority to let SQL highlighting win every time.
+The nvim-treesitter [contributing guide](https://github.com/nvim-treesitter/nvim-treesitter/blob/main/CONTRIBUTING.md)
+has a couple of notes that suggest this might be the way to go:
 
 > Captures can be assigned a priority to control precedence of highlights via the
 `#set! priority <number>` directive (see [`:h treesitter-highlight-priority`](https://neovim.io/doc/user/treesitter.html#treesitter-highlight-priority)). This is useful for controlling conflicts with injected languages or when inheriting queries from other languages.
@@ -275,9 +274,59 @@ The nvim-treesitter [contributing guide](https://github.com/nvim-treesitter/nvim
 > ```
 
 The guide doesn't specifically recommend reduced priority for string literals;
-but I think that is what is called for in this situation.
-I don't know if this was the best solution - but since I couldn't override priorities from my configuration,
-my plan for a fix was to patch nvim-treesitter.
+but it seemed like the obvious fix to me.
+
+But then I noticed that the JSON injection I showed above doesn't have the same problem.
+I also looked more closely at how the Rust queries handle macros.
+I mentioned earlier that the nvim-treesitter queries use language injection to apply Rust highlighting to macro inputs.
+In theory that's because macro input is a token stream that is not necessarily Rust code.
+Here is the [stock injection](https://github.com/nvim-treesitter/nvim-treesitter/blob/4916d6592ede8c07973490d9322f187e07dfefac/runtime/queries/rust/injections.scm#L1) from nvim-treesitter that does that:
+
+```fennel,hl_lines=8
+(macro_invocation
+  macro: [
+    (scoped_identifier
+      name: (_) @_macro_name)
+    (identifier) @_macro_name
+  ]
+  (token_tree) @injection.content
+  (#not-any-of? @_macro_name "slint" "html" "json" "xml")
+  (#set! injection.language "rust")
+  (#set! injection.include-children))
+```
+
+My sqlx queries are macros, and my SQL expressions are part of the token tree that makes up the macro input.
+This query has special exceptions so that it doesn't conflict with stock injections, like the JSON one.
+But there is no exception for my sqlx case.
+That explains why the `:Inspect` output above shows the string highlight applied twice:
+once by the standard Rust highlight queries, and again by this injection.
+
+So my thinking now is that although the parent language highlights do apply to AST nodes covered by a language injection,
+the injection highlights normally win.
+But in this case my SQL injection is fighting with this other injection.
+
+I'm not sure what purpose the Rust injection for macro invocations serves since the parent language highlights seem to apply to macro inputs anyway.
+There might be cases this helps with that I don't understand yet.
+
+So that leaves three options for fixing the inconsistent highlighting problem:
+
+- change the above injection query to add exceptions for sqlx macros, like `sqlx::query!`
+- remove that injection entirely
+- my original plan, reduce the priority of string highlights
+
+All three options require patching nvim-treesitter.
+You can set a custom priority for any highlight in the syntax highlighting queries for a language,
+but AFAIK there isn't a way to override the priority of a stock highlight from my own config.
+And I don't know of any way to override or selectively disable an injection.
+
+I implemented the reduced string priority option before I noticed the conflicting injection problem.
+So that is what I have implemented currently.
+But I think that removing the conflicting injection entirely might be the more generally correct option.
+There could be other macros where injection should apply to content that is not a string.
+(Because of the flexibility of Rust macros the SQL queries in sqlx macros wouldn't have to be inside strings if the macro were written a little differently.)
+In those cases reducing string priority would not fix the problem.
+
+Now on to the next step - patching nvim-treesitter!
 
 ## A little background on patching packages in NixOS
 
@@ -653,3 +702,5 @@ That required patching nvim-treesitter.
 
 Thanks for following my journey!
 Or I apologize, depending on how you're feeling after reading 4400 words on a yak shaving exercise.
+
+{{ revisions() }}
