@@ -2,40 +2,20 @@
 {%- if src_1x is starting_with("http") or raw_path -%}
     {%- set image_url_1x = src_1x -%}
 {%- else -%}
-    {%- set colocated_path_1x = page.path | default(value="") -%}
-    {%- set relative_path_1x = colocated_path_1x ~ src_1x -%}
-    {%- set meta_1x = get_image_metadata(path=relative_path_1x, allow_missing=true) -%}
-
-    {#- Fallback to absolute path if relative path doesn't work -#}
-    {%- if not meta_1x -%}
-        {%- set meta_1x = get_image_metadata(path=src_1x, allow_missing=true) -%}
-        {%- set image_url_1x = get_url(path=src_1x) -%}
-    {%- else %}
-        {%- set image_url_1x = get_url(path=relative_path_1x) -%}
-    {%- endif -%}
+    {%- set image_url_1x = page.permalink ~ src_1x -%}
 {%- endif -%}
 
 {#- and again for the 2x image -#}
 {%- if src_2x is starting_with("http") or raw_path -%}
     {%- set image_url_2x = src_2x -%}
 {%- else -%}
-    {%- set colocated_path_2x = page.path | default(value="") -%}
-    {%- set relative_path_2x = colocated_path_2x ~ src_2x -%}
-    {%- set meta_2x = get_image_metadata(path=relative_path_2x, allow_missing=true) -%}
-
-    {#- Fallback to absolute path if relative path doesn't work -#}
-    {%- if not meta_2x -%}
-        {%- set meta_2x = get_image_metadata(path=src_2x, allow_missing=true) -%}
-        {%- set image_url_2x = get_url(path=src_2x) -%}
-    {%- else %}
-        {%- set image_url_2x = get_url(path=relative_path_2x) -%}
-    {%- endif -%}
+    {%- set image_url_2x = page.permalink ~ src_2x -%}
 {%- endif -%}
 
 {%- set lazy_loading = lazy_loading | default(value=true) -%}
 
 <p>
-    <img 
+    <img
       src="{{ image_url_1x }}"
       srcset="{{ image_url_1x }} 1x, {{ image_url_2x }} 2x"
       {% if alt %} alt="{{ alt }}"{% endif %}
