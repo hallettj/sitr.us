@@ -12,6 +12,7 @@ toc_levels = 2
 revisions = [
   { date = 2026-05-04, message = "Updated the inconsistent highlighting discussion to discuss conflicting injection" },
   { date = 2026-05-04, message = "Correction: Treesitter originated in Atom, not Zed" },
+  { date = 2026-05-04, message = "Added a note about the correct spelling of Tree-sitter" },
 ]
 +++
 
@@ -69,6 +70,13 @@ Whether that works depends on whether nvim-treesitter has the injection query co
 It works in Nix files at least.[^comment-tag]
 
 [^comment-tag]: The injection query configured in Nix that makes tagging a string with a comment work is defined [here](https://github.com/nvim-treesitter/nvim-treesitter/blob/4916d6592ede8c07973490d9322f187e07dfefac/runtime/queries/nix/injections.scm#L4). You can copy that to use in other languages with slight modifications. For example other languages might use a node name like `string_literal` instead of `string_expression`, and `string_content` instead of `string_fragment`.
+
+{% warning() %}
+The official name is Tree-sitter, with a dash.
+Neovim consistently uses the compound word, "Treesitter".
+For this post I've used the same spelling that Neovim does.
+The reason being that I didn't think about it beforehand.
+{% end %}
 
 The stock queries for most languages have some useful injections.
 Rust has injections for regex literals, re2c block comments, and for slint, html, json, and xml macros.
