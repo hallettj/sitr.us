@@ -20,13 +20,13 @@ By the end of my journey I had highlighting looking like this:
 {{ responsive_image(
   src_1x="embedded-sql-query_12pt.png"
   src_2x="embedded-sql-query_24pt.png"
-  alt="let user_id = sqlx::query_scalar!(
-    r#&quot;select id as &quot;id!&quot; from users where provider = ? and provider_id = ?&quot;#,
+  alt='let user_id = sqlx::query_scalar!(
+    r#"select id as "id!" from users where provider = ? and provider_id = ?"#,
     provider,
     provider_id
 )
 .fetch_one(&mut *tx)
-.await?;"
+.await?;'
 ) }}
 
 In most cases this kind of embedded syntax highlighting is easy in Neovim,
@@ -58,7 +58,7 @@ Sometimes you can get an injection explicitly by putting a comment with a langua
 {{ responsive_image(
   src_1x="language-tag_12pt.png"
   src_2x="language-tag_24pt.png"
-  alt="let x = /* sql */ &quot;select * from users&quot;;"
+  alt='let x = /* sql */ "select * from users";'
 ) }}
 
 Whether that works depends on whether nvim-treesitter has the injection query configured for the parent language you're working with.
@@ -73,11 +73,11 @@ Here is syntax highlighting for a JSON value in Rust code:
 {{ responsive_image(
   src_1x="json-injection_12pt.png"
   src_2x="json-injection_24pt.png"
-  alt="let data = serde_json::json!({ 
-    &quot;foo&quot;: 1,
-    &quot;bar&quot;: &quot;two&quot;,
-    &quot;baz&quot;: true,
-});"
+  alt='let data = serde_json::json!({ 
+    "foo": 1,
+    "bar": "two",
+    "baz": true,
+});'
 ) }}
 
 {% info() %}
