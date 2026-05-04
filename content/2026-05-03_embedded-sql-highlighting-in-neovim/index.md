@@ -704,3 +704,5 @@ Thanks for following my journey!
 Or I apologize, depending on how you're feeling after reading 4400 words on a yak shaving exercise.
 
 {{ revisions() }}
+
+{{ comments(tootUrl="https://hachyderm.io/@hallettj/116517866939179735") }}
