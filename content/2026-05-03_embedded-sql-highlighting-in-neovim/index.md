@@ -554,7 +554,7 @@ final: prev: {
 ```
 
 It's best to use `final` to reference the Python package in case there is some other overlay that modifies `python313`.
-Using final means you get the same result regardless of which order this and the other overlay are applied.
+Using `final` means you get the same result regardless of which order this and the other overlay are applied.
 But it's necessary to use `prev` to customize `someProgram` because `someProgram = final.someProgram` would be the kind of self-reference that leads to infinite recursion.
 
 Fixed points are a major reason why Nix uses its own programming language instead of something more mainstream.
