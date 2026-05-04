@@ -82,8 +82,10 @@ Here is syntax highlighting for a JSON value in Rust code:
 
 {% info() %}
 Injections also make Rust macro highlighting look mostly correct.
-Certain macro bodies are not technically Rust code - they are token trees.
-The nvim-treesitter queries use injections to apply Rust highlighting anyway.
+The source code input to a macro invocation is not technically Rust code -
+it's a token tree, or a token stream.
+But it's often desirable to read it as though it is Rust code.
+The nvim-treesitter queries use injections to apply Rust highlighting to preserve the illusion.
 {% end %}
 
 If a language doesn't come preconfigured with the injection you want,
@@ -229,12 +231,13 @@ Changing the highest priority group, `@lsp.type.string.rust`, so that it doesn't
 causes the editor to use colors from the lower priority group.
 
 Another detail is that in the stock Neovim configuration a number of highlight groups **link** to other groups by default.
-In this case `@lsp.type.string.rust` links to `String` by default.
+In this case `@lsp.type.string.rust` links to `@lsp.type.string`, which links to `String` by default.
 That means that any highlight with the group `@lsp.type.string.rust` will apply all of the highlight settings configured for the `String` group.
 The string highlight group from the Rust Treesitter queries, `@string.rust`, also links to `String`.
 That gets you consistent highlighting for strings regardless of whether the highlighting comes from Treesitter or from the LSP.
-Giving explicit highlight settings for `@lsp.type.string`, like I did in the last section, overrides the default link;
-so in my setup `@lsp.type.string` no longer links to `String`.
+Giving explicit highlight settings for `@lsp.type.string`, like I did in the last section, overrides the default link.
+So in my setup `@lsp.type.string.rust` still links to `@lsp.type.string`;
+but `@lsp.type.string` no longer links to `String`.
 
 ## Problem: Treesitter string highlighting sometimes overrides injection highlighting
 
