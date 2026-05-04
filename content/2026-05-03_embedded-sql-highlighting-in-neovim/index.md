@@ -10,7 +10,8 @@ tags = ["Neovim", "Treesitter", "Nix", "Rust"]
 toc_ignore_pattern = "Table of Contents"
 toc_levels = 2
 revisions = [
-  { date = 2026-05-04, message = "Updated the inconsistent highlighting discussion to discuss conflicting injection" }
+  { date = 2026-05-04, message = "Updated the inconsistent highlighting discussion to discuss conflicting injection" },
+  { date = 2026-05-04, message = "Correction: Treesitter originated in Atom, not Zed" },
 ]
 +++
 
@@ -50,7 +51,7 @@ If you care to follow along, you'll hear a tale of Neovim, Treesitter, injection
 I could go on for paragraphs about what Treesitter is, and why it's great. Briefly Treesitter gives code editors an AST for the code in the buffer. That gives more accurate syntax highlighting and indentation than the traditional regular expression method. But there's a lot more you can do when you have an AST! For example you get syntax-aware editing shortcuts.
 
 {% info() %}
-Treesitter originated in Zed. It has become a standout feature of Neovim. And also Helix! And, as I'm now learning, Emacs!
+Treesitter originated in Atom. It has become a standout feature of Neovim. And also Helix! And, as I'm now learning, Emacs!
 {% end %}
 
 One of the magic things that Treesitter provides is **injections**. 
