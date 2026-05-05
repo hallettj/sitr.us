@@ -13,6 +13,7 @@ revisions = [
   { date = 2026-05-04, message = "Updated the inconsistent highlighting discussion to discuss conflicting injection" },
   { date = 2026-05-04, message = "Correction: Treesitter originated in Atom, not Zed" },
   { date = 2026-05-04, message = "Added a note about the correct spelling of Tree-sitter" },
+  { date = 2026-05-05, message = "Link to nixpkgs PR" },
 ]
 +++
 
@@ -616,7 +617,7 @@ A little background on import from... actually I'll just link to [the manual](ht
 
 ### Why not submit a PR?
 
-I will! I promise!
+I did submit a PR! Here it is: [https://github.com/NixOS/nixpkgs/pull/516929](https://github.com/NixOS/nixpkgs/pull/516929)
 
 ## Finally applying the nvim-treesitter patch
 
