@@ -14,6 +14,7 @@ revisions = [
   { date = 2026-05-04, message = "Correction: Treesitter originated in Atom, not Zed" },
   { date = 2026-05-04, message = "Added a note about the correct spelling of Tree-sitter" },
   { date = 2026-05-05, message = "Link to nixpkgs PR" },
+  { date = 2026-05-12, message = "My nixpkgs PR was merged!" },
 ]
 +++
 
@@ -593,6 +594,9 @@ index 092fbfb5a..9ae93e272 100644
              exit 1
 ```
 
+
+**Edit:** as of 2026-05-12 this change is in the nixpkgs master branch. But the change that was merged changes references from `super.nvim-treesitter.src` to `self.nvim-treesitter`, which fixes two problems at once.
+
 Nixpkgs provides a helper that will be useful here: `applyPatches`.
 Because `applyPatches` is a package in Nixpkgs this will require some bootstrapping.
 
@@ -618,6 +622,8 @@ A little background on import from... actually I'll just link to [the manual](ht
 ### Why not submit a PR?
 
 I did submit a PR! Here it is: [https://github.com/NixOS/nixpkgs/pull/516929](https://github.com/NixOS/nixpkgs/pull/516929)
+
+**Edit:** And now it is merged!
 
 ## Finally applying the nvim-treesitter patch
 
@@ -670,6 +676,10 @@ So avoiding referencing the nvim-treesitter package itself in the query packages
 avoids some dependencies that you don't need if you're installing grammars
 selectively with `withPlugins`.
 {% end %}
+
+**Edit:** My nixpkgs PR got merged, and it ended up removing the `.src` reference, and linking queries packages directly to the nvim-treesitter package.
+(It turns out it makes no difference.)
+So although patching the `src` attr does work, the traditional patching method also works.
 
 And this works! Finally my SQL expressions are no longer boring!
 My final patch configuration is [here](https://github.com/hallettj/home.nix/blob/71199814c4dc78ae052b0405c7aa482f133df821/modules/features/neovim/treesitter-fixes/default.nix).
